@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using VRBuilder.Core.Configuration;
 using VRBuilder.UI.Console;
 
@@ -20,7 +19,7 @@ namespace VRBuilder.Core.Utils
 
             if (console == null)
             {
-                Debug.LogError("Could not initialize world console.");
+                ForwardingLogger.LogError("Could not initialize world console.");
                 return;
             }
 
@@ -58,7 +57,7 @@ namespace VRBuilder.Core.Utils
             {
                 executionQueue.Enqueue(() =>
                 {
-                    console.LogMessage(message, details, LogType.Log);
+                    console.LogMessage(message, details, LogLevel.Info);
 
                     if (show)
                     {
@@ -83,7 +82,7 @@ namespace VRBuilder.Core.Utils
             {
                 executionQueue.Enqueue(() =>
                 {
-                    console.LogMessage(message, details, LogType.Warning);
+                    console.LogMessage(message, details, LogLevel.Warn);
 
                     if (show)
                     {
@@ -108,7 +107,7 @@ namespace VRBuilder.Core.Utils
             {
                 executionQueue.Enqueue(() =>
                 {
-                    console.LogMessage(message, details, LogType.Error);
+                    console.LogMessage(message, details, LogLevel.Error);
 
                     if (show)
                     {
@@ -131,7 +130,7 @@ namespace VRBuilder.Core.Utils
             {
                 executionQueue.Enqueue(() =>
                 {
-                    console.LogMessage(ex.Message, ex.StackTrace, LogType.Exception);
+                    console.LogMessage(ex.Message, ex.StackTrace, LogLevel.Error);
 
                     if (show)
                     {
@@ -144,4 +143,3 @@ namespace VRBuilder.Core.Utils
         }
     }
 }
-

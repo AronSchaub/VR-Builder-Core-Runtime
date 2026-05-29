@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace VRBuilder.UI.Console
 {
     /// <summary>
@@ -20,13 +18,13 @@ namespace VRBuilder.UI.Console
         /// <summary>
         /// Type of message logged.
         /// </summary>
-        public LogType LogType { get; private set; }
+        public LogLevel LogLevel { get; private set; }
 
-        public LogMessage(string message, string details, LogType logType)
+        public LogMessage(string message, string details, LogLevel logLevel)
         {
             Message = message;
             Details = details;
-            LogType = logType;
+            LogLevel = logLevel;
         }
     }
 }
