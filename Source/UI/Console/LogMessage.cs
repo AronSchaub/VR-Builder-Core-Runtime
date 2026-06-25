@@ -1,9 +1,7 @@
-using UnityEngine;
-
 namespace VRBuilder.UI.Console
 {
     /// <summary>
-    /// A message logged in a <see cref="LogConsole"/>.
+    /// A message logged in an <see cref="ILogConsole"/>.
     /// </summary>
     public struct LogMessage
     {
@@ -18,15 +16,15 @@ namespace VRBuilder.UI.Console
         public string Details { get; private set; }
 
         /// <summary>
-        /// Type of message logged.
+        /// Severity of the message logged.
         /// </summary>
-        public LogType LogType { get; private set; }
+        public LogSeverity Severity { get; private set; }
 
-        public LogMessage(string message, string details, LogType logType)
+        public LogMessage(string message, string details, LogSeverity severity)
         {
             Message = message;
             Details = details;
-            LogType = logType;
+            Severity = severity;
         }
     }
 }

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace VRBuilder.UI.Console
 {
     /// <summary>
@@ -8,12 +6,17 @@ namespace VRBuilder.UI.Console
     public interface ILogConsole
     {
         /// <summary>
+        /// True if the console is currently visible.
+        /// </summary>
+        bool IsVisible { get; }
+
+        /// <summary>
         /// Add the provided message to the log.
         /// </summary>
         /// <param name="message">Main message.</param>
         /// <param name="details">Extra details, e.g. stack trace.</param>
-        /// <param name="logType">Type of message logged.</param>
-        void LogMessage(string message, string details, LogType logType);
+        /// <param name="severity">Severity of the message logged.</param>
+        void LogMessage(string message, string details, LogSeverity severity);
 
         /// <summary>
         /// Clears the console of all messages.
@@ -29,6 +32,11 @@ namespace VRBuilder.UI.Console
         /// Hides the console.
         /// </summary>
         void Hide();
+
+        /// <summary>
+        /// Toggles the console between visible and hidden.
+        /// </summary>
+        void Toggle();
 
         /// <summary>
         /// Manually sets the console dirty, so it knows it has to be refreshed.
