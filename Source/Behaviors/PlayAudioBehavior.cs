@@ -6,6 +6,7 @@ using UnityEngine.Scripting;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Configuration.Modes;
+using VRBuilder.Core.TextToSpeech;
 using VRBuilder.Core.Utils.Audio;
 
 namespace VRBuilder.Core.Behaviors
@@ -14,7 +15,7 @@ namespace VRBuilder.Core.Behaviors
     /// A behavior that plays audio.
     /// </summary>
     [DataContract(IsReference = true)]
-    [HelpLink("https://mindport-gmbh.github.io/VR-Builder-Documentation/articles/core/play-audio-file-behavior.html?utm_source=unity_editor&utm_medium=referral&utm_campaign=from_unity&utm_id=from_unity")]
+    [HelpLink("https://www.mindport.co/vr-builder/manual/default-behaviors/play-audio-file")]
     public class PlayAudioBehavior : Behavior<PlayAudioBehavior.EntityData>, IOptional
     {
         /// <summary>
@@ -31,16 +32,13 @@ namespace VRBuilder.Core.Behaviors
 
             /// <inheritdoc />
             [DataMember]
-            [DisplayName("Execution Stages")]
-            [DisplayTooltip("Determines whether the behavior runs when the step activates, deactivates, or both.")]
             public BehaviorExecutionStages ExecutionStages { get; set; }
 
             /// <summary>
             /// Audio volume this audio file should be played with.
             /// </summary>
             [DataMember]
-            [DisplayName("Audio Volume")]
-            [DisplayTooltip("Volume from 0 to 1.")]
+            [DisplayName("Audio Volume (from 0 to 1)")]
             [UsesSpecificProcessDrawer("NormalizedFloatDrawer")]
             public float Volume { get; set; } = 1.0f;
 
@@ -113,12 +111,12 @@ namespace VRBuilder.Core.Behaviors
 
                     //start playing
                     if (Data.AudioData.HasAudioClip)
-                    {
+                    { 
                         audioPlayer.PlayAudio(Data.AudioData, Data.Volume);
                     }
 
-                    //wait for playing
-                    while (audioPlayer.IsPlaying)
+                    // Wait for playback, but keep the process blocked while the application is frozen.
+                    while (audioPlayer.IsPlaying || AudioListener.pause)
                     {
                         yield return null;
                     }
