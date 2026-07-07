@@ -70,7 +70,7 @@ namespace VRBuilder.Core.Conditions
             }
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public CompareValuesCondition() : this(Guid.Empty, Guid.Empty, default, default, false, false, new EqualToOperation<T>())
         {
         }

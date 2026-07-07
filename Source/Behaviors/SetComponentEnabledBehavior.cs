@@ -101,7 +101,7 @@ namespace VRBuilder.Core.Behaviors
             }
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public SetComponentEnabledBehavior() : this(Guid.Empty, "", false, false)
         {
         }

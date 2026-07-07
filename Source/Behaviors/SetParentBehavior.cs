@@ -46,7 +46,7 @@ namespace VRBuilder.Core.Behaviors
             public string Name => ParentObject.HasValue() ? $"Make {TargetObject} child of {ParentObject}" : $"Unparent {TargetObject}";
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public SetParentBehavior() : this(Guid.Empty, Guid.Empty)
         {
         }

@@ -30,7 +30,7 @@ namespace VRBuilder.Core.Behaviors
             public string Name => "Go to Chapter";
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public GoToChapterBehavior() : this(Guid.Empty)
         {
         }

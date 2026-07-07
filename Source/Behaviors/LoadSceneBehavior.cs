@@ -59,7 +59,7 @@ namespace VRBuilder.Core.Behaviors
             }
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public LoadSceneBehavior()
         {
         }

@@ -37,7 +37,7 @@ namespace VRBuilder.Core.Behaviors
             }
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public DelayBehavior() : this(0)
         {
         }

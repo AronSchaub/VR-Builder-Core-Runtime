@@ -72,7 +72,7 @@ namespace VRBuilder.Core.Behaviors
             }
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public SetValueBehavior() : this(Guid.Empty, default)
         {
         }

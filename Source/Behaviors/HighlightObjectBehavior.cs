@@ -67,7 +67,7 @@ namespace VRBuilder.Core.Behaviors
             public string Name => $"Highlight {TargetObjects}";
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public HighlightObjectBehavior() : this(Guid.Empty, defaultHighlightColor)
         {
         }

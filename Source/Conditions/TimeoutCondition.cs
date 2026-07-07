@@ -66,7 +66,7 @@ namespace VRBuilder.Core.Conditions
             }
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public TimeoutCondition() : this(0)
         {
         }
