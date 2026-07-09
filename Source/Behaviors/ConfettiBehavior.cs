@@ -3,14 +3,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using UnityEngine;
-using UnityEngine.Scripting;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.Utils;
 using VRBuilder.Core.Utils.ParticleMachines;
-using Object = UnityEngine.Object;
 
 namespace VRBuilder.Core.Behaviors
 {
@@ -37,7 +34,7 @@ namespace VRBuilder.Core.Behaviors
             /// </summary>
             [DataMember]
             [DisplayName("Position Provider")]
-            public SingleSceneObjectReference ConfettiPosition { get; set; }
+            public SingleSceneObjectReference<IEffectProperty> ConfettiPosition { get; set; }
 
             /// <summary>
             /// Path to the desired confetti machine prefab.
@@ -63,8 +60,6 @@ namespace VRBuilder.Core.Behaviors
             /// <inheritdoc />
             [DataMember]
             public BehaviorExecutionStages ExecutionStages { get; set; }
-
-            public GameObject ConfettiMachine { get; set; }
 
             public Metadata Metadata { get; set; }
 
@@ -138,7 +133,7 @@ namespace VRBuilder.Core.Behaviors
 
                 if (confettiPrefab == null)
                 {
-                    Debug.LogWarning("No valid prefab path provided.");
+                    ForwardingLogger.LogWarning("No valid prefab path provided.");
                     return;
                 }
 
