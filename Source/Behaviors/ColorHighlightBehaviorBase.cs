@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
-using UnityEngine;
 using VRBuilder.Core.Configuration.Modes;
+using VRBuilder.Core.Primitives;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
 
@@ -9,6 +9,7 @@ namespace VRBuilder.Core.Behaviors
 {
     /// <summary>
     /// Shared base behavior for color-based highlighting.
+    /// No UnityEngine dependencies — uses engine-agnostic <see cref="IColor"/>.
     /// </summary>
     /// <typeparam name="TData">Behavior data type.</typeparam>
     /// <typeparam name="TProperty">Target property type.</typeparam>
@@ -19,9 +20,9 @@ namespace VRBuilder.Core.Behaviors
     {
         private class ActivatingProcess : InstantProcess<TData>
         {
-            private readonly Action<TProperty, Color> applyHighlight;
+            private readonly Action<TProperty, IColor> applyHighlight;
 
-            public ActivatingProcess(TData data, Action<TProperty, Color> applyHighlight) : base(data)
+            public ActivatingProcess(TData data, Action<TProperty, IColor> applyHighlight) : base(data)
             {
                 this.applyHighlight = applyHighlight;
             }
@@ -72,7 +73,7 @@ namespace VRBuilder.Core.Behaviors
         {
         }
 
-        protected ColorHighlightBehaviorBase(Guid objectId, Color defaultColor)
+        protected ColorHighlightBehaviorBase(Guid objectId, IColor defaultColor)
         {
             Data.TargetObjects = new MultipleScenePropertyReference<TProperty>(objectId);
             Data.Color = defaultColor;
@@ -81,7 +82,7 @@ namespace VRBuilder.Core.Behaviors
         /// <summary>
         /// Applies the highlight state to a single property.
         /// </summary>
-        protected abstract void ApplyHighlight(TProperty property, Color color);
+        protected abstract void ApplyHighlight(TProperty property, IColor color);
 
         /// <summary>
         /// Removes the highlight state from a single property.
