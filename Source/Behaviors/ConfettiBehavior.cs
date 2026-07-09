@@ -88,7 +88,7 @@ namespace VRBuilder.Core.Behaviors
         private const float defaultRadius = 1f;
         private const float distanceAboveUser = 3f;
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public ConfettiBehavior() : this(true, Guid.Empty, "", defaultRadius, defaultDuration, BehaviorExecutionStages.Activation)
         {
         }

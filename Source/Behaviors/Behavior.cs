@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
 
-using UnityEngine;
 using System.Runtime.Serialization;
 using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Unity;
@@ -28,7 +27,7 @@ namespace VRBuilder.Core.Behaviors
             {
                 LifeCycle.StageChanged += (sender, args) =>
                 {
-                    Debug.LogFormat("{0}<b>Behavior</b> <i>'{1} ({2})'</i> is <b>{3}</b>.\n", ConsoleUtils.GetTabs(2), Data.Name, GetType().Name, LifeCycle.Stage);
+                    ForwardingLogger.LogFormat("{0}<b>Behavior</b> <i>'{1} ({2})'</i> is <b>{3}</b>.\n", ConsoleUtils.GetTabs(2), Data.Name, GetType().Name, LifeCycle.Stage);
                 };
             }
         }

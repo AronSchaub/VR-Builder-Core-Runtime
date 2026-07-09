@@ -46,7 +46,7 @@ namespace VRBuilder.Core.Behaviors
             public string Name => $"Scale {Targets} to {TargetScale}";
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public ScalingBehavior() : this(Array.Empty<ISceneObject>(), Vector3.one, 0f)
         {
         }

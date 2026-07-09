@@ -74,7 +74,7 @@ namespace VRBuilder.Core.Conditions
             public Metadata Metadata { get; set; }
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public ObjectInColliderCondition() : this(Guid.Empty, Guid.Empty)
         {
         }

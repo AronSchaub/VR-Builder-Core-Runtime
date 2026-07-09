@@ -33,7 +33,7 @@ namespace VRBuilder.Core.Behaviors
             }
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public ExecuteChapterBehavior() : this(null)
         {
         }

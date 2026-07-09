@@ -163,7 +163,7 @@ namespace VRBuilder.Core.Behaviors
             }
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         protected PlayAudioBehavior() : this(null, BehaviorExecutionStages.None)
         {
         }

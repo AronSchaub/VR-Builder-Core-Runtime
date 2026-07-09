@@ -85,7 +85,7 @@ namespace VRBuilder.Core.Behaviors
             }
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public SetObjectsEnabledBehavior() : this(Guid.Empty, false)
         {
         }

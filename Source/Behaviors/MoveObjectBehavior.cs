@@ -137,7 +137,7 @@ namespace VRBuilder.Core.Behaviors
             }
         }
 
-        [JsonConstructor, Preserve]
+        [JsonConstructor]
         public MoveObjectBehavior() : this(Guid.Empty, Guid.Empty, 0f)
         {
         }
