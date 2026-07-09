@@ -1,10 +1,10 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
-// Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using UnityEngine;
 using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.Utils;
 using VRBuilder.Core.Utils.Logging;
@@ -24,7 +24,7 @@ namespace VRBuilder.Core.Conditions
             {
                 LifeCycle.StageChanged += (sender, args) =>
                 {
-                    Debug.LogFormat("{0}<b>Condition</b> <i>'{1} ({2})'</i> is <b>{3}</b>.\n", ConsoleUtils.GetTabs(2), Data.Name, GetType().Name, LifeCycle.Stage);
+                    ForwardingLogger.LogFormat("{0}<b>Condition</b> <i>'{1} ({2})'</i> is <b>{3}</b>.\n", ConsoleUtils.GetTabs(2), Data.Name, GetType().Name, LifeCycle.Stage);
                 };
             }
         }

@@ -1,8 +1,10 @@
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
+using System;
 using System.Runtime.Serialization;
 using VRBuilder.Core.Attributes;
-using UnityEngine;
 using Newtonsoft.Json;
-using UnityEngine.Scripting;
 
 namespace VRBuilder.Core.Conditions
 {
@@ -36,7 +38,7 @@ namespace VRBuilder.Core.Conditions
             {
                 get
                 {
-                    return $"Complete after {Timeout.ToString()} seconds";
+                    return $"Complete after {Timeout} seconds";
                 }
             }
 
@@ -50,18 +52,18 @@ namespace VRBuilder.Core.Conditions
             {
             }
 
-            private float timeStarted;
+            private long timeStarted;
 
             /// <inheritdoc />
             protected override bool CheckIfCompleted()
             {
-                return Time.time - timeStarted >= Data.Timeout;
+                return DateTimeOffset.Now.ToUnixTimeMilliseconds() - timeStarted >= Data.Timeout;
             }
 
             /// <inheritdoc />
             public override void Start()
             {
-                timeStarted = Time.time;
+                timeStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 base.Start();
             }
         }

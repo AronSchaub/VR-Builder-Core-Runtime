@@ -1,7 +1,9 @@
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
-using UnityEngine.Scripting;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
@@ -34,7 +36,7 @@ namespace VRBuilder.Core.Conditions
             /// </summary>
             [DataMember]
             [DisplayName("Reference object")]
-            public SingleScenePropertyReference<TransformInRangeDetectorProperty> ReferenceObject { get; set; }
+            public SingleScenePropertyReference<ITransformInRangeDetectorProperty> ReferenceObject { get; set; }
 
             /// <summary>
             /// The required distance between two objects to trigger the condition.
@@ -64,7 +66,7 @@ namespace VRBuilder.Core.Conditions
         {
         }
 
-        public ObjectInRangeCondition(ISceneObject target, TransformInRangeDetectorProperty detector, float range, float requiredTimeInTarget = 0)
+        public ObjectInRangeCondition(ISceneObject target, ITransformInRangeDetectorProperty detector, float range, float requiredTimeInTarget = 0)
             : this(ProcessReferenceUtils.GetUniqueIdFrom(target), ProcessReferenceUtils.GetUniqueIdFrom(detector), range, requiredTimeInTarget)
         {
         }
@@ -72,7 +74,7 @@ namespace VRBuilder.Core.Conditions
         public ObjectInRangeCondition(Guid targetId, Guid detector, float range, float requiredTimeInTarget = 0)
         {
             Data.TargetObject = new SingleSceneObjectReference(targetId);
-            Data.ReferenceObject = new SingleScenePropertyReference<TransformInRangeDetectorProperty>(detector);
+            Data.ReferenceObject = new SingleScenePropertyReference<ITransformInRangeDetectorProperty>(detector);
             Data.Range = range;
             Data.RequiredTimeInside = requiredTimeInTarget;
         }
@@ -85,7 +87,7 @@ namespace VRBuilder.Core.Conditions
 
             public override void Start()
             {
-                Data.ReferenceObject.Value.SetTrackedTransform(Data.TargetObject.Value.GameObject.transform);
+                Data.ReferenceObject.Value.SetTrackedTransform(Data.TargetObject.Value);
                 Data.ReferenceObject.Value.DetectionRange = Data.Range;
 
                 base.Start();
@@ -107,7 +109,7 @@ namespace VRBuilder.Core.Conditions
             /// <inheritdoc />
             public override void Complete()
             {
-                Data.TargetObject.Value.GameObject.transform.position = Data.ReferenceObject.Value.gameObject.transform.position;
+                Data.ReferenceObject.Value.ForceMoveToTracked();
             }
         }
 
