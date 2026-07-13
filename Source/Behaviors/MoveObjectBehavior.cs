@@ -1,11 +1,14 @@
-using Newtonsoft.Json;
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Runtime.Serialization;
-using UnityEngine;
-using UnityEngine.Scripting;
+using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
-using VRBuilder.Core.Configuration;
+using VRBuilder.Core.Primitives;
+using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.Utils;
 
@@ -32,7 +35,7 @@ namespace VRBuilder.Core.Behaviors
             /// </summary>
             [DataMember]
             [DisplayName("Object")]
-            public SingleSceneObjectReference TargetObject { get; set; }
+            public SingleScenePropertyReference<IMoveProperty> TargetObject { get; set; }
 
             /// <summary>
             /// Target's position and rotation is linearly interpolated to match PositionProvider's position and rotation at the end of transition.
@@ -50,7 +53,7 @@ namespace VRBuilder.Core.Behaviors
 
             [DataMember]
             [DisplayName("Animation curve")]
-            public AnimationCurve AnimationCurve { get; set; }
+            public IAnimationCurve AnimationCurve { get; set; }
 
             /// <inheritdoc />
             public Metadata Metadata { get; set; }
@@ -62,7 +65,7 @@ namespace VRBuilder.Core.Behaviors
 
         private class ActivatingProcess : StageProcess<EntityData>
         {
-            private float startingTime;
+            private readonly Stopwatch stopWatch = new();
 
             public ActivatingProcess(EntityData data) : base(data)
             {
@@ -71,40 +74,17 @@ namespace VRBuilder.Core.Behaviors
             /// <inheritdoc />
             public override void Start()
             {
-                startingTime = Time.time;
-
-                RuntimeConfigurator.Configuration.SceneObjectManager.RequestAuthority(Data.TargetObject.Value);
-
-                Rigidbody movingRigidbody = Data.TargetObject.Value.GameObject.GetComponent<Rigidbody>();
-                if (movingRigidbody != null && movingRigidbody.isKinematic == false)
-                {
-#if UNITY_6000
-                    movingRigidbody.linearVelocity = Vector3.zero;
-#else
-                    movingRigidbody.velocity = Vector3.zero;
-#endif
-                    movingRigidbody.angularVelocity = Vector3.zero;
-                }
+                stopWatch.Restart();
+                Data.TargetObject.Value.DisablePhysics();
             }
 
             /// <inheritdoc />
             public override IEnumerator Update()
             {
-                Transform movingTransform = Data.TargetObject.Value.GameObject.transform;
-                Transform targetPositionTransform = Data.FinalPosition.Value.GameObject.transform;
-
-                Vector3 initialPosition = movingTransform.position;
-                Quaternion initialRotation = movingTransform.rotation;
-
-                while (Time.time - startingTime < Data.Duration)
+                while (stopWatch.ElapsedMilliseconds < Data.Duration)
                 {
-                    RuntimeConfigurator.Configuration.SceneObjectManager.RequestAuthority(Data.TargetObject.Value);
-
-                    float progress = (Time.time - startingTime) / Data.Duration;
-
-                    movingTransform.position = initialPosition + (targetPositionTransform.position - initialPosition) * Data.AnimationCurve.Evaluate(progress);
-                    movingTransform.rotation = Quaternion.Euler(initialRotation.eulerAngles + (targetPositionTransform.rotation.eulerAngles - initialRotation.eulerAngles) * Data.AnimationCurve.Evaluate(progress));
-
+                    float progress = stopWatch.ElapsedMilliseconds / Data.Duration;
+                    Data.TargetObject.Value.MoveTo(Data.FinalPosition.Value, Data.AnimationCurve.Evaluate(progress));
                     yield return null;
                 }
             }
@@ -112,28 +92,16 @@ namespace VRBuilder.Core.Behaviors
             /// <inheritdoc />
             public override void End()
             {
-                RuntimeConfigurator.Configuration.SceneObjectManager.RequestAuthority(Data.TargetObject.Value);
-
-                Transform movingTransform = Data.TargetObject.Value.GameObject.transform;
-                Transform targetPositionTransform = Data.FinalPosition.Value.GameObject.transform;
-
-                movingTransform.position = targetPositionTransform.position;
-                movingTransform.rotation = targetPositionTransform.rotation;
-
-                Rigidbody movingRigidbody = Data.TargetObject.Value.GameObject.GetComponent<Rigidbody>();
-                if (movingRigidbody != null && movingRigidbody.isKinematic == false)
-                {
-#if UNITY_6000
-                    movingRigidbody.linearVelocity = Vector3.zero;
-#else
-                    movingRigidbody.velocity = Vector3.zero;
-#endif                    
-                    movingRigidbody.angularVelocity = Vector3.zero;
-                }
+                Data.TargetObject.Value.MoveTo(Data.FinalPosition.Value, 1f);
+                Data.TargetObject.Value.EnablePhysics();
+                stopWatch.Stop();
             }
 
             public override void FastForward()
             {
+                Data.TargetObject.Value.DisablePhysics();
+                Data.TargetObject.Value.MoveTo(Data.FinalPosition.Value, 1f);
+                Data.TargetObject.Value.EnablePhysics();
             }
         }
 
@@ -148,10 +116,10 @@ namespace VRBuilder.Core.Behaviors
 
         public MoveObjectBehavior(Guid targetObjectId, Guid finalPositionId, float duration)
         {
-            Data.TargetObject = new SingleSceneObjectReference(targetObjectId);
+            Data.TargetObject = new SingleScenePropertyReference<IMoveProperty>(targetObjectId);
             Data.FinalPosition = new SingleSceneObjectReference(finalPositionId);
             Data.Duration = duration;
-            Data.AnimationCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+            Data.AnimationCurve = AnimationCurveData.Linear(0f, 0f, 1f, 1f);
         }
 
         /// <inheritdoc />

@@ -1,6 +1,14 @@
-﻿using System;
+﻿// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
+using System;
+#if UNITY_6000_0_OR_NEWER
 using UnityEngine;
 using UnityEngine.Events;
+#elif GODOT
+using Godot;
+#endif
+using VRBuilder.Core.Primitives;
 
 namespace VRBuilder.Core.Properties
 {
@@ -12,12 +20,12 @@ namespace VRBuilder.Core.Properties
         /// <summary>
         /// Emitted when the object gets highlighted.
         /// </summary>
-        UnityEvent<HighlightPropertyEventArgs> HighlightStarted { get; }
+        event Action<HighlightPropertyEventArgs> HighlightStartedAction;
 
         /// <summary>
         /// Emitted when the object gets unhighlighted.
         /// </summary>
-        UnityEvent<HighlightPropertyEventArgs> HighlightEnded { get; }
+        event Action<HighlightPropertyEventArgs> HighlightEndedAction;
 
         /// <summary>
         /// Is object currently highlighted.
@@ -28,7 +36,7 @@ namespace VRBuilder.Core.Properties
         /// Highlight this object and use <paramref name="highlightColor"/>.
         /// </summary>
         /// <param name="highlightColor">Color to use for highlighting.</param>
-        void Highlight(Color highlightColor);
+        void Highlight(IColor highlightColor);
 
         /// <summary>
         /// Disable highlight.
@@ -36,11 +44,15 @@ namespace VRBuilder.Core.Properties
         void Unhighlight();
     }
 
+#if UNITY_6000_0_OR_NEWER
     public class HighlightPropertyEventArgs : EventArgs
+#elif GODOT
+    public partial class HighlightPropertyEventArgs : GodotObject
+#endif
     {
-        public readonly Color? HighlightColor;
+        public readonly IColor? HighlightColor;
 
-        public HighlightPropertyEventArgs(Color? highlightColor)
+        public HighlightPropertyEventArgs(IColor? highlightColor)
         {
             HighlightColor = highlightColor;
         }

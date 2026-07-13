@@ -4,14 +4,22 @@
 // Unless expressly provided otherwise, the Software under this license is made available strictly on an 
 // AS IS BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
 
+// Copyright (c) 2013-2019 Innoactive GmbH
 // Modifications copyright (c) 2021-2026 MindPort GmbH
-// Licensed under the Apache License, Version 2.0
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+#if UNITY_6000_0_OR_NEWER
 using UnityEngine;
+#elif GODOT
+using Godot;
+using Godot.Collections;
+using VRBuilder.Core.Godot.Attributes;
+#endif
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Exceptions;
 using VRBuilder.Core.Properties;
@@ -28,8 +36,13 @@ namespace VRBuilder.Core.SceneObjects
     /// This component gives a GameObject a stable, non-replicatable Globally Unique Identifier.
     /// It can be used to reference a specific instance of an object no matter where it is.  
     /// </summary>
+#if UNITY_6000_0_OR_NEWER
     [ExecuteInEditMode, DisallowMultipleComponent]
     public class ProcessSceneObject : MonoBehaviour, ISerializationCallbackReceiver, ISceneObject
+#elif GODOT
+    [Tool, GlobalClass]
+    public partial class ProcessSceneObject : Node3D, ISerializationCallbackReceiver, ISceneObject //todo it is Node3D instead of Node, because in Unity it has "visible" check below
+#endif
     {
         /// <summary>
         /// Unity's serialization system doesn't know about System.Guid, so we convert to a byte array
@@ -75,8 +88,11 @@ namespace VRBuilder.Core.SceneObjects
         public IEnumerable<Guid> Guids => guids.Select(bytes => bytes.Guid);
 
         /// <inheritdoc />
+#if UNITY_6000_0_OR_NEWER
         public GameObject GameObject => gameObject;
-
+#elif GODOT
+        public Node GameObject => this;
+#endif
         /// <summary>
         /// Properties associated with this scene object.
         /// </summary>

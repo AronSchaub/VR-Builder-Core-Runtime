@@ -1,3 +1,6 @@
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,7 +91,7 @@ namespace VRBuilder.Core.SceneObjects
 
                     // This happens if we remove a SceneObject from component where no registry is available
                     // e.g.: From a prefab in prefab edit mode
-                    Debug.LogError($"Null objects found in scene object registry for with Guid {key}: " +
+                    ForwardingLogger.LogError($"Null objects found in scene object registry for with Guid {key}: " +
                         $"{registeredObjects[guid].Where(obj => obj.Equals(null)).Count()} object. " +
                         $"Most likely you removed a process scene object from a prefab in prefab edit mode. " +
                         $"Removing the reference it from the registry.");
@@ -125,7 +128,7 @@ namespace VRBuilder.Core.SceneObjects
             {
                 obj.SetObjectId(Guid.NewGuid());
 
-                Debug.LogWarning($"Found a duplicate in the registry for {obj.GameObject.name}. A new object ID has been assigned.");
+                ForwardingLogger.LogWarning($"Found a duplicate in the registry for {obj.GameObject.name}. A new object ID has been assigned.");
 
 #if UNITY_EDITOR
                 UnityEditor.EditorUtility.SetDirty(obj.GameObject);
@@ -209,7 +212,7 @@ namespace VRBuilder.Core.SceneObjects
         {
             RemoveAllObjectsNotInScene();
             RegisterAll();
-            Debug.Log("Refreshed SceneObjectRegistry");
+            ForwardingLogger.Log("Refreshed SceneObjectRegistry");
         }
 
         /// <summary>

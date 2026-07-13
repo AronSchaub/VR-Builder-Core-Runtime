@@ -54,7 +54,7 @@ namespace VRBuilder.Core.Properties
             get => InheritSceneObjectLockState;
             set 
             {
-                Debug.LogWarning("LockOnParentObjectLock is deprecated. Please use InheritSceneObjectLockState instead.");
+                ForwardingLogger.LogWarning("LockOnParentObjectLock is deprecated. Please use InheritSceneObjectLockState instead.");
                 InheritSceneObjectLockState = value;
             }
         }
@@ -159,7 +159,7 @@ namespace VRBuilder.Core.Properties
 
                 string listUnlockers = unlockers.Count == 0 ? "" : $"\nSteps keeping this property unlocked:{unlockerList}";
 
-                Debug.Log($"<i>{GetType().Name}</i> on <i>{gameObject.name}</i> received a <b>{lockType}</b> request from <i>{requester}</i>." +
+                ForwardingLogger.Log($"<i>{GetType().Name}</i> on <i>{gameObject.name}</i> received a <b>{lockType}</b> request from <i>{requester}</i>." +
                     $"\nCurrent lock state: <b>{IsLocked}</b>. Future lock state: <b>{lockState && canLock}</b>{listUnlockers}");
             }
         }

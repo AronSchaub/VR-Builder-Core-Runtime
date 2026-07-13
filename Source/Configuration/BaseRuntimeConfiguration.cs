@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
-// Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using VRBuilder.Core.Configuration.Modes;
 using VRBuilder.Core.IO;
+using VRBuilder.Core.Properties;
 using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.Serialization;
@@ -113,7 +115,7 @@ namespace VRBuilder.Core.Configuration
         public abstract IEnumerable<IXRRigTransform> UserTransforms { get; }
 
         /// <inheritdoc />
-        public abstract IProcessAudioPlayer ProcessAudioPlayer { get; }
+        public abstract IAudioPlayer AudioPlayer { get; }
 
         /// <inheritdoc />
         public abstract ISceneObjectManager SceneObjectManager { get; }
@@ -203,7 +205,7 @@ namespace VRBuilder.Core.Configuration
             }
             catch (Exception exception)
             {
-                Debug.LogError($"Error when loading process. {exception.GetType().Name}, {exception.Message}\n{exception.StackTrace}", RuntimeConfigurator.Instance.gameObject);
+                ForwardingLogger.LogError($"Error when loading process. {exception.GetType().Name}, {exception.Message}\n{exception.StackTrace},{RuntimeConfigurator.Instance.gameObject}");
             }
 
             return null;

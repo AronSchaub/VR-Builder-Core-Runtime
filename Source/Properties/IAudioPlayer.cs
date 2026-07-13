@@ -1,17 +1,19 @@
-using UnityEngine;
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using VRBuilder.Core.Utils.Audio;
 
-namespace VRBuilder.Core.Configuration
+namespace VRBuilder.Core.Properties
 {
     /// <summary>
     /// Interface for the class playing sounds for the process, i.e. tts and play audio behaviors.
     /// </summary>
-    public interface IProcessAudioPlayer
+    public interface IAudioPlayer: ISceneObjectProperty
     {
         /// <summary>
         /// Gets a fallback audio source. Used only for backwards compatibility.
         /// </summary>
-        AudioSource FallbackAudioSource { get; }
+        IAudioData FallbackAudioSource { get; }
 
         /// <summary>
         /// True if currently playing audio.
@@ -26,12 +28,12 @@ namespace VRBuilder.Core.Configuration
         /// <summary>
         /// Stops playing audio.
         /// </summary>
-        void Stop();
+        void StopAudio();
 
         /// <summary>
         /// Resets the player to its default settings.
         /// </summary>
-        void Reset();
+        void ResetAudio();
 
         /// <summary>
         /// True if the used audio source is muted.

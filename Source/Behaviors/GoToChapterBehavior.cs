@@ -1,9 +1,10 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections;
+#if UNITY_6000_0_OR_NEWER
 using System.Linq;
+#endif
 using System.Runtime.Serialization;
-using UnityEngine.Scripting;
 using VRBuilder.Core.Attributes;
 
 namespace VRBuilder.Core.Behaviors
@@ -54,6 +55,7 @@ namespace VRBuilder.Core.Behaviors
                     return;
                 }
 
+#if UNITY_6000_0_OR_NEWER
                 IChapter chapter = ProcessRunner.Current.Data.Chapters.FirstOrDefault(chapter => chapter.ChapterMetadata.Guid == Data.ChapterGuid);
 
                 if (chapter != null)
@@ -62,6 +64,7 @@ namespace VRBuilder.Core.Behaviors
                 }
 
                 ProcessRunner.Current.Data.Current?.LifeCycle.Abort();
+#endif
             }
 
             /// <inheritdoc />

@@ -1,10 +1,12 @@
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
-using UnityEngine;
-using UnityEngine.Scripting;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Configuration.Modes;
+using VRBuilder.Core.Primitives;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.Utils;
@@ -18,7 +20,7 @@ namespace VRBuilder.Core.Behaviors
     [HelpLink("https://www.mindport.co/vr-builder/manual/default-behaviors/highlight-object")]
     public class HighlightObjectBehavior : ColorHighlightBehaviorBase<HighlightObjectBehavior.EntityData, IHighlightProperty>, IObjectHighlightBehavior
     {
-        private static readonly Color32 defaultHighlightColor = new Color32(231, 64, 255, 126);
+        private static readonly ColorData defaultHighlightColor = new ColorData(231, 64, 255, 126);
 
         /// <summary>
         /// "Highlight object" behavior's data.
@@ -27,15 +29,15 @@ namespace VRBuilder.Core.Behaviors
         [DataContract(IsReference = true)]
         public class EntityData : IBehaviorData, IColorHighlightBehaviorData<IHighlightProperty>
         {
-            private ModeParameter<Color> customColor;
+            private ModeParameter<IColor> customColor;
 
             /// <summary>
             /// <see cref="ModeParameter{T}"/> of the highlight color.
             /// Process modes can change the highlight color.
             /// </summary>
-            public ModeParameter<Color> CustomColor
+            public ModeParameter<IColor> CustomColor
             {
-                get { return customColor ??= new ModeParameter<Color>("HighlightColor", defaultHighlightColor); }
+                get { return customColor ??= new ModeParameter<IColor>("HighlightColor", defaultHighlightColor); }
                 set { customColor = value; }
             }
 
@@ -45,11 +47,11 @@ namespace VRBuilder.Core.Behaviors
             [DataMember(Name = "HighlightColor")]
             [JsonProperty("HighlightColor")]
             [DisplayName("Color")]
-            public Color Color
+            public IColor Color
             {
                 get { return CustomColor.Value; }
 
-                set { CustomColor = new ModeParameter<Color>("HighlightColor", value); }
+                set { CustomColor = new ModeParameter<IColor>("HighlightColor", value); }
             }
 
             /// <summary>
@@ -72,7 +74,7 @@ namespace VRBuilder.Core.Behaviors
         {
         }
 
-        public HighlightObjectBehavior(Guid objectId, Color highlightColor) : base(objectId, highlightColor)
+        public HighlightObjectBehavior(Guid objectId, IColor highlightColor) : base(objectId, highlightColor)
         {
         }
 
@@ -80,12 +82,12 @@ namespace VRBuilder.Core.Behaviors
         {
         }
 
-        public HighlightObjectBehavior(IHighlightProperty target, Color highlightColor) : this(ProcessReferenceUtils.GetUniqueIdFrom(target), highlightColor)
+        public HighlightObjectBehavior(IHighlightProperty target, IColor highlightColor) : this(ProcessReferenceUtils.GetUniqueIdFrom(target), highlightColor)
         {
         }
 
         /// <inheritdoc />
-        protected override void ApplyHighlight(IHighlightProperty property, Color color)
+        protected override void ApplyHighlight(IHighlightProperty property, IColor color)
         {
             property?.Highlight(color);
         }

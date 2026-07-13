@@ -1,10 +1,10 @@
 // Modifications copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
+using System.Diagnostics;
 using System.Runtime.Serialization;
-using VRBuilder.Core.Attributes;
 using Newtonsoft.Json;
+using VRBuilder.Core.Attributes;
 
 namespace VRBuilder.Core.Conditions
 {
@@ -36,10 +36,7 @@ namespace VRBuilder.Core.Conditions
             [HideInProcessInspector]
             public string Name
             {
-                get
-                {
-                    return $"Complete after {Timeout} seconds";
-                }
+                get { return $"Complete after {Timeout} seconds"; }
             }
 
             /// <inheritdoc />
@@ -48,23 +45,29 @@ namespace VRBuilder.Core.Conditions
 
         private class ActiveProcess : BaseActiveProcessOverCompletable<EntityData>
         {
+            private readonly Stopwatch stopWatch = new();
+
             public ActiveProcess(EntityData data) : base(data)
             {
             }
 
-            private long timeStarted;
+            public override void Start()
+            {
+                base.Start();
+                stopWatch.Restart();
+            }
 
             /// <inheritdoc />
             protected override bool CheckIfCompleted()
             {
-                return DateTimeOffset.Now.ToUnixTimeMilliseconds() - timeStarted >= Data.Timeout;
+                return stopWatch.ElapsedMilliseconds >= Data.Timeout;
             }
 
             /// <inheritdoc />
-            public override void Start()
+            public override void End()
             {
-                timeStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-                base.Start();
+                base.End();
+                stopWatch.Stop();
             }
         }
 

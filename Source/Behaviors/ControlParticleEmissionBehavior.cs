@@ -2,7 +2,6 @@ using Newtonsoft.Json;
 using System.Collections;
 using System.Linq;
 using System.Runtime.Serialization;
-using UnityEngine.Scripting;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;

@@ -1,13 +1,15 @@
-using Newtonsoft.Json;
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using System;
 using System.Collections;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
-using VRBuilder.Core.Configuration;
+using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.Utils;
-using VRBuilder.Core.Utils.ParticleMachines;
 
 namespace VRBuilder.Core.Behaviors
 {
@@ -34,7 +36,7 @@ namespace VRBuilder.Core.Behaviors
             /// </summary>
             [DataMember]
             [DisplayName("Position Provider")]
-            public SingleSceneObjectReference<IEffectProperty> ConfettiPosition { get; set; }
+            public SingleScenePropertyReference<IEffectProperty> ConfettiPosition { get; set; }
 
             /// <summary>
             /// Path to the desired confetti machine prefab.
@@ -71,7 +73,7 @@ namespace VRBuilder.Core.Behaviors
                     string positionProvider = "user";
                     if (IsAboveUser == false)
                     {
-                        positionProvider = ConfettiPosition.HasValue() ? ConfettiPosition.Value.GameObject.name : "[NULL]";
+                        positionProvider = ConfettiPosition.HasValue() ? $"{ConfettiPosition.Value}" : "[NULL]";
                     }
 
                     return $"Spawn confetti on {positionProvider}";
@@ -96,24 +98,24 @@ namespace VRBuilder.Core.Behaviors
         public ConfettiBehavior(bool isAboveUser, Guid positionProviderId, string confettiMachinePrefabPath, float radius, float duration, BehaviorExecutionStages executionStages)
         {
             Data.IsAboveUser = isAboveUser;
-            Data.ConfettiPosition = new SingleSceneObjectReference(positionProviderId);
+            Data.ConfettiPosition = new SingleScenePropertyReference<IEffectProperty>(positionProviderId);
             Data.ConfettiMachinePrefabPath = confettiMachinePrefabPath;
             Data.AreaRadius = radius;
             Data.Duration = duration;
             Data.ExecutionStages = executionStages;
 
-            if (string.IsNullOrEmpty(Data.ConfettiMachinePrefabPath) && RuntimeConfigurator.Exists)
+#if UNITY_6000_0_OR_NEWER
+            if (string.IsNullOrEmpty(Data.ConfettiMachinePrefabPath) && VRBuilder.Core.Configuration.RuntimeConfigurator.Exists)
             {
-                Data.ConfettiMachinePrefabPath = RuntimeConfigurator.Configuration.SceneConfiguration.DefaultConfettiPrefab;
+                Data.ConfettiMachinePrefabPath = VRBuilder.Core.Configuration.RuntimeConfigurator.Configuration.SceneConfiguration.DefaultConfettiPrefab;
             }
+#endif
         }
 
         private class EmitConfettiProcess : StageProcess<EntityData>
         {
             private readonly BehaviorExecutionStages stages;
-            private float timeStarted;
-            private GameObject confettiPrefab;
-            private List<GameObject> confettiMachines = new List<GameObject>();
+            private readonly Stopwatch stopWatch = new();
 
             public EmitConfettiProcess(EntityData data, BehaviorExecutionStages stages) : base(data)
             {
@@ -128,10 +130,11 @@ namespace VRBuilder.Core.Behaviors
                     return;
                 }
 
-                // Load the given prefab and stop the coroutine if not possible.
-                confettiPrefab = Resources.Load<GameObject>(Data.ConfettiMachinePrefabPath);
+                var loadSucceeded = Data.ConfettiPosition.Value.LoadConfettiMachinePrefab(Data.ConfettiMachinePrefabPath);
 
-                if (confettiPrefab == null)
+                // Load the given prefab and stop the coroutine if not possible.
+
+                if (!loadSucceeded)
                 {
                     ForwardingLogger.LogWarning("No valid prefab path provided.");
                     return;
@@ -139,24 +142,23 @@ namespace VRBuilder.Core.Behaviors
 
                 if (Data.IsAboveUser)
                 {
-                    foreach (IXRRigTransform user in RuntimeConfigurator.Configuration.UserTransforms)
-                    {
-                        Vector3 spawnPosition;
-                        spawnPosition = user.Head.position;
-                        spawnPosition.y += distanceAboveUser;
-
-                        CreateConfettiMachine(spawnPosition);
-                    }
+                    Data.ConfettiPosition.Value.CreateConfettiMachineAboveUser();
                 }
                 else
                 {
-                    CreateConfettiMachine(Data.ConfettiPosition.Value.GameObject.transform.position);
+                    Data.ConfettiPosition.Value.ConfettiMachineCreatedAction += OnConfettiMachineCreated;
+                    Data.ConfettiPosition.Value.CreateConfettiMachine();
                 }
 
                 if (Data.Duration > 0f)
                 {
-                    timeStarted = Time.time;
+                    stopWatch.Restart();
                 }
+            }
+
+            private void OnConfettiMachineCreated()
+            {
+                Data.ConfettiPosition.Value.ActivateConfettiMachine(Data.AreaRadius, Data.Duration);
             }
 
             /// <inheritdoc />
@@ -167,14 +169,14 @@ namespace VRBuilder.Core.Behaviors
                     yield break;
                 }
 
-                if (confettiMachines.Count == 0)
+                if (Data.ConfettiPosition.Value.Count == 0)
                 {
                     yield break;
                 }
 
                 if (Data.Duration > 0)
                 {
-                    while (Time.time - timeStarted < Data.Duration)
+                    while (stopWatch.ElapsedMilliseconds < Data.Duration)
                     {
                         yield return null;
                     }
@@ -186,47 +188,21 @@ namespace VRBuilder.Core.Behaviors
             {
                 if (ShouldExecuteCurrentStage(Data))
                 {
-                    foreach (GameObject confettiMachine in confettiMachines)
-                    {
-                        Object.Destroy(confettiMachine);
-                    }
-
-                    confettiMachines.Clear();
+                    Data.ConfettiPosition.Value.ClearConfettiMachines();
+                    Data.ConfettiPosition.Value.ConfettiMachineCreatedAction -= OnConfettiMachineCreated;
                 }
+
+                stopWatch.Stop();
             }
 
             /// <inheritdoc />
-            public override void FastForward() { }
+            public override void FastForward()
+            {
+            }
 
             private bool ShouldExecuteCurrentStage(EntityData data)
             {
                 return (data.ExecutionStages & stages) > 0;
-            }
-
-            private void CreateConfettiMachine(Vector3 spawnPosition)
-            {
-                RuntimeConfigurator.Configuration.SceneObjectManager.InstantiatePrefab(confettiPrefab, spawnPosition, Quaternion.Euler(90, 0, 0), OnConfettiMachineCreated);
-            }
-
-            private void OnConfettiMachineCreated(GameObject confettiMachine)
-            {
-                if (confettiMachine == null)
-                {
-                    Debug.LogWarning("The provided prefab is missing.");
-                    return;
-                }
-
-                if (confettiMachine.GetComponent(typeof(IParticleMachine)) == null)
-                {
-                    Debug.LogWarning("The provided prefab does not have any component of type \"IParticleMachine\".");
-                    return;
-                }
-
-                confettiMachines.Add(confettiMachine);
-
-                // Change the settings and activate the machine
-                IParticleMachine particleMachine = confettiMachine.GetComponent<IParticleMachine>();
-                particleMachine.Activate(Data.AreaRadius, Data.Duration);
             }
         }
 

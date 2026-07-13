@@ -1,13 +1,73 @@
 // copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
+#if UNITY_6000_0_OR_NEWER
+using UnityEngine;
+#elif GODOT
+using Godot;
+#endif
+
+using System;
 using VRBuilder.Core.SceneObjects;
 
 namespace VRBuilder.Core.Properties
 {
+    /// <summary>
+    /// Interface that allows a Property to detect when a <see cref="ISceneObject"/> enters or exits a trigger collider.
+    /// </summary>
     public interface IColliderWithTriggerProperty : ISceneObjectProperty
     {
+        /// <summary>
+        /// Emitted when a collider enters this trigger.
+        /// </summary>
+        event Action<ColliderWithTriggerEventArgs> EnteredTriggerAction;
+
+        /// <summary>
+        /// Emitted when a collider exits this trigger.
+        /// </summary>
+        event Action<ColliderWithTriggerEventArgs> ExitedTriggerAction;
+
+        /// <summary>
+        /// Returns true if the given <see cref="ISceneObject"/>'s transform is inside this trigger.
+        /// </summary>
+        /// <param name="sceneObject">The <see cref="ISceneObject"/> to check.</param>
         bool IsTransformInsideTrigger(ISceneObject sceneObject);
+
+        /// <summary>
+        /// Teleports the given <see cref="ISceneObject"/> to this trigger's position and fires the entered event.
+        /// </summary>
+        /// <param name="objs">The <see cref="ISceneObject"/> to teleport.</param>
         void FastForwardEnter(ISceneObject objs);
     }
+
+    /// <summary>
+    /// Event arguments for trigger enter and exit events.
+    /// </summary>
+#if UNITY_6000_0_OR_NEWER
+        public class ColliderWithTriggerEventArgs : EventArgs
+        {
+            /// <summary>
+            /// The object that entered or exited the trigger.
+            /// </summary>
+            public readonly GameObject CollidedObject;
+
+            public ColliderWithTriggerEventArgs(GameObject collidedObject)
+            {
+                CollidedObject = collidedObject;
+            }
+        }
+#elif GODOT
+    public partial class ColliderWithTriggerEventArgs : GodotObject
+    {
+        /// <summary>
+        /// The object that entered or exited the trigger.
+        /// </summary>
+        public readonly Node CollidedObject;
+
+        public ColliderWithTriggerEventArgs(Node collidedObject)
+        {
+            CollidedObject = collidedObject;
+        }
+    }
+#endif
 }
