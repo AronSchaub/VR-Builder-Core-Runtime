@@ -1,11 +1,14 @@
-using Newtonsoft.Json;
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using System;
 using System.Collections;
 using System.IO;
 using System.Runtime.Serialization;
-using UnityEngine.SceneManagement;
-using UnityEngine.Scripting;
+using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
+using VRBuilder.Core.Properties;
+using VRBuilder.Core.SceneObjects;
 
 namespace VRBuilder.Core.Behaviors
 {
@@ -30,6 +33,10 @@ namespace VRBuilder.Core.Behaviors
             [DisplayName("Scene to load")]
             public string ScenePath { get; set; }
 
+            [DataMember]
+            [DisplayName("Scene Controller")]
+            public SingleScenePropertyReference<ISceneProperty> SceneProperty { get; set; }
+            
             /// <summary>
             /// If true, the scene will be loaded additively.
             /// </summary>
@@ -67,11 +74,10 @@ namespace VRBuilder.Core.Behaviors
         private class ActivatingProcess : StageProcess<EntityData>
         {
             bool isLoading = false;
-            LoadSceneMode loadSceneMode;
+            IAsyncCallback asyncHandler;
 
             public ActivatingProcess(EntityData data) : base(data)
             {
-                loadSceneMode = Data.LoadAdditively ? LoadSceneMode.Additive : LoadSceneMode.Single;
             }
 
             /// <inheritdoc />
@@ -79,10 +85,13 @@ namespace VRBuilder.Core.Behaviors
             {
                 if (Data.LoadAsynchronously)
                 {
-                    return;
+                    asyncHandler = Data.SceneProperty.Value.StartLoadAsync(Data.ScenePath, Data.LoadAdditively);
+                }
+                else
+                {
+                    Data.SceneProperty.Value.LoadSynchronously(Data.ScenePath, Data.LoadAdditively);
                 }
 
-                LoadSynchronously();
             }
 
             /// <inheritdoc />
@@ -91,16 +100,8 @@ namespace VRBuilder.Core.Behaviors
                 if (Data.LoadAsynchronously)
                 {
                     isLoading = true;
-                    int sceneIndex = SceneUtility.GetBuildIndexByScenePath(Data.ScenePath);
 
-                    if (sceneIndex < 0 || sceneIndex >= SceneManager.sceneCountInBuildSettings)
-                    {
-                        throw new LoadSceneBehaviorException("The provided scene is invalid.");
-                    }
-
-                    UnityEngine.AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneIndex, loadSceneMode);
-
-                    while (asyncLoad.isDone == false)
+                    while (asyncHandler.isDone == false)
                     {
                         yield return null;
                     }
@@ -118,24 +119,13 @@ namespace VRBuilder.Core.Behaviors
             {
             }
 
-            private void LoadSynchronously()
-            {
-                int sceneIndex = SceneUtility.GetBuildIndexByScenePath(Data.ScenePath);
-
-                if (sceneIndex < 0 || sceneIndex >= SceneManager.sceneCountInBuildSettings)
-                {
-                    throw new LoadSceneBehaviorException("The provided scene is invalid.");
-                }
-
-                SceneManager.LoadScene(sceneIndex, loadSceneMode);
-            }
 
             /// <inheritdoc />
             public override void FastForward()
             {
                 if (Data.LoadAsynchronously && isLoading == false)
                 {
-                    LoadSynchronously();
+                    Data.SceneProperty.Value.LoadSynchronously(Data.ScenePath, Data.LoadAdditively);
                 }
             }
         }

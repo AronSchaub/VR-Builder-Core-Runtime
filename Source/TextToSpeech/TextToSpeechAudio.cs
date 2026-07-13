@@ -1,3 +1,6 @@
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using System;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -7,6 +10,7 @@ using UnityEngine.Localization.Settings;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Localization;
+using VRBuilder.Core.Primitives;
 using VRBuilder.Core.Settings;
 using VRBuilder.Core.TextToSpeech.Providers;
 using VRBuilder.Core.Utils.Audio;
@@ -24,7 +28,7 @@ namespace VRBuilder.Core.TextToSpeech
         private bool isLoading;
         private string text;
         private string speaker;
-        private AudioClip audioClip;
+        private IAudioClip audioClip;
 
         /// <inheritdoc/>
         [DataMember]
@@ -64,7 +68,7 @@ namespace VRBuilder.Core.TextToSpeech
         /// <summary>
         /// True when there is an Audio Clip loaded.
         /// </summary>
-        public bool HasAudioClip
+        public bool HasAudio
         {
             get
             {
@@ -81,7 +85,7 @@ namespace VRBuilder.Core.TextToSpeech
         bool IAudioData.IsLoading => isLoading;
 
         /// <inheritdoc/>
-        public AudioClip AudioClip
+        public IAudioClip AudioClip
         {
             get => audioClip;
             private set => audioClip = value;
@@ -97,16 +101,16 @@ namespace VRBuilder.Core.TextToSpeech
         /// <summary>
         /// Creates the audio clip based on the provided parameters.
         /// </summary>
-        public void InitializeAudioClip()
+        public void Initialize()
         {
 #if UNITY_EDITOR
             //refresh the clip if the clip name changed
-            if (isReady && AudioClip?.name != text)
+            if (isReady && AudioClip?.Name != text)
             {
                 AudioClip = null;
             }
 #endif
-            if (isReady && AudioClip)
+            if (isReady && AudioClip != null)
             {
                 return;
             }
@@ -136,7 +140,7 @@ namespace VRBuilder.Core.TextToSpeech
                 usedText = text;
             }
 
-            Task<AudioClip> t = provider.ConvertTextToSpeech(usedKey, usedText, LanguageSettings.Instance.ActiveOrDefaultLocale, Speaker);
+            Task<IAudioClip> t = provider.ConvertTextToSpeech(usedKey, usedText, LanguageSettings.Instance.ActiveOrDefaultLocale, Speaker);
             t.ContinueWith(task =>
             {
                 try
@@ -160,7 +164,7 @@ namespace VRBuilder.Core.TextToSpeech
         {
             if (Application.isPlaying && !IsEmpty())
             {
-                InitializeAudioClip();
+                Initialize();
             }
         }
 

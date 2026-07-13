@@ -1,10 +1,12 @@
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Runtime.Serialization;
-using UnityEngine;
-using UnityEngine.Scripting;
 using VRBuilder.Core.Attributes;
+using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.Utils;
 
@@ -25,7 +27,7 @@ namespace VRBuilder.Core.Behaviors
             /// Process object to reparent.
             /// </summary>
             [DataMember]
-            public SingleSceneObjectReference TargetObject { get; set; }
+            public SingleScenePropertyReference<IModifyParentProperty> TargetObject { get; set; }
 
             /// <summary>
             /// New parent game object.
@@ -57,7 +59,7 @@ namespace VRBuilder.Core.Behaviors
 
         public SetParentBehavior(Guid target, Guid parent, bool snapToParentTransform = false)
         {
-            Data.TargetObject = new SingleSceneObjectReference(target);
+            Data.TargetObject = new SingleScenePropertyReference<IModifyParentProperty>(target);
             Data.ParentObject = new SingleSceneObjectReference(parent);
             Data.SnapToParentTransform = snapToParentTransform;
         }
@@ -71,24 +73,10 @@ namespace VRBuilder.Core.Behaviors
             /// <inheritdoc />
             public override void Start()
             {
-                if (Data.ParentObject.Value == null)
-                {
-                    Data.TargetObject.Value.GameObject.transform.SetParent(null);
-                }
+                if (Data.ParentObject.HasValue())
+                    Data.TargetObject.Value.SetParent(Data.ParentObject.Value, Data.SnapToParentTransform);
                 else
-                {
-                    if (HasScaleIssues())
-                    {
-                        Debug.LogWarning($"'{Data.TargetObject.Value.GameObject.name}' is being parented to a hierarchy that has changes in rotation and scale. This may result in a distorted object after parenting.");
-                    }
-
-                    if (Data.SnapToParentTransform)
-                    {
-                        Data.TargetObject.Value.GameObject.transform.SetPositionAndRotation(Data.ParentObject.Value.GameObject.transform.position, Data.ParentObject.Value.GameObject.transform.rotation);
-                    }
-
-                    Data.TargetObject.Value.GameObject.transform.SetParent(Data.ParentObject.Value.GameObject.transform, true);
-                }
+                    Data.TargetObject.Value.UnsetParent();
             }
 
             /// <inheritdoc />
@@ -105,29 +93,6 @@ namespace VRBuilder.Core.Behaviors
             /// <inheritdoc />
             public override void FastForward()
             {
-            }
-
-            private bool HasScaleIssues()
-            {
-                Transform currentTransform = Data.TargetObject.Value.GameObject.transform;
-                Transform parentTransform = Data.ParentObject.Value.GameObject.transform;
-
-                bool changesScale = currentTransform.localScale != Vector3.one;
-                bool changesRotation = currentTransform.rotation != parentTransform.rotation && Data.SnapToParentTransform == false;
-
-                while (parentTransform != null)
-                {
-                    changesScale |= parentTransform.localScale != Vector3.one;
-
-                    if (parentTransform.parent != null)
-                    {
-                        changesRotation |= parentTransform.rotation != parentTransform.parent.rotation;
-                    }
-
-                    parentTransform = parentTransform.parent;
-                }
-
-                return changesScale && changesRotation;
             }
         }
 

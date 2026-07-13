@@ -1,9 +1,11 @@
-using UnityEngine;
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using System.Collections;
+using System.Diagnostics;
 using System.Runtime.Serialization;
-using VRBuilder.Core.Attributes;
 using Newtonsoft.Json;
-using UnityEngine.Scripting;
+using VRBuilder.Core.Attributes;
 
 namespace VRBuilder.Core.Behaviors
 {
@@ -30,10 +32,7 @@ namespace VRBuilder.Core.Behaviors
             [IgnoreDataMember]
             public string Name
             {
-                get
-                {
-                    return $"Wait for {DelayTime} seconds";
-                }
+                get { return $"Wait for {DelayTime} seconds"; }
             }
         }
 
@@ -46,7 +45,7 @@ namespace VRBuilder.Core.Behaviors
         {
             if (delayTime < 0f)
             {
-                Debug.LogWarningFormat("DelayTime has to be zero or positive, but it was {0}. Setting to 0 instead.", delayTime);
+                ForwardingLogger.LogWarningFormat("DelayTime has to be zero or positive, but it was {0}. Setting to 0 instead.", delayTime);
                 delayTime = 0f;
             }
 
@@ -55,6 +54,8 @@ namespace VRBuilder.Core.Behaviors
 
         private class ActivatingProcess : StageProcess<EntityData>
         {
+            private readonly Stopwatch stopWatch = new();
+
             public ActivatingProcess(EntityData data) : base(data)
             {
             }
@@ -62,22 +63,20 @@ namespace VRBuilder.Core.Behaviors
             /// <inheritdoc />
             public override void Start()
             {
+                stopWatch.Restart();
             }
 
             /// <inheritdoc />
             public override IEnumerator Update()
             {
-                float timeStarted = Time.time;
-
-                while (Time.time - timeStarted < Data.DelayTime)
-                {
+                while (stopWatch.ElapsedMilliseconds < Data.DelayTime)
                     yield return null;
-                }
             }
 
             /// <inheritdoc />
             public override void End()
             {
+                stopWatch.Stop();
             }
 
             /// <inheritdoc />

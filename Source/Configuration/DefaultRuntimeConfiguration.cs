@@ -1,12 +1,14 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
-// Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using VRBuilder.Core.Configuration.Modes;
+using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
 
 namespace VRBuilder.Core.Configuration
@@ -16,7 +18,7 @@ namespace VRBuilder.Core.Configuration
     /// </summary>
     public class DefaultRuntimeConfiguration : BaseRuntimeConfiguration
     {
-        private IProcessAudioPlayer processAudioPlayer;
+        private IAudioPlayer audioPlayer;
         private ISceneObjectManager sceneObjectManager;
 
         /// <summary>
@@ -67,21 +69,24 @@ namespace VRBuilder.Core.Configuration
         {
             get
             {
-                return ProcessAudioPlayer.FallbackAudioSource;
+                //TODO: after moving to Core/Runtime fix:
+                // return AudioPlayer.FallbackAudioSource.ToUnity();
+                return null;
             }
         }
 
         /// <inheritdoc />
-        public override IProcessAudioPlayer ProcessAudioPlayer
+        public override IAudioPlayer AudioPlayer
         {
             get
             {
-                if (processAudioPlayer == null)
-                {
-                    processAudioPlayer = new DefaultAudioPlayer();
-                }
+                //TODO: after moving to Core/Runtime fix:
+                // if (audioPlayer == null)
+                // {
+                //     audioPlayer = new DefaultAudioPlayer();
+                // }
 
-                return processAudioPlayer;
+                return audioPlayer;
             }
         }
 

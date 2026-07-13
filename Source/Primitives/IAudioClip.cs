@@ -1,0 +1,13 @@
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
+namespace VRBuilder.Core.Primitives
+{
+    public interface IAudioClip
+    {
+        byte[] RawAudioData { get; }
+        int Frequency { get; }
+        int Channels { get; }
+        string Name { get; }
+    }
+}

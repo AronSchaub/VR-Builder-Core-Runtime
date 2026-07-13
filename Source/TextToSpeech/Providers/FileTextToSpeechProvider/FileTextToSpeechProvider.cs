@@ -1,3 +1,6 @@
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -5,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Localization;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.IO;
+using VRBuilder.Core.Primitives;
 using VRBuilder.Core.TextToSpeech.Configuration;
 using VRBuilder.Core.TextToSpeech.Utils;
 
@@ -21,11 +25,11 @@ namespace VRBuilder.Core.TextToSpeech.Providers
         protected ITextToSpeechConfiguration configuration = new FileTextToSpeechConfiguration();
 
         /// <inheritdoc/>
-        public async Task<AudioClip> ConvertTextToSpeech(string key, string text, Locale locale, string speaker)
+        public async Task<IAudioClip> ConvertTextToSpeech(string key, string text, Locale locale, string speaker)
         {
             string filename = configuration.GetUniqueTextToSpeechFilename(key, text, locale);
             string filePath = GetPathToFile(filename);
-            AudioClip audioClip;
+            IAudioClip? audioClip = null;
 
             if (await IsFileCached(filePath))
             {
@@ -33,8 +37,10 @@ namespace VRBuilder.Core.TextToSpeech.Providers
                 float[] sound = TextToSpeechUtils.ShortsInByteArrayToFloats(bytes);
 
                 int sampleRate = ReadSampleRate(bytes);
-                audioClip = AudioClip.Create(text, channels: 1, frequency: sampleRate, lengthSamples: sound.Length, stream: false);
-                audioClip.SetData(sound, 0);
+                var ac = AudioClip.Create(text, channels: 1, frequency: sampleRate, lengthSamples: sound.Length, stream: false);
+                ac.SetData(sound, 0);
+                //TODO: reintroduce after move to Core/Runtime
+                // audioClip = ac.ToAudioData();
             }
             else
             {
@@ -42,7 +48,7 @@ namespace VRBuilder.Core.TextToSpeech.Providers
                 audioClip = await TextToSpeechProviderFactory.Instance.CreateProvider().ConvertTextToSpeech(key, text, locale, speaker);
             }
 
-            if (audioClip is null)
+            if (audioClip == null)
             {
                 throw new CouldNotLoadAudioFileException($"AudioClip is null for text '{text}'");
             }

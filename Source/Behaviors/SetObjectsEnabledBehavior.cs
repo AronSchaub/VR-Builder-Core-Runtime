@@ -1,9 +1,11 @@
-using Newtonsoft.Json;
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using System;
 using System.Runtime.Serialization;
-using UnityEngine.Scripting;
+using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
-using VRBuilder.Core.Configuration;
+using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
 
 namespace VRBuilder.Core.Behaviors
@@ -26,7 +28,7 @@ namespace VRBuilder.Core.Behaviors
             /// </summary>
             [DataMember]
             [DisplayName("Objects")]
-            public MultipleSceneObjectReference TargetObjects { get; set; }
+            public MultipleScenePropertyReference<IModifySceneObjectProperty> TargetObjects { get; set; }
 
             [DataMember]
             [HideInProcessInspector]
@@ -35,6 +37,7 @@ namespace VRBuilder.Core.Behaviors
             [DataMember]
             [DisplayName("Revert after step is complete")]
             public bool RevertOnDeactivation { get; set; }
+
             /// <inheritdoc />
             public Metadata Metadata { get; set; }
 
@@ -59,10 +62,8 @@ namespace VRBuilder.Core.Behaviors
             /// <inheritdoc />
             public override void Start()
             {
-                foreach (ISceneObject sceneObject in Data.TargetObjects.Values)
-                {
-                    RuntimeConfigurator.Configuration.SceneObjectManager.SetSceneObjectActive(sceneObject, Data.SetEnabled);
-                }
+                foreach (var property in Data.TargetObjects.Values)
+                    property.SetActive(Data.SetEnabled);
             }
         }
 
@@ -77,10 +78,8 @@ namespace VRBuilder.Core.Behaviors
             {
                 if (Data.RevertOnDeactivation)
                 {
-                    foreach (ISceneObject sceneObject in Data.TargetObjects.Values)
-                    {
-                        RuntimeConfigurator.Configuration.SceneObjectManager.SetSceneObjectActive(sceneObject, !Data.SetEnabled);
-                    }
+                    foreach (var property in Data.TargetObjects.Values)
+                        property.SetActive(!Data.SetEnabled);
                 }
             }
         }
@@ -96,7 +95,7 @@ namespace VRBuilder.Core.Behaviors
 
         public SetObjectsEnabledBehavior(Guid objectId, bool setEnabled, bool revertOnDeactivate = false)
         {
-            Data.TargetObjects = new MultipleSceneObjectReference(objectId);
+            Data.TargetObjects = new MultipleScenePropertyReference<IModifySceneObjectProperty>(objectId);
             Data.SetEnabled = setEnabled;
             Data.RevertOnDeactivation = revertOnDeactivate;
         }

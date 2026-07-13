@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
-// Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2024 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using UnityEngine;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Localization;
+using VRBuilder.Core.Primitives;
 using VRBuilder.Core.Settings;
 
 namespace VRBuilder.Core.Utils.Audio
@@ -35,7 +37,7 @@ namespace VRBuilder.Core.Utils.Audio
                 path = value;
                 if (Application.isPlaying)
                 {
-                    InitializeAudioClip();
+                    Initialize();
                 }
             }
         }
@@ -51,10 +53,10 @@ namespace VRBuilder.Core.Utils.Audio
         }
         
         /// <inheritdoc/>
-        public bool HasAudioClip => AudioClip != null;
+        public bool HasAudio => AudioClip != null;
 
         /// <inheritdoc/>
-        public AudioClip AudioClip { get; private set; }
+        public IAudioClip AudioClip { get; private set; }
         
         /// <inheritdoc/>
         public bool IsReady => true;
@@ -69,7 +71,7 @@ namespace VRBuilder.Core.Utils.Audio
             set => ResourcesPath = value;
         }
 
-        public void InitializeAudioClip()
+        public void Initialize()
         {
             AudioClip = null;
 
@@ -78,15 +80,18 @@ namespace VRBuilder.Core.Utils.Audio
                 Debug.LogWarningFormat("Path to audio file is not defined.");
             }
 
-            AudioClip = Resources.Load<AudioClip>(GetLocalizedContent());
+            var ac = Resources.Load<AudioClip>(GetLocalizedContent());
+            //TODO: readd after move to Core/Runtime
+            // AudioClip = ac.ToAudioData();
 
             // Attempt to fallback to use the key as path.
-            if (HasAudioClip == false)
+            if (HasAudio == false)
             {
-                AudioClip = Resources.Load<AudioClip>(ResourcesPath);
+                ac = Resources.Load<AudioClip>(ResourcesPath);
+                // AudioClip = ac.ToAudioData();
             }
 
-            if (HasAudioClip == false)
+            if (HasAudio == false)
             {
                 Debug.LogWarningFormat("Given value '{0}' has returned no valid resource path for an audio clip, or it is not a valid resource path.", ResourcesPath);
             }

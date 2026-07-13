@@ -1,10 +1,15 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
-// Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections.Generic;
+#if UNITY_6000_0_OR_NEWER
 using UnityEngine;
+#elif GODOT
+using Godot;
+#endif
 using VRBuilder.Core.Properties;
 
 namespace VRBuilder.Core.SceneObjects
@@ -42,8 +47,11 @@ namespace VRBuilder.Core.SceneObjects
         /// <summary>
         /// Target GameObject, used for applying stuff.
         /// </summary>
+#if UNITY_6000_0_OR_NEWER
         GameObject GameObject { get; }
-
+#elif GODOT
+        Node GameObject { get; } //was GameObject
+#endif
         /// <summary>
         /// Properties on the scene object.
         /// </summary>

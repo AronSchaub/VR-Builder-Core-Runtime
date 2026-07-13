@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
-// Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections.Generic;
@@ -255,7 +256,7 @@ namespace VRBuilder.Core
             {
                 LifeCycle.StageChanged += (sender, args) =>
                 {
-                    Debug.LogFormat("<b>Chapter</b> <i>'{0}'</i> is <b>{1}</b>.\n", Data.Name, LifeCycle.Stage.ToString());
+                    ForwardingLogger.LogFormat("<b>Chapter</b> <i>'{0}'</i> is <b>{1}</b>.\n", Data.Name, LifeCycle.Stage.ToString());
                 };
             }
         }

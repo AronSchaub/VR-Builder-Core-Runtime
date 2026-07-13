@@ -1,8 +1,8 @@
 // Modifications copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections;
+using System.Diagnostics;
 
 namespace VRBuilder.Core.Conditions
 {
@@ -16,7 +16,7 @@ namespace VRBuilder.Core.Conditions
         }
 
         private bool isInside;
-        private long timeStarted;
+        private readonly Stopwatch stopWatch = new();
 
         /// <inheritdoc />
         public override void Start()
@@ -26,7 +26,7 @@ namespace VRBuilder.Core.Conditions
 
             if (isInside)
             {
-                timeStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                stopWatch.Restart();
             }
         }
 
@@ -46,11 +46,11 @@ namespace VRBuilder.Core.Conditions
 
                     if (isInside)
                     {
-                        timeStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                        stopWatch.Restart();
                     }
                 }
 
-                if (isInside && DateTimeOffset.Now.ToUnixTimeMilliseconds() - timeStarted >= Data.RequiredTimeInside)
+                if (isInside && stopWatch.ElapsedMilliseconds >= Data.RequiredTimeInside)
                 {
                     Data.IsCompleted = true;
                     break;
@@ -63,6 +63,7 @@ namespace VRBuilder.Core.Conditions
         /// <inheritdoc />
         public override void End()
         {
+            stopWatch.Stop();
         }
 
         /// <inheritdoc />

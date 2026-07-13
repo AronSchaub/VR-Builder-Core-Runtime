@@ -1,13 +1,16 @@
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using System;
-using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using UnityEngine;
-using UnityEngine.Scripting;
+using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
-using VRBuilder.Core.Configuration;
+using VRBuilder.Core.Primitives;
+using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
 
 namespace VRBuilder.Core.Behaviors
@@ -23,12 +26,12 @@ namespace VRBuilder.Core.Behaviors
             // Process object to scale.
             [DataMember]
             [DisplayName("Target Objects")]
-            public MultipleSceneObjectReference Targets { get; set; }
+            public MultipleScenePropertyReference<IScaleProperty> Targets { get; set; }
 
             // Target scale.
             [DataMember]
             [DisplayName("Target Scale")]
-            public Vector3 TargetScale { get; set; }
+            public IVector3 TargetScale { get; set; }
 
             // Duration of the animation in seconds.
             [DataMember]
@@ -37,7 +40,7 @@ namespace VRBuilder.Core.Behaviors
 
             [DataMember]
             [DisplayName("Animation curve")]
-            public AnimationCurve AnimationCurve { get; set; }
+            public IAnimationCurve AnimationCurve { get; set; }
 
             public Metadata Metadata { get; set; }
 
@@ -47,20 +50,22 @@ namespace VRBuilder.Core.Behaviors
         }
 
         [JsonConstructor]
-        public ScalingBehavior() : this(Array.Empty<ISceneObject>(), Vector3.one, 0f)
+        public ScalingBehavior() : this(Array.Empty<ISceneObject>(), Vector3Data.One, 0f)
         {
         }
 
-        public ScalingBehavior(IEnumerable<ISceneObject> targets, Vector3 targetScale, float duration)
+        public ScalingBehavior(IEnumerable<ISceneObject> targets, IVector3 targetScale, float duration)
         {
-            Data.Targets = new MultipleSceneObjectReference(targets.Select(target => target.Guid));
+            Data.Targets = new MultipleScenePropertyReference<IScaleProperty>(targets.Select(target => target.Guid));
             Data.TargetScale = targetScale;
             Data.Duration = duration;
-            Data.AnimationCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+            Data.AnimationCurve = AnimationCurveData.Linear(0f, 0f, 1f, 1f);
         }
 
         private class ActivatingProcess : StageProcess<EntityData>
         {
+            private readonly Stopwatch stopWatch = new();
+
             public ActivatingProcess(EntityData data) : base(data)
             {
             }
@@ -68,6 +73,7 @@ namespace VRBuilder.Core.Behaviors
             /// <inheritdoc />
             public override void Start()
             {
+                stopWatch.Restart();
             }
 
             /// <inheritdoc />
@@ -77,25 +83,20 @@ namespace VRBuilder.Core.Behaviors
                 {
                     throw new InvalidOperationException("ScalingBehavior: No target objects assigned to scale.");
                 }
+
                 if (!Data.Targets.Values.Any())
                 {
                     yield break;
                 }
 
-                float startedAt = Time.time;
-                ISceneObject[] sceneObjects = Data.Targets.Values.ToArray();
-                Transform[] scaledTransforms = sceneObjects.Select(so => so.GameObject.transform).ToArray();
-                Vector3[] initialScales = scaledTransforms.Select(t => t.localScale).ToArray();
-
-                while (Time.time - startedAt < Data.Duration)
+                while (stopWatch.ElapsedMilliseconds < Data.Duration)
                 {
-                    float progress = (Time.time - startedAt) / Data.Duration;
+                    float progress = stopWatch.ElapsedMilliseconds / Data.Duration;
                     float curve = Data.AnimationCurve.Evaluate(progress);
 
-                    for (int i = 0; i < sceneObjects.Length; i++)
+                    foreach (IScaleProperty property in Data.Targets.Values)
                     {
-                        RuntimeConfigurator.Configuration.SceneObjectManager.RequestAuthority(sceneObjects[i]);
-                        scaledTransforms[i].localScale = Vector3.LerpUnclamped(initialScales[i], Data.TargetScale, curve);
+                        property.ScaleTo(Data.TargetScale, curve);
                     }
 
                     yield return null;
@@ -105,13 +106,12 @@ namespace VRBuilder.Core.Behaviors
             /// <inheritdoc />
             public override void End()
             {
-                foreach (ISceneObject sceneObject in Data.Targets.Values)
+                foreach (var property in Data.Targets.Values)
                 {
-                    RuntimeConfigurator.Configuration.SceneObjectManager.RequestAuthority(sceneObject);
-
-                    Transform scaledTransform = sceneObject.GameObject.transform;
-                    scaledTransform.localScale = Data.TargetScale;
+                    property.ScaleTo(Data.TargetScale, 1f);
                 }
+
+                stopWatch.Stop();
             }
 
             /// <inheritdoc />

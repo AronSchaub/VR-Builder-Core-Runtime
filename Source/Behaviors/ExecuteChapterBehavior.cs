@@ -1,8 +1,10 @@
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using UnityEngine.Scripting;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.EntityOwners;
 using VRBuilder.Core.EntityOwners.ParallelEntityCollection;
