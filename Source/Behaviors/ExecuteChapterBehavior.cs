@@ -25,6 +25,8 @@ namespace VRBuilder.Core.Behaviors
         public class EntityData : EntityCollectionData<IChapter>, IBehaviorData
         {
             [DataMember]
+            [DisplayName("Chapter")]
+            [DisplayTooltip("Chapter executed as a step group.")]
             public IChapter Chapter { get; set; }
 
             public string Name { get; set; }

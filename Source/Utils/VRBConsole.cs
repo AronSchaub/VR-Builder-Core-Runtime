@@ -6,24 +6,31 @@ using VRBuilder.UI.Console;
 namespace VRBuilder.Core.Utils
 {
     /// <summary>
-    /// Log messages to a in-world console set up in the <see cref="RuntimeConfigurator"/>.
+    /// Log messages to an in-world console set up in the <see cref="RuntimeConfigurator"/>.
     /// </summary>
-    public static class WorldConsole
+    public static class VRBConsole
     {
         private static ILogConsole console;
         private static Queue<Action> executionQueue = new Queue<Action>();
 
-        static WorldConsole()
+        private static ILogConsole Console
         {
-            console = RuntimeConfigurator.Configuration.WorldConsole;
-
-            if (console == null)
+            get
             {
-                ForwardingLogger.LogError("Could not initialize world console.");
-                return;
-            }
+                if (console == null && RuntimeConfigurator.Exists)
+                {
+                    try
+                    {
+                        console = RuntimeConfigurator.Configuration.VRBConsole;
+                    }
+                    catch (Exception ex)
+                    {
+                        ForwardingLogger.LogWarning($"Could not initialize VR console: {ex.Message}");
+                    }
+                }
 
-            console.Hide();
+                return console;
+            }
         }
 
         /// <summary>
@@ -53,22 +60,8 @@ namespace VRBuilder.Core.Utils
         /// <param name="show">If true, show the console when the message is logged.</param>
         public static void Log(string message, string details = "", bool show = false)
         {
-            lock (executionQueue)
-            {
-                executionQueue.Enqueue(() =>
-                {
-                    console.LogMessage(message, details, LogLevel.Info);
-
-                    if (show)
-                    {
-                        console.Show();
-                    }
-                });
-            }
-
-            console.SetDirty();
+            Enqueue(message, details, LogSeverity.Log, show);
         }
-
 
         /// <summary>
         /// Logs a warning in the console.
@@ -78,22 +71,8 @@ namespace VRBuilder.Core.Utils
         /// <param name="show">If true, show the console when the message is logged.</param>
         public static void LogWarning(string message, string details = "", bool show = false)
         {
-            lock (executionQueue)
-            {
-                executionQueue.Enqueue(() =>
-                {
-                    console.LogMessage(message, details, LogLevel.Warn);
-
-                    if (show)
-                    {
-                        console.Show();
-                    }
-                });
-            }
-
-            console.SetDirty();
+            Enqueue(message, details, LogSeverity.Warning, show);
         }
-
 
         /// <summary>
         /// Logs an error in the console.
@@ -103,20 +82,7 @@ namespace VRBuilder.Core.Utils
         /// <param name="show">If true, show the console when the message is logged.</param>
         public static void LogError(string message, string details = "", bool show = true)
         {
-            lock (executionQueue)
-            {
-                executionQueue.Enqueue(() =>
-                {
-                    console.LogMessage(message, details, LogLevel.Error);
-
-                    if (show)
-                    {
-                        console.Show();
-                    }
-                });
-            }
-
-            console.SetDirty();
+            Enqueue(message, details, LogSeverity.Error, show);
         }
 
         /// <summary>
@@ -126,11 +92,56 @@ namespace VRBuilder.Core.Utils
         /// <param name="show">If true, show the console when the message is logged.</param>
         public static void LogException(Exception ex, bool show = true)
         {
+            Enqueue(ex.Message, ex.StackTrace, LogSeverity.Exception, show);
+        }
+
+        /// <summary>
+        /// Clears all messages from the console.
+        /// </summary>
+        public static void Clear()
+        {
+            ILogConsole target = Console;
+
+            if (target == null)
+            {
+                return;
+            }
+
+            lock (executionQueue)
+            {
+                executionQueue.Enqueue(() => console.Clear());
+            }
+
+            target.SetDirty();
+        }
+
+        /// <summary>
+        /// Toggles the console between visible and hidden.
+        /// </summary>
+        public static void Toggle()
+        {
+            ILogConsole target = Console;
+
+            if (target == null)
+            {
+                return;
+            }
+
+            lock (executionQueue)
+            {
+                executionQueue.Enqueue(() => console.Toggle());
+            }
+
+            target.SetDirty();
+        }
+
+        private static void Enqueue(string message, string details, LogSeverity severity, bool show)
+        {
             lock (executionQueue)
             {
                 executionQueue.Enqueue(() =>
                 {
-                    console.LogMessage(ex.Message, ex.StackTrace, LogLevel.Error);
+                    console.LogMessage(message, details, severity);
 
                     if (show)
                     {
@@ -139,7 +150,7 @@ namespace VRBuilder.Core.Utils
                 });
             }
 
-            console.SetDirty();
+            Console?.SetDirty();
         }
     }
 }

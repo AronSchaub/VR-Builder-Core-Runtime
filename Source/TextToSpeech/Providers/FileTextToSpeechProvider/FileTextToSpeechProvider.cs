@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Localization;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.IO;
 using VRBuilder.Core.Primitives;
@@ -25,9 +24,9 @@ namespace VRBuilder.Core.TextToSpeech.Providers
         protected ITextToSpeechConfiguration configuration = new FileTextToSpeechConfiguration();
 
         /// <inheritdoc/>
-        public async Task<IAudioClip> ConvertTextToSpeech(string key, string text, Locale locale, string speaker)
+        public async Task<IAudioClip> ConvertTextToSpeech(ITextToSpeechProperties textToSpeechProperties)
         {
-            string filename = configuration.GetUniqueTextToSpeechFilename(key, text, locale);
+            string filename = configuration.GetUniqueTextToSpeechFilename(textToSpeechProperties);
             string filePath = GetPathToFile(filename);
             IAudioClip? audioClip = null;
 
@@ -37,7 +36,7 @@ namespace VRBuilder.Core.TextToSpeech.Providers
                 float[] sound = TextToSpeechUtils.ShortsInByteArrayToFloats(bytes);
 
                 int sampleRate = ReadSampleRate(bytes);
-                var ac = AudioClip.Create(text, channels: 1, frequency: sampleRate, lengthSamples: sound.Length, stream: false);
+                var ac = AudioClip.Create(textToSpeechProperties.Text, channels: 1, frequency: sampleRate, lengthSamples: sound.Length, stream: false);
                 ac.SetData(sound, 0);
                 //TODO: reintroduce after move to Core/Runtime
                 // audioClip = ac.ToAudioData();
@@ -45,12 +44,12 @@ namespace VRBuilder.Core.TextToSpeech.Providers
             else
             {
                 Debug.Log($"No audio cached for TTS string. File {filePath} not found. Audio will be generated in real time.");
-                audioClip = await TextToSpeechProviderFactory.Instance.CreateProvider().ConvertTextToSpeech(key, text, locale, speaker);
+                audioClip = await TextToSpeechProviderFactory.Instance.CreateProvider().ConvertTextToSpeech(textToSpeechProperties);
             }
 
             if (audioClip == null)
             {
-                throw new CouldNotLoadAudioFileException($"AudioClip is null for text '{text}'");
+                throw new CouldNotLoadAudioFileException($"AudioClip is null for text '{textToSpeechProperties.Text}'");
             }
 
             return audioClip;

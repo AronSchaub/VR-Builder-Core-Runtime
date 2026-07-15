@@ -17,6 +17,7 @@ namespace VRBuilder.Core.Behaviors
 {
     // This behavior linearly changes scale of a Target object over Duration seconds, until it matches TargetScale.
     [DataContract(IsReference = true)]
+    [HelpLink("https://mindport-gmbh.github.io/VR-Builder-Documentation/articles/core/scale-objects-behavior.html?utm_source=unity_editor&utm_medium=referral&utm_campaign=from_unity&utm_id=from_unity")]
     public class ScalingBehavior : Behavior<ScalingBehavior.EntityData>
     {
         [DisplayName("Scale Object")]
@@ -35,7 +36,8 @@ namespace VRBuilder.Core.Behaviors
 
             // Duration of the animation in seconds.
             [DataMember]
-            [DisplayName("Animation Duration (in seconds)")]
+            [DisplayName("Animation Duration")]
+            [DisplayTooltip("Duration of the animation in seconds.")]
             public float Duration { get; set; }
 
             [DataMember]

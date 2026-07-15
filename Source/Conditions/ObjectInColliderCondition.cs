@@ -18,7 +18,7 @@ namespace VRBuilder.Core.Conditions
     /// Condition which is completed when `TargetObject` gets inside `TriggerProperty`'s collider.
     /// </summary>
     [DataContract(IsReference = true)]
-    [HelpLink("https://www.mindport.co/vr-builder/manual/default-conditions/move-object-in-collider")]
+    [HelpLink("https://mindport-gmbh.github.io/VR-Builder-Documentation/articles/core/objects-in-collider-condition.html?utm_source=unity_editor&utm_medium=referral&utm_campaign=from_unity&utm_id=from_unity")]
     public class ObjectInColliderCondition : Condition<ObjectInColliderCondition.EntityData>
     {
         /// <summary>
@@ -33,6 +33,7 @@ namespace VRBuilder.Core.Conditions
             /// </summary>
             [DataMember]
             [DisplayName("Objects")]
+            [DisplayTooltip("Objects that must enter the collider.")]
             public MultipleSceneObjectReference TargetObjects { get; set; }
 
             /// <summary>
@@ -40,7 +41,7 @@ namespace VRBuilder.Core.Conditions
             /// </summary>
             [DataMember]
             [DisplayName("Collider")]
-
+            [DisplayTooltip("Trigger collider the objects must enter.")]
             public SingleScenePropertyReference<IColliderWithTriggerProperty> TriggerObject { get; set; }
 
             /// <inheritdoc />
@@ -65,10 +66,12 @@ namespace VRBuilder.Core.Conditions
             /// <inheritdoc />
             [DataMember]
             [DisplayName("Required seconds inside")]
+            [DisplayTooltip("How long the required object count must stay inside the collider, in seconds.")]
             public float RequiredTimeInside { get; set; }
 
             [DataMember]
             [DisplayName("Required Object count")]
+            [DisplayTooltip("Number of objects that must be inside the collider at the same time.")]
             public float ObjectsRequiredInTrigger { get; set; }
 
             /// <inheritdoc />
