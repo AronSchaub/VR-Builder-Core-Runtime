@@ -4,43 +4,48 @@ using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Localization;
-using UnityEngine.Localization.Settings;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.TextToSpeech.Configuration;
-using VRBuilder.Core.Utils.Audio;
 
 namespace VRBuilder.Core.TextToSpeech.Utils
 {
     public static class TextToSpeechUtils
     {
         /// <summary>
-        /// Get GetUniqueIdentifier to identify the text relative to the locale and hash value
+        /// Get GetUniqueIdentifier to identify the text relative to the locale and more properties.
         /// </summary>
-        /// <param name="configuration">Used text-to-speech provider configuration</param>
-        /// <param name="audioData">Used audio data with meta-information</param>
-        /// <param name="locale">Used locale</param>
-        /// <param name="format">Used file format</param>
-        /// <returns></returns>
-        public static string GetUniqueTextToSpeechFilename(this ITextToSpeechConfiguration configuration, ITextToSpeechContent audioData, Locale locale, string format = "wav")
+        /// <param name="configuration">Used text-to-speech provider configuration.</param>
+        /// <param name="audioData">Used audio data with meta-information.</param>
+        /// <param name="locale">Used locale.</param>
+        /// <returns>Returns a unique file name of the text-to-speech file.</returns>
+        public static string GetUniqueTextToSpeechFilename(this ITextToSpeechConfiguration configuration, ITextToSpeechContent audioData, Locale locale)
         {
-            return GetUniqueTextToSpeechFilename(configuration, audioData.Text, audioData.Text, locale, audioData.Speaker, format);
+            return GetUniqueTextToSpeechFilename(configuration, new TextToSpeechProperties(audioData).WithLocale(locale));
         }
 
         /// <summary>
-        /// Get GetUniqueIdentifier to identify the text relative to the locale and hash value
+        /// Get GetUniqueIdentifier to identify the text relative to the locale and more properties.
         /// </summary>
-        /// <param name="configuration">Used text-to-speech provider configuration</param>
-        /// <param name="key">Key of the string of the localization table</param>
-        /// <param name="text">The text to be checked if key is not set</param>
-        /// <param name="locale">Used locale</param>
-        /// <param name="speaker">Used speaker</param>
-        /// <param name="format">Used file format</param>
-        /// <returns></returns>
-        public static string GetUniqueTextToSpeechFilename(this ITextToSpeechConfiguration configuration, string key, string text, Locale locale, string speaker = "", string format = "wav")
+        /// <param name="configuration">Used text-to-speech provider configuration.</param>
+        /// <param name="key">Key of the string of the localization table.</param>
+        /// <param name="text">The text to be checked if key is not set.</param>
+        /// <param name="locale">Used locale.</param>
+        /// <param name="speaker">Used speaker.</param>
+        /// <returns>Returns a unique file name of the text-to-speech file.</returns>
+        public static string GetUniqueTextToSpeechFilename(this ITextToSpeechConfiguration configuration, string key = "", string text = "", Locale locale = null, string speaker = "")
         {
-            return !LocalizationSettings.HasSettings || string.IsNullOrEmpty(key)
-                ? $"TTS_{(speaker != "" ? $"{speaker}_" : "")}{locale.Identifier.Code}_{GetMd5Hash(text).Replace("-", "")}.{format}"
-                : $"TTS_{(speaker != "" ? $"{speaker}_" : "")}{RuntimeConfigurator.Instance.GetProcessStringLocalizationTable()}_{key}_{locale.Identifier.Code}.{format}";
+            return GetUniqueTextToSpeechFilename(configuration, new TextToSpeechProperties().WithText(text).WithKey(key).WithLocale(locale).WithSpeaker(speaker));
+        }
+
+        /// <summary>
+        /// Get GetUniqueIdentifier to identify the text relative to the locale and more properties.
+        /// </summary>
+        /// <param name="configuration">Used text-to-speech provider configuration.</param>
+        /// <param name="properties">Used text-to-speech file properties.</param>
+        /// <returns>Returns a unique file name of the text-to-speech file.</returns>
+        public static string GetUniqueTextToSpeechFilename(this ITextToSpeechConfiguration configuration, ITextToSpeechProperties properties)
+        {
+            return properties.ToFileName();
         }
 
         /// <summary>
@@ -50,10 +55,17 @@ namespace VRBuilder.Core.TextToSpeech.Utils
         /// <param name="key">Key of the string of the localization table</param>
         /// <param name="text">The text to be checked if key is not set</param>
         /// <param name="locale">Used locale</param>
+        /// <param name="speaker">Used speaker</param>
         /// <returns>True if the localizedContent in the chosen locale is cached</returns>
-        public static string PrepareFilepathForText(this ITextToSpeechConfiguration configuration, string key, string text, Locale locale)
+        public static string PrepareFilepathForText(this ITextToSpeechConfiguration configuration, string key, string text, Locale locale, string speaker = "")
         {
-            string filename = configuration.GetUniqueTextToSpeechFilename(key, text, locale);
+            string filename = configuration.GetUniqueTextToSpeechFilename(
+                new TextToSpeechProperties()
+                    .WithText(text)
+                    .WithKey(key)
+                    .WithLocale(locale)
+                    .WithSpeaker(speaker)
+                    .WithTable(RuntimeConfigurator.Instance.GetProcessStringLocalizationTable()));
             string directory = Path.Combine(Application.temporaryCachePath.Replace('/', Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, RuntimeConfigurator.Configuration.GetTextToSpeechSettings().StreamingAssetCacheDirectoryName);
             Directory.CreateDirectory(directory);
             return Path.Combine(directory, filename);
