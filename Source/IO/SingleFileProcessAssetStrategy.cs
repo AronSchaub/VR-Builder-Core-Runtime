@@ -31,7 +31,7 @@ namespace VRBuilder.Core.IO
             }
             catch (Exception ex)
             {
-                Debug.LogError(ex.Message);
+                ForwardingLogger.LogError(ex.Message);
             }
 
             return null;

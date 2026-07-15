@@ -172,7 +172,7 @@ namespace VRBuilder.Core.TextToSpeech
                 return profile.ProviderVoiceMappings.First(m => m.ProviderName == providerName).VoiceId;
             }
 
-            Debug.LogWarning($"No voice ID for language {languageCode} and provider {providerName} found. Using other profiles that contains the provider.");
+            ForwardingLogger.LogWarning($"No voice ID for language {languageCode} and provider {providerName} found. Using other profiles that contains the provider.");
             
             // If no exact match, try profiles that include the provider in their list
             profile = voiceProfiles.FirstOrDefault(p =>

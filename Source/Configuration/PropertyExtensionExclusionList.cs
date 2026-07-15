@@ -36,7 +36,7 @@ namespace VRBuilder.Core.Configuration
 
                     if (excludedType == null)
                     {
-                        Debug.LogWarning($"Property extension exclusion list for assembly '{assemblyFullName}' contains invalid extension type: '{typeName}'.");
+                        ForwardingLogger.LogWarning($"Property extension exclusion list for assembly '{assemblyFullName}' contains invalid extension type: '{typeName}'.");
                     }
                     else
                     {

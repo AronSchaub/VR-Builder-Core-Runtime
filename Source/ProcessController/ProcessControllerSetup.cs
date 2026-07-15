@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using VRBuilder.Core;
 using VRBuilder.Core.Utils;
 
 namespace VRBuilder.ProcessController
@@ -71,7 +72,7 @@ namespace VRBuilder.ProcessController
                 CurrentProcessController = defaultProcessController;
                 if (CurrentProcessController == null)
                 {
-                    Debug.LogError("ProcessControllerSetup was not configured properly.");
+                    ForwardingLogger.LogError("ProcessControllerSetup was not configured properly.");
                     return;
                 }
             }

@@ -105,8 +105,8 @@ namespace VRBuilder.Core
             catch (Exception e)
             {
                 string fullPath = EntityPathUtils.BuildRichTextEntityPath(this);
-                Debug.LogError($"Configure failed at {fullPath}\nException: {e.Message}");
-                Debug.LogException(e);
+                ForwardingLogger.LogError($"Configure failed at {fullPath}\nException: {e.Message}");
+                ForwardingLogger.LogException(e);
             }
 #endif
         }
@@ -318,7 +318,7 @@ namespace VRBuilder.Core
 
             if (LifeCycleLoggingConfig.Instance.LogSteps)
             {
-                LifeCycle.StageChanged += (sender, args) => { Debug.LogFormat("{0}<b>Step</b> <i>'{1}'</i> is <b>{2}</b>.\n", ConsoleUtils.GetTabs(), Data.Name, LifeCycle.Stage); };
+                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("{0}<b>Step</b> <i>'{1}'</i> is <b>{2}</b>.\n", ConsoleUtils.GetTabs(), Data.Name, LifeCycle.Stage); };
             }
         }
     }

@@ -51,11 +51,11 @@ namespace VRBuilder.Core.Serialization
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogErrorFormat("Exception occured while trying to parse a color.\n{0}", ex.Message);
+                    ForwardingLogger.LogErrorFormat("Exception occured while trying to parse a color.\n{0}", ex.Message);
                     return Color.magenta;
                 }
             }
-            Debug.LogWarning("Can't read/parse color from JSON.");
+            ForwardingLogger.LogWarning("Can't read/parse color from JSON.");
             return Color.magenta;
         }
 

@@ -311,7 +311,7 @@ namespace VRBuilder.Core
         private void LogException(Exception exception, string function)
         {
             string path = EntityPathUtils.BuildRichTextEntityPath(Owner);
-            Debug.LogError($"Exception at {path} while <b>{Stage} ({function})</b>\n{exception}");
+            ForwardingLogger.LogError($"Exception at {path} while <b>{Stage} ({function})</b>\n{exception}");
         }
     }
 }

@@ -64,7 +64,7 @@ namespace VRBuilder.Core.Settings
             catch (UnityException e)
             {
                 // This is commented to avoid confusing errors since this exception can trigger but does not block functionality. Uncomment for debugging purposes.
-                // Debug.LogException(e);
+                // ForwardingLogger.LogException(e);
                 throw;
             }
         }

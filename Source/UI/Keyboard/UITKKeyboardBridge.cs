@@ -129,12 +129,12 @@ namespace VRBuilder.Core.UI.Keyboard
 
             if (uiDocument == null)
             {
-                Debug.LogWarning("UITKKeyboardBridge: no UIDocument is assigned and none was found in the scene. " +
-                    "Assign one in the inspector or add a UIDocument component somewhere in the scene; the spatial keyboard bridge is inactive for this session.", this);
+                ForwardingLogger.LogWarning("UITKKeyboardBridge: no UIDocument is assigned and none was found in the scene. " +
+                    "Assign one in the inspector or add a UIDocument component somewhere in the scene; the spatial keyboard bridge is inactive for this session.");
             }
             else
             {
-                Debug.LogWarning($"UITKKeyboardBridge: UIDocument.rootVisualElement was not available within {InitRetryFrameBudget} frames; the spatial keyboard bridge is inactive for this session.", this);
+                ForwardingLogger.LogWarning($"UITKKeyboardBridge: UIDocument.rootVisualElement was not available within {InitRetryFrameBudget} frames; the spatial keyboard bridge is inactive for this session.");
             }
         }
 
@@ -399,7 +399,7 @@ namespace VRBuilder.Core.UI.Keyboard
                 if (logWarnings && !missingBackendWarningShown)
                 {
                     missingBackendWarningShown = true;
-                    Debug.LogWarning("UITKKeyboardBridge could not find an available keyboard backend. Falling back to hardware input only.", this);
+                    ForwardingLogger.LogWarning("UITKKeyboardBridge could not find an available keyboard backend. Falling back to hardware input only.");
                 }
 
                 return;

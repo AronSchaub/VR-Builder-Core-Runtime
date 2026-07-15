@@ -53,7 +53,7 @@ namespace VRBuilder.Core.Properties
 
             if (LifeCycleLoggingConfig.Instance.LogDataPropertyChanges)
             {
-                Debug.Log($"{ConsoleUtils.GetTabs()}<b>{GetType().Name}</b> on <i>'{SceneObject.GameObject.name}'</i> changed from <b>{ValueToString(storedValue)}</b> to <b>{ValueToString(value)}</b>.\n");
+                ForwardingLogger.Log($"{ConsoleUtils.GetTabs()}<b>{GetType().Name}</b> on <i>'{SceneObject.GameObject.name}'</i> changed from <b>{ValueToString(storedValue)}</b> to <b>{ValueToString(value)}</b>.\n");
             }
 
             storedValue = value;

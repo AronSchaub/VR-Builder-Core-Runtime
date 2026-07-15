@@ -45,7 +45,7 @@ namespace VRBuilder.Core
             if (data.ToUnlock.Any(propertyReference => propertyReference.TargetObject.Value == null))
             {
                 data.ToUnlock = data.ToUnlock.Where(propertyReference => propertyReference.TargetObject.Value != null).ToList();
-                Debug.LogWarning($"Null references have been found and removed in the manually unlocked objects of step '{data.Name}'.\n" +
+                ForwardingLogger.LogWarning($"Null references have been found and removed in the manually unlocked objects of step '{data.Name}'.\n" +
                     $"Did you delete or reset any Process Scene Objects?");
             }
 

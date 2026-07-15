@@ -122,7 +122,7 @@ namespace VRBuilder.Core.TextToSpeech
 
 			if (IsEmpty())
 			{
-				Debug.LogWarning($"No text provided.");
+				ForwardingLogger.LogWarning($"No text provided.");
 				isLoading = false;
 				return;
 			}
@@ -165,7 +165,7 @@ namespace VRBuilder.Core.TextToSpeech
 			}
 			catch (Exception e)
 			{
-				Debug.LogException(e);
+				ForwardingLogger.LogException(e);
 				isReady = false;
 			}
 			finally

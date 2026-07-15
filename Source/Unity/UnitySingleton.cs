@@ -3,6 +3,7 @@
 // Modifications copyright (c) 2021-2026 MindPort GmbH
 
 using UnityEngine;
+using VRBuilder.Core;
 
 namespace VRBuilder.Unity
 {
@@ -67,7 +68,7 @@ namespace VRBuilder.Unity
                 if (Instance != this)
                 {
                     Destroy(this);
-                    Debug.LogWarningFormat("An instance of the singleton {0} already exists.", typeof(T).Name);
+                    ForwardingLogger.LogWarningFormat("An instance of the singleton {0} already exists.", typeof(T).Name);
                 } else
                 {
                     DontDestroyOnLoad(instance);

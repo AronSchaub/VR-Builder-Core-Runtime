@@ -80,7 +80,7 @@ namespace VRBuilder.Core.IO
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                ForwardingLogger.LogException(e);
                 return false;
             }
         }
@@ -182,7 +182,7 @@ namespace VRBuilder.Core.IO
             if (Directory.Exists(absolutePath) == false)
             {
                 Directory.CreateDirectory(absolutePath);
-                Debug.LogWarningFormat("Directory '{0}' was created.", absolutePath);
+                ForwardingLogger.LogWarningFormat("Directory '{0}' was created.", absolutePath);
             }
 
             if (string.IsNullOrEmpty(fileName))

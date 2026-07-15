@@ -23,7 +23,7 @@ namespace VRBuilder.Core.Utils
         {
             if (width <= 0)
             {
-                Debug.LogWarning($"Invalid parameters for DrawWireCylinderGizmo. Width: {width}, StartPoint: {startPoint}, EndPoint: {endPoint}. Width must be greater than zero.");
+                ForwardingLogger.LogWarning($"Invalid parameters for DrawWireCylinderGizmo. Width: {width}, StartPoint: {startPoint}, EndPoint: {endPoint}. Width must be greater than zero.");
                 return;
             }
             Gizmos.color = color;

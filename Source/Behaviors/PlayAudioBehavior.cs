@@ -2,11 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using Newtonsoft.Json;
 using System.Collections;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
-using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Configuration.Modes;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
@@ -119,7 +118,7 @@ namespace VRBuilder.Core.Behaviors
                     }
 
                     // Wait for playback, but keep the process blocked while the application is frozen.
-                    while (Data.AudioProperty.Value.IsPlaying || AudioListener.pause)
+                    while (Data.AudioProperty.Value.IsPlaying)
                     {
                         yield return null;
                     }
@@ -145,7 +144,7 @@ namespace VRBuilder.Core.Behaviors
             }
         }
 
-        private class AbortingProcess : InstantProcess<PlayAudioBehavior.EntityData>
+        private class AbortingProcess : InstantProcess<EntityData>
         {
             public AbortingProcess(EntityData data) : base(data)
             {

@@ -57,7 +57,7 @@ namespace VRBuilder.Core.SceneObjects
                 Type propertyType = GetImplementation(processProperty);
                 if (propertyType == null)
                 {
-                    Debug.LogError($"No implementation found for {processProperty.Name}.");
+                    ForwardingLogger.LogError($"No implementation found for {processProperty.Name}.");
                     return null;
                 }
 
@@ -157,7 +157,7 @@ namespace VRBuilder.Core.SceneObjects
 
             if (concreteTypeToAdd == null)
             {
-                Debug.LogError($"No implementation found for {valueType.Name}.");
+                ForwardingLogger.LogError($"No implementation found for {valueType.Name}.");
                 return false;
             }
 

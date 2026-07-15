@@ -32,7 +32,7 @@ namespace VRBuilder.Core.IO
             }
             catch(Exception ex)
             {
-                Debug.LogError(ex.Message);
+                ForwardingLogger.LogError(ex.Message);
             }
 
             // Restore the process to the original state.
@@ -60,7 +60,7 @@ namespace VRBuilder.Core.IO
 
                 if(deserializedChapter == null)
                 {
-                    Debug.LogError($"Error loading the process. Could not find chapter with id: {chapter.ChapterMetadata.Guid}");
+                    ForwardingLogger.LogError($"Error loading the process. Could not find chapter with id: {chapter.ChapterMetadata.Guid}");
                 }
 
                 deserializedChapters.Add(deserializedChapter);

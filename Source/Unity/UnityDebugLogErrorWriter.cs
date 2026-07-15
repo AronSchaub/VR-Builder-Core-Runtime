@@ -5,6 +5,7 @@
 using System.IO;
 using System.Text;
 using UnityEngine;
+using VRBuilder.Core;
 
 namespace VRBuilder.Unity
 {
@@ -24,7 +25,7 @@ namespace VRBuilder.Unity
         /// <inheritdoc />
         public override void Flush()
         {
-            Debug.LogError(buffer.ToString());
+            ForwardingLogger.LogError(buffer.ToString());
             buffer.Length = 0;
         }
 

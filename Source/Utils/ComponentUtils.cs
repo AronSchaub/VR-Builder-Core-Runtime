@@ -48,7 +48,7 @@ namespace VRBuilder.Core.Utils
                 UnityEditor.EditorUtility.SetDirty(eventObject);
                 return true;
 #else
-                UnityEngine.Debug.LogError($"{target.name} attempted to add a persistent listener to {unityEvent.ToString()} at runtime. This is supported only at editor time.");
+                ForwardingLogger.LogError($"{target.name} attempted to add a persistent listener to {unityEvent.ToString()} at runtime. This is supported only at editor time.");
                 return false;
 #endif
             }
@@ -99,7 +99,7 @@ namespace VRBuilder.Core.Utils
             }
             if (temporary.Contains(comp))
             {
-                Debug.LogError("Cyclic dependency detected in component graph.");
+                ForwardingLogger.LogError("Cyclic dependency detected in component graph.");
                 return;
             }
 

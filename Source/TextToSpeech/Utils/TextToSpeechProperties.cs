@@ -77,7 +77,7 @@ namespace VRBuilder.Core.TextToSpeech.Utils
         {
 	        if (!string.IsNullOrEmpty(Table))
 	        {
-		        Debug.LogWarning($"Already set table '${Table}' will be overwritten with new table '{table}'.");
+		        ForwardingLogger.LogWarning($"Already set table '${Table}' will be overwritten with new table '{table}'.");
 	        }
             Table = table;
             return this;

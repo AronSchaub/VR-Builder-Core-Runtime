@@ -43,7 +43,7 @@ namespace VRBuilder.Core.TextToSpeech.Providers
             }
             else
             {
-                Debug.Log($"No audio cached for TTS string. File {filePath} not found. Audio will be generated in real time.");
+                ForwardingLogger.Log($"No audio cached for TTS string. File {filePath} not found. Audio will be generated in real time.");
                 audioClip = await TextToSpeechProviderFactory.Instance.CreateProvider().ConvertTextToSpeech(textToSpeechProperties);
             }
 

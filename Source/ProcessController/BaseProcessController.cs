@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using VRBuilder.Core;
 
 namespace VRBuilder.ProcessController
 {
@@ -25,7 +26,7 @@ namespace VRBuilder.ProcessController
         {
             if (PrefabName == null)
             {
-                Debug.LogError($"Could not find process controller prefab named {PrefabName}.");
+                ForwardingLogger.LogError($"Could not find process controller prefab named {PrefabName}.");
                 return null;
             }
 

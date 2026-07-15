@@ -37,11 +37,11 @@ namespace VRBuilder.Core.Serialization
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogErrorFormat("Exception occured while trying to parse an animation curve.\n{0}", ex.Message);
+                    ForwardingLogger.LogErrorFormat("Exception occured while trying to parse an animation curve.\n{0}", ex.Message);
                     return new AnimationCurve();
                 }
             }
-            Debug.LogWarning("Can't read/parse animation curve from JSON.");
+            ForwardingLogger.LogWarning("Can't read/parse animation curve from JSON.");
             return new AnimationCurve();
         }
 

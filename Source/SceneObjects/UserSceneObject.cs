@@ -24,7 +24,7 @@ namespace VRBuilder.Core.SceneObjects
                 if (head == null)
                 {
                     head = GetComponentInChildren<Camera>().transform;
-                    Debug.LogWarning("User head object is not referenced on User Scene Object component. The rig's camera will be used, if available.");
+                    ForwardingLogger.LogWarning("User head object is not referenced on User Scene Object component. The rig's camera will be used, if available.");
                 }
 
                 return head;

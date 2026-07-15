@@ -224,7 +224,7 @@ namespace VRBuilder.Core.Configuration
                 }
                 else
                 {
-                    Debug.Log($"Error loading process. File not found: {filePath}");
+                    ForwardingLogger.Log($"Error loading process. File not found: {filePath}");
                 }
             }
 

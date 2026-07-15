@@ -94,7 +94,7 @@ namespace VRBuilder.Core.Input
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError(ex);
+                    ForwardingLogger.LogError(ex);
                 }
             }
         }

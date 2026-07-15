@@ -104,13 +104,13 @@ namespace VRBuilder.Core.Highlighting
         {
             if (enabled == false)
             {
-                Debug.LogError($"{GetType().Name} component is disabled for {name} and can not be highlighted.", gameObject);
+                ForwardingLogger.LogError($"{GetType().Name} component is disabled for {name} and can not be highlighted. {gameObject}");
                 return false;
             }
 
             if (gameObject.activeInHierarchy == false)
             {
-                Debug.LogError($"{name} is disabled and can not be highlighted.", gameObject);
+                ForwardingLogger.LogError($"{name} is disabled and can not be highlighted. {gameObject}");
                 return false;
             }
 

@@ -77,7 +77,7 @@ namespace VRBuilder.Core.Utils.Audio
 
             if (string.IsNullOrEmpty(ResourcesPath))
             {
-                Debug.LogWarningFormat("Path to audio file is not defined.");
+                ForwardingLogger.LogWarningFormat("Path to audio file is not defined.");
             }
 
             var ac = Resources.Load<AudioClip>(GetLocalizedContent());
@@ -93,7 +93,7 @@ namespace VRBuilder.Core.Utils.Audio
 
             if (HasAudio == false)
             {
-                Debug.LogWarningFormat("Given value '{0}' has returned no valid resource path for an audio clip, or it is not a valid resource path.", ResourcesPath);
+                ForwardingLogger.LogWarningFormat("Given value '{0}' has returned no valid resource path for an audio clip, or it is not a valid resource path.", ResourcesPath);
             }
         }
 

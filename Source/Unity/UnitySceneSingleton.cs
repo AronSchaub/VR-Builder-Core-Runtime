@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using VRBuilder.Core.Utils;
 using UnityEngine;
+using VRBuilder.Core;
 
 namespace VRBuilder.Unity
 {
@@ -34,7 +35,7 @@ namespace VRBuilder.Unity
                     }
                     catch (InvalidOperationException)
                     {
-                        Debug.LogError($"You have no concrete implementation of '{typeof(T).Name}'");
+                        ForwardingLogger.LogError($"You have no concrete implementation of '{typeof(T).Name}'");
                         throw;
                     }
                 }
@@ -103,7 +104,7 @@ namespace VRBuilder.Unity
                     return;
                 }
                 Destroy(gameObject);
-                Debug.LogWarningFormat("An instance of the UnitySceneSingleton {0} already exists.", typeof(T).Name);
+                ForwardingLogger.LogWarningFormat("An instance of the UnitySceneSingleton {0} already exists.", typeof(T).Name);
             }
         }
 

@@ -119,7 +119,7 @@ namespace VRBuilder.Core.Configuration
                         errorLog += ", ";
                     }
                 }
-                Debug.LogWarning(errorLog);
+                ForwardingLogger.LogWarning(errorLog);
             }
 
             return instances[0];
@@ -169,7 +169,7 @@ namespace VRBuilder.Core.Configuration
 
                 if (type == null)
                 {
-                    Debug.LogError($"IRuntimeConfiguration type '{Instance?.runtimeConfigurationName}' cannot be found. Using '{typeof(DefaultRuntimeConfiguration).AssemblyQualifiedName}' instead.");
+                    ForwardingLogger.LogError($"IRuntimeConfiguration type '{Instance?.runtimeConfigurationName}' cannot be found. Using '{typeof(DefaultRuntimeConfiguration).AssemblyQualifiedName}' instead.");
                     type = typeof(DefaultRuntimeConfiguration);
                 }
 
@@ -181,7 +181,7 @@ namespace VRBuilder.Core.Configuration
             {
                 if (value == null)
                 {
-                    Debug.LogError("Process runtime configuration cannot be null.");
+                    ForwardingLogger.LogError("Process runtime configuration cannot be null.");
                     return;
                 }
 
