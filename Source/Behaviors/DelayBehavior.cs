@@ -11,7 +11,7 @@ namespace VRBuilder.Core.Behaviors
     /// Behavior that waits for `DelayTime` seconds before finishing its activation.
     /// </summary>
     [DataContract(IsReference = true)]
-    [HelpLink("https://www.mindport.co/vr-builder/manual/default-behaviors/delay")]
+    [HelpLink("https://mindport-gmbh.github.io/VR-Builder-Documentation/articles/core/delay-behavior.html?utm_source=unity_editor&utm_medium=referral&utm_campaign=from_unity&utm_id=from_unity")]
     public class DelayBehavior : Behavior<DelayBehavior.EntityData>
     {
         /// <summary>
@@ -22,7 +22,8 @@ namespace VRBuilder.Core.Behaviors
         public class EntityData : IBehaviorData
         {
             [DataMember]
-            [DisplayName("Delay (in seconds)")]
+            [DisplayName("Delay")]
+            [DisplayTooltip("Delay before the behavior completes, in seconds.")]
             public float DelayTime { get; set; }
 
             public Metadata Metadata { get; set; }

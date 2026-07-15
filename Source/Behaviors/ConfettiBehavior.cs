@@ -18,6 +18,7 @@ namespace VRBuilder.Core.Behaviors
     /// This behavior causes confetti to rain.
     /// </summary>
     [DataContract(IsReference = true)]
+    [HelpLink("https://mindport-gmbh.github.io/VR-Builder-Documentation/articles/core/spawn-confetti-behavior.html?utm_source=unity_editor&utm_medium=referral&utm_campaign=from_unity&utm_id=from_unity")]
     public class ConfettiBehavior : Behavior<ConfettiBehavior.EntityData>
     {
         [DisplayName("Spawn Confetti")]
@@ -62,6 +63,8 @@ namespace VRBuilder.Core.Behaviors
 
             /// <inheritdoc />
             [DataMember]
+            [DisplayName("Execution Stages")]
+            [DisplayTooltip("Determines whether the behavior runs when the step activates, deactivates, or both.")]
             public BehaviorExecutionStages ExecutionStages { get; set; }
 
             public GameObject ConfettiMachine { get; set; }

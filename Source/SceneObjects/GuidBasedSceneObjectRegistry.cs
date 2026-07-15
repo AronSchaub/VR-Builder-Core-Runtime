@@ -16,6 +16,11 @@ namespace VRBuilder.Core.SceneObjects
     {
         protected readonly Dictionary<Guid, List<ISceneObject>> registeredObjects = new Dictionary<Guid, List<ISceneObject>>();
 
+        /// <inheritdoc/>
+        public event Action Changed;
+
+        private bool suppressChangeNotification;
+
         public IEnumerable<Guid> RegisteredGuids => registeredObjects.Keys;
 
         /// <inheritdoc/>
@@ -148,6 +153,11 @@ namespace VRBuilder.Core.SceneObjects
 
             obj.GuidAdded += OnGuidAdded;
             obj.GuidRemoved += OnGuidRemoved;
+
+            if (suppressChangeNotification == false)
+            {
+                NotifyChanged();
+            }
         }
 
         private bool HasDuplicateGuid(ISceneObject obj)
@@ -158,7 +168,11 @@ namespace VRBuilder.Core.SceneObjects
             }
 
             IEnumerable<ISceneObject> sceneObjects = GetObjects(obj.Guid);
+#if UNITY_6000_5_OR_NEWER
+            return sceneObjects.Select(so => so.GameObject.GetEntityId()).Contains(obj.GameObject.GetEntityId()) == false;
+#else
             return sceneObjects.Select(so => so.GameObject.GetInstanceID()).Contains(obj.GameObject.GetInstanceID()) == false;
+#endif
         }
 
         private void RegisterGuid(ISceneObject sceneObject, Guid guid)
@@ -179,6 +193,7 @@ namespace VRBuilder.Core.SceneObjects
         private void OnGuidAdded(object sender, GuidContainerEventArgs args)
         {
             RegisterGuid((ISceneObject)sender, args.Guid);
+            NotifyChanged();
         }
 
         private void OnGuidRemoved(object sender, GuidContainerEventArgs args)
@@ -193,15 +208,27 @@ namespace VRBuilder.Core.SceneObjects
                     registeredObjects.Remove(args.Guid);
                 }
             }
+
+            NotifyChanged();
         }
 
         /// <inheritdoc/>
         public void RegisterAll()
         {
-            foreach (ProcessSceneObject processObject in SceneUtils.GetActiveAndInactiveComponents<ProcessSceneObject>())
+            suppressChangeNotification = true;
+            try
             {
-                Register(processObject);
+                foreach (ProcessSceneObject processObject in SceneUtils.GetActiveAndInactiveComponents<ProcessSceneObject>())
+                {
+                    Register(processObject);
+                }
             }
+            finally
+            {
+                suppressChangeNotification = false;
+            }
+
+            NotifyChanged();
         }
 
         /// <inheritdoc/>
@@ -258,7 +285,13 @@ namespace VRBuilder.Core.SceneObjects
                 }
             }
 
+            NotifyChanged();
             return wasUnregistered;
+        }
+
+        private void NotifyChanged()
+        {
+            Changed?.Invoke();
         }
 
         private IEnumerable<Guid> GetAllGuids(ISceneObject obj)
