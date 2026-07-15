@@ -12,6 +12,19 @@ namespace VRBuilder.Core.Primitives
         [DataMember]
         public KeyframeData[] Keyframes { readonly get; set; }
 
+        [DataMember]
+        public int PreWrapMode { readonly get; set; }
+
+        [DataMember]
+        public int PostWrapMode { readonly get; set; }
+
+        public AnimationCurveData(KeyframeData[] keyframes, int preWrapMode = 0, int postWrapMode = 0)
+        {
+            Keyframes = keyframes;
+            PreWrapMode = preWrapMode;
+            PostWrapMode = postWrapMode;
+        }
+
         public static AnimationCurveData Linear(float timeStart, float valueStart, float timeEnd, float valueEnd)
         {
             return new AnimationCurveData
@@ -22,12 +35,6 @@ namespace VRBuilder.Core.Primitives
                     new KeyframeData(timeEnd, valueEnd)
                 }
             };
-        }
-
-        [Obsolete("You have to convert this to your Platform specific AnimationCurve")]
-        public float Evaluate(float time)
-        {
-            throw new NotImplementedException("You have to convert this to your Platform specific AnimationCurve");
         }
     }
 }

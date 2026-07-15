@@ -94,11 +94,10 @@ namespace VRBuilder.Core.Behaviors
                 while (stopWatch.ElapsedMilliseconds < Data.Duration)
                 {
                     float progress = stopWatch.ElapsedMilliseconds / Data.Duration;
-                    float curve = Data.AnimationCurve.Evaluate(progress);
 
                     foreach (IScaleProperty property in Data.Targets.Values)
                     {
-                        property.ScaleTo(Data.TargetScale, curve);
+                        property.ScaleTo(Data.TargetScale, progress, Data.AnimationCurve);
                     }
 
                     yield return null;
@@ -110,7 +109,7 @@ namespace VRBuilder.Core.Behaviors
             {
                 foreach (var property in Data.Targets.Values)
                 {
-                    property.ScaleTo(Data.TargetScale, 1f);
+                    property.ScaleTo(Data.TargetScale, 1f, null);
                 }
 
                 stopWatch.Stop();

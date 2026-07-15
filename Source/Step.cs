@@ -7,7 +7,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using UnityEngine;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Configuration.Modes;
@@ -17,8 +16,8 @@ using VRBuilder.Core.EntityOwners.ParallelEntityCollection;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.SceneObjects;
-using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Core.Utils;
+using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Unity;
 
 namespace VRBuilder.Core

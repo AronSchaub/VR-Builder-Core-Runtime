@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using VRBuilder.Core.Exceptions;
 using VRBuilder.Core.Utils;
 

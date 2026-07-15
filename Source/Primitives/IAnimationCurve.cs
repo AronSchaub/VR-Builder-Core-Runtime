@@ -5,6 +5,8 @@ namespace VRBuilder.Core.Primitives
 {
     public interface IAnimationCurve
     {
-        float Evaluate(float time);
+        KeyframeData[] Keyframes { get; set; }
+        int PreWrapMode { get; set; }
+        int PostWrapMode { get; set; }
     }
 }

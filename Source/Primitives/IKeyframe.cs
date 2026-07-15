@@ -9,5 +9,6 @@ namespace VRBuilder.Core.Primitives
         float Value { get; }
         float InTangent { get; }
         float OutTangent { get; }
+        int WeightedMode { get; set; }
     }
 }

@@ -20,12 +20,16 @@ namespace VRBuilder.Core.Primitives
         [DataMember]
         public float OutTangent { readonly get; set; }
 
-        public KeyframeData(float time, float value, float inTangent = 0f, float outTangent = 0f)
+        [DataMember]
+        public int WeightedMode { readonly get; set; }
+
+        public KeyframeData(float time, float value, float inTangent = 0f, float outTangent = 0f, int weightedMode = 0)
         {
             Time = time;
             Value = value;
             InTangent = inTangent;
             OutTangent = outTangent;
+            WeightedMode = weightedMode;
         }
     }
 }
