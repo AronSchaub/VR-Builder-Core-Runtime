@@ -26,19 +26,12 @@ namespace VRBuilder.Core.Primitives
         /// <summary>
         /// Creates a new ColorData from float components (0..1 range).
         /// </summary>
-        public ColorData(float r, float g, float b, float a)
+        public ColorData(float r, float g, float b, float a = 1f)
         {
             R = r;
             G = g;
             B = b;
             A = a;
-        }
-
-        /// <summary>
-        /// Creates a new ColorData from float components with alpha = 1.
-        /// </summary>
-        public ColorData(float r, float g, float b) : this(r, g, b, 1f)
-        {
         }
 
         public bool Equals(ColorData other)
