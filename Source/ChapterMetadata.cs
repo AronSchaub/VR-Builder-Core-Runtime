@@ -4,7 +4,7 @@
 
 using System;
 using System.Runtime.Serialization;
-using UnityEngine;
+using VRBuilder.Core.Primitives;
 
 namespace VRBuilder.Core
 {
@@ -24,7 +24,7 @@ namespace VRBuilder.Core
         /// Reference to the entry node's position in the Workflow window.
         /// </summary>
         [DataMember]
-        public Vector2 EntryNodePosition { get; set; }
+        public IVector2 EntryNodePosition { get; set; }
 
         /// <summary>
         /// Unique identifier for chapter.

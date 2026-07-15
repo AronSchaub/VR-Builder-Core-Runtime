@@ -2,8 +2,8 @@
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
 
-using System;
-using UnityEngine;
+using System; 
+using VRBuilder.Core.Primitives;
 using VRBuilder.Core.Utils;
 
 namespace VRBuilder.Core.Entities.Factories
@@ -16,7 +16,7 @@ namespace VRBuilder.Core.Entities.Factories
         /// <summary>
         /// Creates a new <see cref="IStep"/> with given <paramref name="name"/>, <paramref name="position"/> and, if there is any valid <see cref="PostProcessEntity{T}"/>, executes corresponding post processing.
         /// </summary>
-        public static IStep CreateStep(string name, Vector2 position = default, string stepType = "default")
+        public static IStep CreateStep(string name, IVector2 position = default, string stepType = "default")
         {
             IStep step = StepFactory.Instance.Create(name);
             step.StepMetadata.Position = position;
