@@ -1,5 +1,5 @@
 using System.Runtime.Serialization;
-using UnityEngine;
+using VRBuilder.Core.Primitives;
 
 namespace VRBuilder.Core
 {
@@ -10,12 +10,12 @@ namespace VRBuilder.Core
     public class ViewTransform
     {
         [DataMember]
-        public Vector3 Position { get; set; }
+        public IVector3 Position { get; set; }
 
         [DataMember]
-        public Vector3 Scale { get; set; }
+        public IVector3 Scale { get; set; }
 
-        public ViewTransform(Vector3 position, Vector3 scale)
+        public ViewTransform(IVector3 position, IVector3 scale)
         {
             Position = position;
             Scale = scale;

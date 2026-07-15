@@ -19,6 +19,9 @@ namespace VRBuilder.Core.Configuration
     /// </summary>
     public sealed class RuntimeConfigurator : MonoBehaviour
     {
+        // TODO replace with AssemblyQualifiedName or actual lookup or similar again, when we progress further in refactoring
+        private const string RuntimeConfigurationName = "VRBuilder.Core.Configuration.DefaultRuntimeConfiguration, VRBuilder.Unity";
+        
         /// <summary>
         /// The event that fires when a process mode or runtime configuration changes.
         /// </summary>
@@ -36,7 +39,7 @@ namespace VRBuilder.Core.Configuration
         /// This field is filled by <see cref="RuntimeConfiguratorEditor"/>
         /// </remarks>
         [SerializeField]
-        private string runtimeConfigurationName = typeof(DefaultRuntimeConfiguration).AssemblyQualifiedName;
+        private string runtimeConfigurationName = RuntimeConfigurationName; //was: typeof(DefaultRuntimeConfiguration).AssemblyQualifiedName;
 
         /// <summary>
         /// Process name which is selected.
@@ -169,8 +172,8 @@ namespace VRBuilder.Core.Configuration
 
                 if (type == null)
                 {
-                    ForwardingLogger.LogError($"IRuntimeConfiguration type '{Instance?.runtimeConfigurationName}' cannot be found. Using '{typeof(DefaultRuntimeConfiguration).AssemblyQualifiedName}' instead.");
-                    type = typeof(DefaultRuntimeConfiguration);
+                    ForwardingLogger.LogError($"IRuntimeConfiguration type '{Instance?.runtimeConfigurationName}' cannot be found. Using '{RuntimeConfigurationName}' instead.");
+                    type = Type.GetType(RuntimeConfigurationName);
                 }
 
                 Configuration = (BaseRuntimeConfiguration)ReflectionUtils.CreateInstanceOfType(type);
