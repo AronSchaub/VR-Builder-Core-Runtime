@@ -4,7 +4,7 @@
 
 using System.Runtime.Serialization;
 using VRBuilder.Core.Utils.Logging;
-using VRBuilder.Unity;
+using VRBuilder.Utils;
 
 namespace VRBuilder.Core.Behaviors
 {

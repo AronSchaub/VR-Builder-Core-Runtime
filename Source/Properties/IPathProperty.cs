@@ -1,4 +1,3 @@
-using UnityEngine;
 using VRBuilder.Core.Primitives;
 
 namespace VRBuilder.Core.Properties
