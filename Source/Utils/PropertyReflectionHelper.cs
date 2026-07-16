@@ -74,7 +74,7 @@ namespace VRBuilder.Core.Utils
                     return;
                 }
 
-                IEnumerable<Type> refs = ExtractFittingPropertyType<LockableProperty>(reference.GetReferenceType());
+                IEnumerable<Type> refs = ExtractFittingPropertyType<ILockableProperty>(reference.GetReferenceType());
 
                 foreach (ISceneObject sceneObject in sceneObjects)
                 {
@@ -84,13 +84,12 @@ namespace VRBuilder.Core.Utils
                         IEnumerable<Type> types = new[] { refType };
                         if (checkRequiredComponentsToo)
                         {
-                            types = GetDependenciesFrom<LockableProperty>(refType);
+                            types = GetDependenciesFrom<ILockableProperty>(refType);
                         }
 
                         foreach (Type type in types)
                         {
-                            LockableProperty property = sceneObject.Properties.FirstOrDefault(property => property.GetType() == type) as LockableProperty;
-                            if (property != null)
+                            if (sceneObject.Properties.FirstOrDefault(property => property.GetType() == type) is ILockableProperty property)
                             {
                                 result.Add(new LockablePropertyData(property));
                             }

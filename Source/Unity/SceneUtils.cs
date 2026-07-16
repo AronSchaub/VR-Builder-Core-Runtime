@@ -39,7 +39,7 @@ namespace VRBuilder.Unity
         /// </summary>
         public static IEnumerable<GameObject> GetActiveAndInactiveGameObjects()
         {
-            return Resources.FindObjectsOfTypeAll<GameObject>().Where(gameObject => gameObject != null && gameObject.Equals(null) == false && gameObject.scene.IsValid() && SceneManager.GetActiveScene() == gameObject.scene);
+            return Resources.FindObjectsOfTypeAll<GameObject>().Where(gameObject => gameObject != null && !gameObject.Equals(null) && gameObject.scene.IsValid() && SceneManager.GetActiveScene() == gameObject.scene);
         }
 
         /// <summary>
@@ -82,12 +82,9 @@ namespace VRBuilder.Unity
         /// <returns>True, if scripts are missing.</returns>
         public static bool ContainsMissingScripts(GameObject gameObject)
         {
-            foreach (Component component in gameObject.GetComponents<Component>())
+            if (gameObject.GetComponents<Component>().Any(component => component == null))
             {
-                if (component == null)
-                {
-                    return true;
-                }
+                return true;
             }
 
             for (int i = 0; i < gameObject.transform.childCount; i++)

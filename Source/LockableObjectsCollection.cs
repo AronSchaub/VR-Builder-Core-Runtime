@@ -89,7 +89,7 @@ namespace VRBuilder.Core
             }
         }
 
-        public bool IsInManualUnlockList(LockableProperty property)
+        public bool IsInManualUnlockList(ILockableProperty property)
         {
             foreach (LockablePropertyReference lockableProperty in data.ToUnlock)
             {
@@ -107,7 +107,7 @@ namespace VRBuilder.Core
             return toUnlock.Any(propertyData => propertyData.Property.SceneObject == sceneObject);
         }
 
-        public bool IsInAutoUnlockList(LockableProperty property)
+        public bool IsInAutoUnlockList(ILockableProperty property)
         {
             foreach (LockablePropertyData lockableProperty in toUnlock)
             {
@@ -120,12 +120,12 @@ namespace VRBuilder.Core
             return false;
         }
 
-        public void Remove(LockableProperty property)
+        public void Remove(ILockableProperty property)
         {
             data.ToUnlock = data.ToUnlock.Where(reference => reference.GetProperty() != property).ToList();
         }
 
-        public void Add(LockableProperty property)
+        public void Add(ILockableProperty property)
         {
             data.ToUnlock = data.ToUnlock.Union(new[] { new LockablePropertyReference(property), }).ToList();
         }
