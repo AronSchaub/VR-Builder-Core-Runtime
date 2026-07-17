@@ -1,12 +1,14 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
-// Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Configuration.Modes;
+using VRBuilder.Core.ProcessRunning;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.Utils;
@@ -112,12 +114,12 @@ namespace VRBuilder.Core.RestrictiveEnvironment
                 return completedTransition.Data.TargetStep.Data;
             }
 
-            if (ProcessRunner.IsRunning == false)
+            if (!ProcessRunnerLocator.IsRegistered || !ProcessRunnerLocator.Current.IsRunning)
             {
                 return null;
             }
 
-            IProcessData process = ProcessRunner.Current.Data;
+            IProcessData process = ProcessRunnerLocator.Current.CurrentProcess.Data;
             // Test all chapters, but the last.
             for (int i = 0; i < process.Chapters.Count - 1; i++)
             {

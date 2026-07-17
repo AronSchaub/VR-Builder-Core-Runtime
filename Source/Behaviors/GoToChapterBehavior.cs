@@ -1,11 +1,15 @@
-using Newtonsoft.Json;
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using System;
 using System.Collections;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using VRBuilder.Core.Attributes;
+using VRBuilder.Core.ProcessRunning;
 #if UNITY_6000_0_OR_NEWER
 using System.Linq;
 #endif
-using System.Runtime.Serialization;
-using VRBuilder.Core.Attributes;
 
 namespace VRBuilder.Core.Behaviors
 {
@@ -58,14 +62,15 @@ namespace VRBuilder.Core.Behaviors
                 }
 
 #if UNITY_6000_0_OR_NEWER
-                IChapter chapter = ProcessRunner.Current.Data.Chapters.FirstOrDefault(chapter => chapter.ChapterMetadata.Guid == Data.ChapterGuid);
+                var processRunner = ProcessRunnerLocator.Current;
+                IChapter chapter = processRunner.CurrentProcess.Data.Chapters.FirstOrDefault(chapter => chapter.ChapterMetadata.Guid == Data.ChapterGuid);
 
                 if (chapter != null)
                 {
-                    ProcessRunner.SetNextChapter(chapter);
+                    processRunner.SetNextChapter(chapter);
                 }
 
-                ProcessRunner.Current.Data.Current?.LifeCycle.Abort();
+                processRunner.CurrentProcess.Data.Current?.LifeCycle.Abort();
 #endif
             }
 

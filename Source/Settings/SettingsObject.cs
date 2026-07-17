@@ -1,6 +1,7 @@
+#if UNITY_6000_0_OR_NEWER
 // Copyright (c) 2013-2019 Innoactive GmbH
-// Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// SPDX-License-Identifier: Apache-2.0
 
 using System.IO;
 #if UNITY_EDITOR
@@ -92,3 +93,96 @@ namespace VRBuilder.Core.Settings
         }
     }
 }
+#elif GODOT
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier:LGPL-3.0-or-later
+
+using Godot;
+
+namespace VRBuilder.Core.Settings //TinkerFlow.Core.Settings
+{
+    /// <summary>
+    /// Godot 4 C# equivalent of the Unity ScriptableObject-based SettingsObject.
+    /// Stores settings in ProjectSettings (project.godot) instead of Resources/AssetDatabase.
+    /// </summary>
+    /// <typeparam name="T">The concrete settings class (must have a parameterless constructor).</typeparam>
+    public abstract class SettingsObject<T> where T : SettingsObject<T>, new()
+    {
+        private static T _instance;
+
+        /// <summary>
+        /// Singleton instance. Initializes defaults on first access.
+        /// </summary>
+        public static T Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new T();
+                    _instance.RegisterDefaults();
+                }
+                return _instance;
+            }
+        }
+
+        /// <summary>
+        /// The ProjectSettings path prefix for this settings group.
+        /// Example: "addons/process_engine"
+        /// </summary>
+        protected abstract string SettingsPrefix { get; }
+
+        /// <summary>
+        /// Override to call Define() for each setting with its default value.
+        /// Called once on first singleton access.
+        /// </summary>
+        protected virtual void RegisterDefaults() { }
+
+        /// <summary>
+        /// Define a setting with a default and register its initial value.
+        /// If the setting doesn't exist in project.godot yet, it is created.
+        /// SetInitialValue ensures the "Reset" button in Project Settings UI works.
+        /// </summary>
+        protected void Define<[MustBeVariant] TValue>(string key, TValue defaultValue)
+        {
+            string path = $"{SettingsPrefix}/{key}";
+
+            if (!ProjectSettings.HasSetting(path))
+            {
+                ProjectSettings.SetSetting(path, Variant.From(defaultValue));
+            }
+
+            ProjectSettings.SetInitialValue(path, Variant.From(defaultValue));
+        }
+
+        /// <summary>
+        /// Get a setting value. Falls back to <paramref name="defaultValue"/> if not set.
+        /// </summary>
+        protected TValue Get<[MustBeVariant] TValue>(string key, TValue defaultValue = default) 
+        {
+            string path = $"{SettingsPrefix}/{key}";
+            Variant result = ProjectSettings.GetSetting(path, Variant.From(defaultValue));
+            return result.As<TValue>();
+        }
+
+        /// <summary>
+        /// Set a setting value and persist it to project.godot.
+        /// </summary>
+        protected void Set<[MustBeVariant] TValue>(string key, TValue value)
+        {
+            string path = $"{SettingsPrefix}/{key}";
+            ProjectSettings.SetSetting(path, Variant.From(value));
+        }
+
+        /// <summary>
+        /// Persist all ProjectSettings to project.godot.
+        /// Only works in the editor (ProjectSettings are baked into exported binaries).
+        /// For runtime persistence in exported builds, use a ConfigFile at user:// instead.
+        /// </summary>
+        public void Save()
+        {
+            ProjectSettings.Save();
+        }
+    }
+}
+#endif
