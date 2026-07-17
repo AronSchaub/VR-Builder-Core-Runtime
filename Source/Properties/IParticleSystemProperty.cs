@@ -1,5 +1,4 @@
 using System;
-using UnityEngine.Events;
 
 namespace VRBuilder.Core.Properties
 {
@@ -11,12 +10,12 @@ namespace VRBuilder.Core.Properties
         /// <summary>
         /// Called when the system starts emitting particles.
         /// </summary>
-        UnityEvent<ParticleSystemPropertyEventArgs> StartedEmission { get; }
+        event Action<ParticleSystemPropertyEventArgs> StartedEmission;
 
         /// <summary>
         /// Called when the system stops emitting particles.
         /// </summary>
-        UnityEvent<ParticleSystemPropertyEventArgs> StoppedEmission { get; }
+        event Action<ParticleSystemPropertyEventArgs> StoppedEmission;
 
         /// <summary>
         /// True if the system is emitting particles.

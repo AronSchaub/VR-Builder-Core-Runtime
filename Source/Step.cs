@@ -19,6 +19,7 @@ using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.Utils;
 using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Unity;
+using VRBuilder.Utils;
 
 namespace VRBuilder.Core
 {
@@ -122,7 +123,7 @@ namespace VRBuilder.Core
                 {
                     foreach (ISceneObject sceneObject in RuntimeConfigurator.Configuration.SceneObjectRegistry.GetObjects(tag))
                     {
-                        toUnlock = toUnlock.Union(sceneObject.Properties.Where(property => Data.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as LockableProperty))).ToList();
+                        toUnlock = toUnlock.Union(sceneObject.Properties.Where(property => Data.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as ILockableProperty))).ToList();
                     }
                 }
             }
@@ -162,7 +163,7 @@ namespace VRBuilder.Core
                 {
                     foreach (ISceneObject sceneObject in RuntimeConfigurator.Configuration.SceneObjectRegistry.GetObjects(tag))
                     {
-                        toUnlock = toUnlock.Union(sceneObject.Properties.Where(property => Data.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as LockableProperty))).ToList();
+                        toUnlock = toUnlock.Union(sceneObject.Properties.Where(property => Data.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as ILockableProperty))).ToList();
                     }
                 }
             }
@@ -235,7 +236,7 @@ namespace VRBuilder.Core
                 {
                     foreach (ISceneObject sceneObject in RuntimeConfigurator.Configuration.SceneObjectRegistry.GetObjects(tag))
                     {
-                        lockableProperties = lockableProperties.Union(sceneObject.Properties.Where(property => Data.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as LockableProperty))).ToList();
+                        lockableProperties = lockableProperties.Union(sceneObject.Properties.Where(property => Data.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as ILockableProperty))).ToList();
                     }
                 }
             }

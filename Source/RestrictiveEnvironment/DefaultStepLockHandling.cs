@@ -60,7 +60,7 @@ namespace VRBuilder.Core.RestrictiveEnvironment
                     {
                         foreach (ISceneObject sceneObject in RuntimeConfigurator.Configuration.SceneObjectRegistry.GetObjects(tag))
                         {
-                            toUnlock = toUnlock.Union(sceneObject.Properties.Where(property => lockableStepData.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as LockableProperty))).ToList();
+                            toUnlock = toUnlock.Union(sceneObject.Properties.Where(property => lockableStepData.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as ILockableProperty))).ToList();
                         }
                     }
 
@@ -155,7 +155,7 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         {
             if (lockOnProcessStart)
             {
-                foreach (LockableProperty prop in SceneUtils.GetActiveAndInactiveComponents<LockableProperty>())
+                foreach (ILockableProperty prop in SceneUtils.GetActiveAndInactiveComponents<ILockableProperty>())
                 {
                     if(prop.InheritSceneObjectLockState && !prop.IsAlwaysUnlocked)
                     {
@@ -170,7 +170,7 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         {
             if (lockOnProcessFinished)
             {
-                foreach (LockableProperty prop in SceneUtils.GetActiveAndInactiveComponents<LockableProperty>())
+                foreach (ILockableProperty prop in SceneUtils.GetActiveAndInactiveComponents<ILockableProperty>())
                 {
                     if(prop.InheritSceneObjectLockState && !prop.IsAlwaysUnlocked)
                     {

@@ -4,7 +4,7 @@
 
 namespace VRBuilder.Utils
 {
-    internal static class ConsoleUtils
+    public static class ConsoleUtils
     {
         private const string tab = "    ";
 

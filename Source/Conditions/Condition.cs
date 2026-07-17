@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.Utils;
 using VRBuilder.Core.Utils.Logging;
-using VRBuilder.Unity;
+using VRBuilder.Utils;
 
 namespace VRBuilder.Core.Conditions
 {

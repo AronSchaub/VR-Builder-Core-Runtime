@@ -21,7 +21,7 @@ namespace VRBuilder.Core.Utils
         // Start is called before the first frame update
         private void Start()
         {
-            foreach(LockableProperty lockable in SceneUtils.GetActiveAndInactiveComponents<LockableProperty>())
+            foreach(ILockableProperty lockable in SceneUtils.GetActiveAndInactiveComponents<ILockableProperty>())
             {
                 if(lockable.InheritSceneObjectLockState && !lockable.IsAlwaysUnlocked)
                 {

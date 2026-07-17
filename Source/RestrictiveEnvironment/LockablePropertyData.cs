@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
 
+using VRBuilder.Core.Behaviors;
 using VRBuilder.Core.Properties;
 
 namespace VRBuilder.Core.RestrictiveEnvironment
@@ -14,16 +15,16 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         /// <summary>
         /// Target lockable property.
         /// </summary>
-        public readonly LockableProperty Property;
+        public readonly ILockableProperty Property;
 
         /// <summary>
         /// If true the property is locked in the end of a step.
         /// </summary>
         public bool EndStepLocked = true;
 
-        public LockablePropertyData(LockableProperty property) : this(property, property.EndStepLocked) { }
+        public LockablePropertyData(ILockableProperty property) : this(property, property.EndStepLocked) { }
 
-        public LockablePropertyData(LockableProperty property, bool endStepLocked)
+        public LockablePropertyData(ILockableProperty property, bool endStepLocked)
         {
             EndStepLocked = endStepLocked;
             Property = property;
