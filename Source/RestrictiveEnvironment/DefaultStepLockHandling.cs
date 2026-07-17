@@ -155,7 +155,7 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         {
             if (lockOnProcessStart)
             {
-                foreach (ILockableProperty prop in SceneUtils.GetActiveAndInactiveComponents<ILockableProperty>())
+                foreach (ILockableProperty prop in RuntimeConfigurator.Configuration.SceneObjectRegistry.GetAllProperties<ILockableProperty>())
                 {
                     if(prop.InheritSceneObjectLockState && !prop.IsAlwaysUnlocked)
                     {
@@ -170,7 +170,7 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         {
             if (lockOnProcessFinished)
             {
-                foreach (ILockableProperty prop in SceneUtils.GetActiveAndInactiveComponents<ILockableProperty>())
+                foreach (ILockableProperty prop in RuntimeConfigurator.Configuration.SceneObjectRegistry.GetAllProperties<ILockableProperty>())
                 {
                     if(prop.InheritSceneObjectLockState && !prop.IsAlwaysUnlocked)
                     {

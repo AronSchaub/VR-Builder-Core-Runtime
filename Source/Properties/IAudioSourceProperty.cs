@@ -21,6 +21,6 @@ namespace VRBuilder.Core.Properties
         /// <summary>
         /// Get the selected audio player.
         /// </summary>
-        public IAudioPlayer AudioPlayer { get; }
+        public IAudioData AudioPlayer { get; }
     }
 }

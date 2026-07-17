@@ -120,6 +120,14 @@ namespace VRBuilder.Core.SceneObjects
                 .Where(so => so.CheckHasProperty<T>())
                 .Select(so => so.GetProperty<T>());
         }
+        
+        /// <inheritdoc/>
+        public IEnumerable<T> GetAllProperties<T>() where T : ISceneObjectProperty
+        {
+            return registeredObjects.Keys
+                .SelectMany(GetProperties<T>)
+                .Distinct();
+        }
 
         /// <inheritdoc/>
         public void Register(ISceneObject obj)

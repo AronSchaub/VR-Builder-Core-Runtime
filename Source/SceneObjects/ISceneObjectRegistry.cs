@@ -31,6 +31,11 @@ namespace VRBuilder.Core.SceneObjects
         IEnumerable<T> GetProperties<T>(Guid guid) where T : ISceneObjectProperty;
 
         /// <summary>
+        /// Returns all registered properties of the specified type across all registered scene objects.
+        /// </summary>
+        IEnumerable<T> GetAllProperties<T>() where T : ISceneObjectProperty;
+        
+        /// <summary>
         /// Registers an SceneObject in the registry. If there is an SceneObject with the same name
         /// already registered, an NameNotUniqueException will be thrown. Also if the Guid
         /// is already known an SceneObjectAlreadyRegisteredException will be thrown.
@@ -51,5 +56,6 @@ namespace VRBuilder.Core.SceneObjects
         /// Updates the registry by removing all <see cref="ISceneObject"/> which are not in the scene anymore and adding new ones.
         /// </summary>
         void Refresh();
+
     }
 }

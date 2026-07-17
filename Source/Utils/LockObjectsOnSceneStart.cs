@@ -6,6 +6,7 @@ using System.Linq;
 using VRBuilder.Core.Properties;
 using VRBuilder.Unity;
 using UnityEngine;
+using VRBuilder.Core.Configuration;
 
 namespace VRBuilder.Core.Utils
 {
@@ -21,7 +22,7 @@ namespace VRBuilder.Core.Utils
         // Start is called before the first frame update
         private void Start()
         {
-            foreach(ILockableProperty lockable in SceneUtils.GetActiveAndInactiveComponents<ILockableProperty>())
+            foreach(ILockableProperty lockable in RuntimeConfigurator.Configuration.SceneObjectRegistry.GetAllProperties<ILockableProperty>())
             {
                 if(lockable.InheritSceneObjectLockState && !lockable.IsAlwaysUnlocked)
                 {
