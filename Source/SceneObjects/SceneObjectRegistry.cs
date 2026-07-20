@@ -4,10 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.Settings;
-using VRBuilder.Unity;
 
 namespace VRBuilder.Core.SceneObjects
 {
@@ -15,7 +13,7 @@ namespace VRBuilder.Core.SceneObjects
     /// Implementation of <see cref="ISceneObjectRegistry"/> that handles <see cref="ISceneObject"/>s with one
     /// or more GUID associated to them. The GUIDs don't have to be unique and can represent a group of objects.
     /// </summary>
-    public class GuidBasedSceneObjectRegistry : ISceneObjectRegistry
+    public class SceneObjectRegistry : ISceneObjectRegistry
     {
         protected readonly Dictionary<Guid, List<ISceneObject>> registeredObjects = new Dictionary<Guid, List<ISceneObject>>();
 
@@ -24,18 +22,20 @@ namespace VRBuilder.Core.SceneObjects
 
         private bool suppressChangeNotification;
 
+        private ISceneObjectRegistryConfiguration configuration;
+
+        /// <summary>
+        /// Flag to track if there are any dirty scene objects that need registry refresh.
+        /// </summary>
+        /// <remarks>
+        /// Tracks state swishes of prefabs between edit mode and the main scene.
+        /// </remarks>
+        private bool hasDirtySceneObjects = false;
+
         public IEnumerable<Guid> RegisteredGuids => registeredObjects.Keys;
 
         /// <inheritdoc/>
-        public ISceneObject this[string name] => GetByName(name);
-
-        /// <inheritdoc/>
         public ISceneObject this[Guid guid] => GetByGuid(guid);
-
-        public GuidBasedSceneObjectRegistry()
-        {
-            RegisterAll();
-        }
 
         /// <inheritdoc/>
         public bool ContainsGuid(Guid guid)
@@ -44,40 +44,9 @@ namespace VRBuilder.Core.SceneObjects
         }
 
         /// <inheritdoc/>
-        public bool ContainsName(string guidString)
-        {
-            Guid guid;
-
-            if (Guid.TryParse(guidString, out guid))
-            {
-                return ContainsGuid(guid);
-            }
-
-            return false;
-        }
-
-        /// <inheritdoc/>
         public ISceneObject GetByGuid(Guid guid)
         {
-            if (registeredObjects.ContainsKey(guid))
-            {
-                return registeredObjects[guid].FirstOrDefault();
-            }
-
-            return null;
-        }
-
-        /// <inheritdoc/>
-        public ISceneObject GetByName(string name)
-        {
-            Guid guid;
-
-            if (Guid.TryParse(name, out guid))
-            {
-                return GetByGuid(guid);
-            }
-
-            return null;
+            return registeredObjects.TryGetValue(guid, out var o) ? o.FirstOrDefault() : null;
         }
 
         /// <inheritdoc/>
@@ -97,9 +66,9 @@ namespace VRBuilder.Core.SceneObjects
                     // This happens if we remove a SceneObject from component where no registry is available
                     // e.g.: From a prefab in prefab edit mode
                     ForwardingLogger.LogError($"Null objects found in scene object registry for with Guid {key}: " +
-                        $"{registeredObjects[guid].Where(obj => obj.Equals(null)).Count()} object. " +
-                        $"Most likely you removed a process scene object from a prefab in prefab edit mode. " +
-                        $"Removing the reference it from the registry.");
+                                              $"{registeredObjects[guid].Count(obj => obj.Equals(null))} object. " +
+                                              $"Most likely you removed a process scene object from a prefab in prefab edit mode. " +
+                                              $"Removing the reference it from the registry.");
 
                     registeredObjects.Remove(guid);
                     return new List<ISceneObject>();
@@ -120,7 +89,7 @@ namespace VRBuilder.Core.SceneObjects
                 .Where(so => so.CheckHasProperty<T>())
                 .Select(so => so.GetProperty<T>());
         }
-        
+
         /// <inheritdoc/>
         public IEnumerable<T> GetAllProperties<T>() where T : ISceneObjectProperty
         {
@@ -141,20 +110,9 @@ namespace VRBuilder.Core.SceneObjects
             {
                 obj.SetObjectId(Guid.NewGuid());
 
-                ForwardingLogger.LogWarning($"Found a duplicate in the registry for {obj.GameObject.name}. A new object ID has been assigned.");
+                ForwardingLogger.LogWarning($"Found a duplicate in the registry for {obj}. A new object ID has been assigned.");
 
-#if UNITY_EDITOR
-                UnityEditor.EditorUtility.SetDirty(obj.GameObject);
-
-                if (UnityEditor.PrefabUtility.IsPartOfPrefabInstance(obj.GameObject))
-                {
-                    var prefabInstance = UnityEditor.PrefabUtility.GetOutermostPrefabInstanceRoot(obj.GameObject);
-                    if (prefabInstance != null)
-                    {
-                        UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(prefabInstance);
-                    }
-                }
-#endif
+                configuration?.EditorPrefabHandler.OnDuplicateGuidDetected(obj);
             }
 
             foreach (Guid guid in GetAllGuids(obj))
@@ -165,6 +123,8 @@ namespace VRBuilder.Core.SceneObjects
             obj.GuidAdded += OnGuidAdded;
             obj.GuidRemoved += OnGuidRemoved;
 
+            RefreshIfDirty();
+
             if (suppressChangeNotification == false)
             {
                 NotifyChanged();
@@ -173,17 +133,12 @@ namespace VRBuilder.Core.SceneObjects
 
         private bool HasDuplicateGuid(ISceneObject obj)
         {
-            if (ContainsGuid(obj.Guid) == false)
-            {
-                return false;
-            }
+            if (!ContainsGuid(obj.Guid)) return false;
+            var identity = configuration?.SceneObjectIdentity;
+            if (identity == null) return true;
 
-            IEnumerable<ISceneObject> sceneObjects = GetObjects(obj.Guid);
-#if UNITY_6000_5_OR_NEWER
-            return sceneObjects.Select(so => so.GameObject.GetEntityId()).Contains(obj.GameObject.GetEntityId()) == false;
-#else
-            return sceneObjects.Select(so => so.GameObject.GetInstanceID()).Contains(obj.GameObject.GetInstanceID()) == false;
-#endif
+            var objId = identity.GetIdentity(obj);
+            return GetObjects(obj.Guid).Any(existing => identity.GetIdentity(existing) != objId);
         }
 
         private void RegisterGuid(ISceneObject sceneObject, Guid guid)
@@ -214,7 +169,7 @@ namespace VRBuilder.Core.SceneObjects
                 registeredObjects[args.Guid].Remove((ISceneObject)sender);
 
 
-                if (registeredObjects[args.Guid].Count() == 0)
+                if (!registeredObjects[args.Guid].Any())
                 {
                     registeredObjects.Remove(args.Guid);
                 }
@@ -229,10 +184,10 @@ namespace VRBuilder.Core.SceneObjects
             suppressChangeNotification = true;
             try
             {
-                foreach (ProcessSceneObject processObject in SceneUtils.GetActiveAndInactiveComponents<ProcessSceneObject>())
-                {
+                var finder = configuration?.SceneObjectFinder;
+                if (finder == null) return;
+                foreach (var processObject in finder.FindAllSceneObjects<ISceneObject>())
                     Register(processObject);
-                }
             }
             finally
             {
@@ -289,12 +244,14 @@ namespace VRBuilder.Core.SceneObjects
                 {
                     wasUnregistered &= registeredObjects[guid].Remove(obj);
 
-                    if (registeredObjects[guid].Count() == 0)
+                    if (!registeredObjects[guid].Any())
                     {
                         registeredObjects.Remove(guid);
                     }
                 }
             }
+
+            RefreshIfDirty();
 
             NotifyChanged();
             return wasUnregistered;
@@ -307,7 +264,42 @@ namespace VRBuilder.Core.SceneObjects
 
         private IEnumerable<Guid> GetAllGuids(ISceneObject obj)
         {
-            return new List<Guid>() { obj.Guid }.Concat(obj.Guids);
+            return new HashSet<Guid> { obj.Guid }.Concat(obj.Guids);
+        }
+
+        public void SetConfiguration(object configuration)
+        {
+            if (configuration is ISceneObjectRegistryConfiguration config)
+                this.configuration = config;
+        }
+
+        public void Initialize()
+        {
+            RegisterAll();
+        }
+
+        /// <summary>
+        /// Marks a scene object's prefab as dirty, indicating that the registry needs refreshing.
+        /// </summary>
+        /// <param name="sceneObject">The scene object to mark as dirty (currently not used).</param>
+        /// <remarks>
+        /// This currently triggers a full refresh of the SceneObjectRegistry
+        /// </remarks>
+        public void MarkSceneObjectDirty(ISceneObject sceneObject)
+        {
+            hasDirtySceneObjects = true;
+        }
+
+        /// <summary>
+        /// Refreshes the scene object registry if there are dirty scene objects that need to be updated.
+        /// </summary>
+        public void RefreshIfDirty()
+        {
+            if (hasDirtySceneObjects)
+            {
+                Refresh();
+                hasDirtySceneObjects = false;
+            }
         }
     }
 }

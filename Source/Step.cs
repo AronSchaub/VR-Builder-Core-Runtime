@@ -123,7 +123,7 @@ namespace VRBuilder.Core
 
                 foreach (Guid tag in Data.GroupsToUnlock.Keys)
                 {
-                    foreach (ISceneObject sceneObject in RuntimeConfigurator.Configuration.SceneObjectRegistry.GetObjects(tag))
+                    foreach (ISceneObject sceneObject in SceneObjectRegistryLocator.Current.GetObjects(tag))
                     {
                         toUnlock = toUnlock.Union(sceneObject.Properties.Where(property => Data.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as ILockableProperty))).ToList();
                     }
@@ -163,7 +163,7 @@ namespace VRBuilder.Core
 
                 foreach (Guid tag in Data.GroupsToUnlock.Keys)
                 {
-                    foreach (ISceneObject sceneObject in RuntimeConfigurator.Configuration.SceneObjectRegistry.GetObjects(tag))
+                    foreach (ISceneObject sceneObject in SceneObjectRegistryLocator.Current.GetObjects(tag))
                     {
                         toUnlock = toUnlock.Union(sceneObject.Properties.Where(property => Data.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as ILockableProperty))).ToList();
                     }
@@ -236,7 +236,7 @@ namespace VRBuilder.Core
 
                 foreach (Guid tag in Data.GroupsToUnlock.Keys)
                 {
-                    foreach (ISceneObject sceneObject in RuntimeConfigurator.Configuration.SceneObjectRegistry.GetObjects(tag))
+                    foreach (ISceneObject sceneObject in SceneObjectRegistryLocator.Current.GetObjects(tag))
                     {
                         lockableProperties = lockableProperties.Union(sceneObject.Properties.Where(property => Data.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as ILockableProperty))).ToList();
                     }

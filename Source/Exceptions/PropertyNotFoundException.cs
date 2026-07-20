@@ -10,6 +10,6 @@ namespace VRBuilder.Core.Exceptions
     public class PropertyNotFoundException : ProcessException
     {
         public PropertyNotFoundException(string message) : base(message) { }
-        public PropertyNotFoundException(ISceneObject sourceObject, Type missingType) : base(string.Format("SceneObject '{0}' does not contain a property of type '{1}'", sourceObject.GameObject.name, missingType.Name)) { }
+        public PropertyNotFoundException(ISceneObject sourceObject, Type missingType) : base($"SceneObject '{sourceObject}' does not contain a property of type '{missingType.Name}'") { }
     }
 }

@@ -7,6 +7,7 @@ namespace VRBuilder.Core.StepLocking
     {
         private static IStepLockService? current;
         public static IStepLockService? Current { get; set; }
+        [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, nameof(Current))]
         public static bool IsRegistered => current != null;
     }
 }

@@ -32,22 +32,7 @@ namespace VRBuilder.Core.Configuration
         /// </summary>
         public static string ManifestFileName => "ProcessManifest";
 
-        private ISceneObjectRegistry sceneObjectRegistry = new GuidBasedSceneObjectRegistry();
         private ISceneConfiguration sceneConfiguration;
-
-        /// <inheritdoc />
-        public virtual ISceneObjectRegistry SceneObjectRegistry
-        {
-            get
-            {
-                if (sceneObjectRegistry == null)
-                {
-                    sceneObjectRegistry = new GuidBasedSceneObjectRegistry();
-                }
-
-                return sceneObjectRegistry;
-            }
-        }
 
         /// <inheritdoc />
         public IProcessSerializer Serializer { get; set; } = new NewtonsoftJsonProcessSerializerV4();

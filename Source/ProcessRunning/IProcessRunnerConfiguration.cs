@@ -9,7 +9,7 @@ namespace VRBuilder.Core.ProcessRunning
     /// </summary>
     public interface IProcessRunnerConfiguration
     {
-        string RunnerName { get; }
+        string ServiceTypeName { get; }
         
         /// <summary>
         /// If <c>true</c>, process events are reset when the current scene is unloaded.

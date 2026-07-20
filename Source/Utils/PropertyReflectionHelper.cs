@@ -66,7 +66,7 @@ namespace VRBuilder.Core.Utils
 
                 foreach (Guid guid in reference.Guids)
                 {
-                    sceneObjects = sceneObjects.Concat(RuntimeConfigurator.Configuration.SceneObjectRegistry.GetObjects(guid));
+                    sceneObjects = sceneObjects.Concat(SceneObjectRegistryLocator.Current.GetObjects(guid));
                 }
 
                 if (sceneObjects.Count() == 0)
