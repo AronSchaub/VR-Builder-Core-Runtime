@@ -11,21 +11,29 @@ using VRBuilder.Core.Configuration.Modes;
 using VRBuilder.Core.ProcessRunning;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
+using VRBuilder.Core.StepLocking;
 using VRBuilder.Core.Utils;
-using VRBuilder.Unity;
 
 namespace VRBuilder.Core.RestrictiveEnvironment
 {
     /// <summary>
     /// Restricts interaction with scene objects by using LockableProperties, which are extracted from the <see cref="IStepData"/>.
     /// </summary>
-    public class DefaultStepLockHandling : StepLockHandlingStrategy
+    public class DefaultStepLockHandling : IStepLockService
     {
-        private bool lockOnProcessStart = true;
-        private bool lockOnProcessFinished = true;
+        private IStepLockConfiguration configuration;
+
+        public void SetConfiguration(object configuration)
+        {
+            this.configuration = configuration as IStepLockConfiguration;
+        }
+
+        public void Initialize()
+        {
+        }
 
         /// <inheritdoc />
-        public override void Unlock(IStepData data, IEnumerable<LockablePropertyData> manualUnlocked)
+        public void Unlock(IStepData data, IEnumerable<LockablePropertyData> manualUnlocked)
         {
             IEnumerable<LockablePropertyData> unlockList = PropertyReflectionHelper.ExtractLockablePropertiesFromStep(data);
             unlockList = unlockList.Union(manualUnlocked);
@@ -40,7 +48,7 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         }
 
         /// <inheritdoc />
-        public override void Lock(IStepData data, IEnumerable<LockablePropertyData> manualUnlocked)
+        public void Lock(IStepData data, IEnumerable<LockablePropertyData> manualUnlocked)
         {
             // All properties which should be locked
             IEnumerable<LockablePropertyData> lockList = PropertyReflectionHelper.ExtractLockablePropertiesFromStep(data);
@@ -129,35 +137,37 @@ namespace VRBuilder.Core.RestrictiveEnvironment
                     {
                         return process.Chapters[i + 1].Data.FirstStep.Data;
                     }
+
                     break;
                 }
             }
+
             // No next step found, seems to be the last.
             return null;
         }
 
         /// <inheritdoc />
-        public override void Configure(IMode mode)
+        public void Configure(IMode mode)
         {
             if (mode.ContainsParameter<bool>("LockOnProcessStart"))
             {
-                lockOnProcessStart = mode.GetParameter<bool>("LockOnProcessStart");
+                configuration.LockOnProcessStart = mode.GetParameter<bool>("LockOnProcessStart");
             }
 
             if (mode.ContainsParameter<bool>("LockOnProcessFinished"))
             {
-                lockOnProcessFinished = mode.GetParameter<bool>("LockOnProcessFinished");
+                configuration.LockOnProcessFinished = mode.GetParameter<bool>("LockOnProcessFinished");
             }
         }
 
         /// <inheritdoc />
-        public override void OnProcessStarted(IProcess process)
+        public void OnProcessStarted(IProcess process)
         {
-            if (lockOnProcessStart)
+            if (configuration.LockOnProcessStart)
             {
                 foreach (ILockableProperty prop in RuntimeConfigurator.Configuration.SceneObjectRegistry.GetAllProperties<ILockableProperty>())
                 {
-                    if(prop.InheritSceneObjectLockState && !prop.IsAlwaysUnlocked)
+                    if (prop.InheritSceneObjectLockState && !prop.IsAlwaysUnlocked)
                     {
                         prop.SetLocked(true);
                     }
@@ -166,13 +176,13 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         }
 
         /// <inheritdoc />
-        public override void OnProcessFinished(IProcess process)
+        public void OnProcessFinished(IProcess process)
         {
-            if (lockOnProcessFinished)
+            if (configuration.LockOnProcessFinished)
             {
                 foreach (ILockableProperty prop in RuntimeConfigurator.Configuration.SceneObjectRegistry.GetAllProperties<ILockableProperty>())
                 {
-                    if(prop.InheritSceneObjectLockState && !prop.IsAlwaysUnlocked)
+                    if (prop.InheritSceneObjectLockState && !prop.IsAlwaysUnlocked)
                     {
                         prop.SetLocked(true);
                     }

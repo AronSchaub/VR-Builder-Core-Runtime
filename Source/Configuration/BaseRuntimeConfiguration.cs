@@ -14,6 +14,7 @@ using VRBuilder.Core.Properties;
 using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.Serialization;
+using VRBuilder.Core.StepLocking;
 using VRBuilder.Core.Utils;
 using VRBuilder.UI.Console;
 
@@ -105,11 +106,6 @@ namespace VRBuilder.Core.Configuration
         public abstract AudioSource InstructionPlayer { get; }
 
         /// <summary>
-        /// Determines the property locking strategy used for this runtime configuration.
-        /// </summary>
-        public StepLockHandlingStrategy StepLockHandling { get; set; }
-
-        /// <summary>
         /// Returns transform data for all user rigs in the scene.
         /// </summary>
         public abstract IEnumerable<IXRRigTransform> UserTransforms { get; }
@@ -162,15 +158,6 @@ namespace VRBuilder.Core.Configuration
 
                 return sceneConfiguration;
             }
-        }
-
-        protected BaseRuntimeConfiguration() : this(new DefaultStepLockHandling())
-        {
-        }
-
-        protected BaseRuntimeConfiguration(StepLockHandlingStrategy lockHandling)
-        {
-            StepLockHandling = lockHandling;
         }
 
         /// <inheritdoc />
