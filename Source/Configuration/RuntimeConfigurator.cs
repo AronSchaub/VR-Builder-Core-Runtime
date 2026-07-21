@@ -53,8 +53,8 @@ namespace VRBuilder.Core.Configuration
         /// <summary>
         /// String localization table used by the current process.
         /// </summary>
-        [SerializeField]
-        private string processStringLocalizationTable = "";
+        //[SerializeField]
+        //private string processStringLocalizationTable = "";
 
         private BaseRuntimeConfiguration runtimeConfiguration;
 
@@ -266,10 +266,10 @@ namespace VRBuilder.Core.Configuration
         /// Returns the string localization table for the selected process.
         /// </summary>
         /// <returns>The string localization table for the selected process.</returns>
-        public string GetProcessStringLocalizationTable()
-        {
-            return processStringLocalizationTable;
-        }
+        //public string GetProcessStringLocalizationTable()
+        //{
+        //    return processStringLocalizationTable;
+        //}
 
         private void Awake()
         {

@@ -1,7 +1,9 @@
+// Copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: lgpl-3.0-or-later
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace VRBuilder.Core.TextToSpeech
 {
@@ -27,37 +29,22 @@ namespace VRBuilder.Core.TextToSpeech
         /// <summary>
         /// Display name of the profile (e.g., "Marcello", "Markus").
         /// </summary>
-        [SerializeField]
-        private string displayName;
+        public string DisplayName;
 
         /// <summary>
         /// ISO language code (e.g., "de-DE", "en-US").
         /// </summary>
-        [SerializeField]
-        private string[] languageCode;
+        public string[] LanguageCode;
 
         /// <summary>
         /// Mappings from provider names to voice IDs.
         /// </summary>
-        [SerializeField]
-        private List<ProviderVoiceMapping> providerVoiceMappings;
+        public List<ProviderVoiceMapping> providerVoiceMappings;
         
         /// <summary>
         /// Fallback provider if there is no avaibled provider for multiple voices
         /// </summary>
         private string fallbackProviderName;
-
-        public string DisplayName
-        {
-            get => displayName;
-            set => displayName = value;
-        }
-
-        public string[] LanguageCode
-        {
-            get => languageCode;
-            set => languageCode = value;
-        }
 
         public List<ProviderVoiceMapping> ProviderVoiceMappings
         {
@@ -73,16 +60,16 @@ namespace VRBuilder.Core.TextToSpeech
 
         public VoiceProfile()
         {
-            displayName = "New Profile";
-            languageCode = new []{"all"};
+            DisplayName = "New Profile";
+            LanguageCode = new []{"all"};
             providerVoiceMappings = new List<ProviderVoiceMapping>();
         }
 
         public VoiceProfile(string displayName, string[] languageCode, string voiceId, string[] providerNames)
         {
-            this.displayName = displayName;
-            this.languageCode = languageCode;
-            this.providerVoiceMappings = providerNames.Select(p => new ProviderVoiceMapping(p, voiceId)).ToList();
+            DisplayName = displayName;
+            LanguageCode = languageCode;
+            providerVoiceMappings = providerNames.Select(p => new ProviderVoiceMapping(p, voiceId)).ToList();
         }
     }
 }

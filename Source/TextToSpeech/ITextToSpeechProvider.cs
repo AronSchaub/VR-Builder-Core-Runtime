@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Threading.Tasks;
-using UnityEngine.Localization;
 using VRBuilder.Core.Primitives;
 using VRBuilder.Core.TextToSpeech.Configuration;
 using VRBuilder.Core.TextToSpeech.Utils;
@@ -22,9 +21,9 @@ namespace VRBuilder.Core.TextToSpeech.Providers
         /// <summary>
         /// Loads the AudioClip file for the given text.
         /// </summary>
-        /// <param name="requestProperties">Properties containing all information about the text-to-speech audio data.</param>
+        /// <param name="requestFileNameBuilder">Properties containing all information about the text-to-speech audio data.</param>
         /// <returns>ready to play Audioclip</returns>
-        Task<IAudioClip> ConvertTextToSpeech(ITextToSpeechProperties requestProperties);
+        Task<IAudioClip> ConvertTextToSpeech(ITextToSpeechFileNameBuilder requestFileNameBuilder);
 
         /// <summary>
         /// Load config while editor- and runtime
