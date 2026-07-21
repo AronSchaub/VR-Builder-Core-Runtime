@@ -63,9 +63,9 @@ namespace VRBuilder.Core.Behaviors
             }
 
             /// <inheritdoc />
-            public override void Configure(IMode mode, Stage stage)
+            public override void Configure(IModeService modeService, Stage stage)
             {
-                Data.CustomColor.Configure(mode);
+                Data.CustomColor.Configure(modeService);
             }
         }
 

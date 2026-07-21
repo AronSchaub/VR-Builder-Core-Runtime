@@ -43,7 +43,7 @@ namespace VRBuilder.Core
             /// <summary>
             /// Reference to <see cref="IBehavior"/>'s current mode.
             /// </summary>
-            public IMode Mode { get; set; }
+            public IModeService ModeService { get; set; }
         }
 
         /// <inheritdoc />

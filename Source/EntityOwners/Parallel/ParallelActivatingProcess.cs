@@ -20,7 +20,7 @@ namespace VRBuilder.Core.EntityOwners.ParallelEntityCollection
         /// <inheritdoc />
         public override void Start()
         {
-            foreach (IEntity child in Data.GetChildren().Where(child => Data.Mode.CheckIfSkipped(child.GetType()) == false))
+            foreach (IEntity child in Data.GetChildren().Where(child => Data.ModeService.CheckIfSkipped(child.GetType()) == false))
             {
                 child.LifeCycle.Activate();
             }
@@ -29,7 +29,7 @@ namespace VRBuilder.Core.EntityOwners.ParallelEntityCollection
         /// <inheritdoc />
         public override IEnumerator Update()
         {
-            while (GetBlockingChildren(Data, Data.Mode).Any(child => child.LifeCycle.Stage == Stage.Activating))
+            while (GetBlockingChildren(Data, Data.ModeService).Any(child => child.LifeCycle.Stage == Stage.Activating))
             {
                 yield return null;
             }

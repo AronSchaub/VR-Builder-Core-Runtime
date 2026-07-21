@@ -2,16 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using VRBuilder.Core;
 using VRBuilder.Core.ProcessRunning;
 
 namespace VRBuilder.Core.Localization
 {
 	/// <summary>
-	/// 
+	/// Language service to load current language-based settings from <see cref="LanguageSettings"/>.
 	/// </summary>
 	public interface ILanguageService: IVRBService
 	{
@@ -21,7 +18,7 @@ namespace VRBuilder.Core.Localization
 		string ProcessStringLocalizationTable { get; }
 		
 		/// <summary>
-		/// Gets the active selected or default language. 
+		/// Gets the active selected or default language.
 		/// </summary>
 		CultureInfo ActiveOrDefaultLocale { get; set; }
 		

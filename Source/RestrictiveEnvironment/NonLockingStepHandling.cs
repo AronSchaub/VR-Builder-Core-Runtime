@@ -26,7 +26,7 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         {
         }
 
-        public void Configure(IMode mode)
+        public void Configure(IModeService modeService)
         {
         }
 

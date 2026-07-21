@@ -16,13 +16,13 @@ namespace VRBuilder.Core.EntityOwners.ParallelEntityCollection
     internal abstract class Process<TData> : Core.StageProcess<TData> where TData : class, IEntityCollectionData, IModeData
     {
         /// <summary>
-        /// Takes a <paramref name="collection"/> of entities and filters out the ones that must be skipped due to <paramref name="mode"/>
+        /// Takes a <paramref name="collection"/> of entities and filters out the ones that must be skipped due to <paramref name="modeService"/>
         /// or contains a <seealso cref="IBackgroundBehaviorData"/> with `IsBlocking` set to false.
         /// </summary>
-        protected IEnumerable<IEntity> GetBlockingChildren(IEntityCollectionData collection, IMode mode)
+        protected IEnumerable<IEntity> GetBlockingChildren(IEntityCollectionData collection, IModeService modeService)
         {
             return collection.GetChildren()
-                .Where(child => mode.CheckIfSkipped(child.GetType()) == false)
+                .Where(child => modeService.CheckIfSkipped(child.GetType()) == false)
                 .Where(child =>
                 {
                     IDataOwner dataOwner = child as IDataOwner;

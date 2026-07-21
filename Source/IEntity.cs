@@ -39,9 +39,9 @@ namespace VRBuilder.Core
         IStageProcess GetAbortingProcess();
 
         /// <summary>
-        /// Configures the entity according to the given <paramref name="mode"/>.
+        /// Configures the entity according to the given <paramref name="modeService"/>.
         /// </summary>
-        void Configure(IMode mode);
+        void Configure(IModeService modeService);
 
         /// <summary>
         /// Called every frame during the Unity's update.

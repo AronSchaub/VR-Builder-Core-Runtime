@@ -16,14 +16,14 @@ namespace VRBuilder.Core.EntityOwners
         }
 
         /// <inheritdoc />
-        public override void Configure(IMode mode, Stage stage)
+        public override void Configure(IModeService modeService, Stage stage)
         {
             foreach (TEntity child in Data.GetChildren())
             {
                 if (child is IOptional)
                 {
-                    bool wasSkipped = Data.Mode != null && Data.Mode.CheckIfSkipped(child.GetType());
-                    bool isSkipped = mode.CheckIfSkipped(child.GetType());
+                    bool wasSkipped = Data.ModeService != null && Data.ModeService.CheckIfSkipped(child.GetType());
+                    bool isSkipped = modeService.CheckIfSkipped(child.GetType());
 
                     if (wasSkipped == isSkipped)
                     {
@@ -59,7 +59,7 @@ namespace VRBuilder.Core.EntityOwners
                     }
                 }
 
-                child.Configure(mode);
+                child.Configure(modeService);
             }
         }
     }
