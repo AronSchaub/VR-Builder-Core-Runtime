@@ -22,8 +22,8 @@ namespace VRBuilder.ProcessController
         public override List<Type> GetRequiredSetupComponents()
         {
             List<Type> requiredSetupComponents = base.GetRequiredSetupComponents();
-            requiredSetupComponents.Add(InputController.ConcreteType);
-            //TODO: needs to be setup differently.
+            //TODO: needs to be setup differently after the refactor
+            // requiredSetupComponents.Add(InputController.ConcreteType);
             // requiredSetupComponents.Add(typeof(SpectatorController));
             return requiredSetupComponents;
         }
