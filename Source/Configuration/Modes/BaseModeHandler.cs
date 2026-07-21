@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections.Generic;
@@ -10,7 +12,7 @@ using VRBuilder.Core.Exceptions;
 namespace VRBuilder.Core.Configuration.Modes
 {
     /// <summary>
-    /// Simple ModeHandler.
+    /// Simple mode handler .
     /// </summary>
     public sealed class BaseModeHandler : IModeHandler
     {
@@ -21,17 +23,17 @@ namespace VRBuilder.Core.Configuration.Modes
         public int CurrentModeIndex { get; private set; }
 
         /// <inheritdoc />
-        public IMode CurrentMode
+        public IModeService CurrentModeService
         {
-            get { return AvailableModes[CurrentModeIndex]; }
+            get => AvailableModes[CurrentModeIndex];
         }
 
         /// <inheritdoc />
-        public ReadOnlyCollection<IMode> AvailableModes { get; }
+        public ReadOnlyCollection<IModeService> AvailableModes { get; }
 
-        public BaseModeHandler(List<IMode> modes, int defaultMode = 0)
+        public BaseModeHandler(List<IModeService> modes, int defaultMode = 0)
         {
-            AvailableModes = new ReadOnlyCollection<IMode>(modes);
+            AvailableModes = new ReadOnlyCollection<IModeService>(modes);
             CurrentModeIndex = defaultMode;
         }
 
@@ -45,7 +47,7 @@ namespace VRBuilder.Core.Configuration.Modes
 
             if (CurrentModeIndex >= AvailableModes.Count)
             {
-                string message = string.Format("The current process mode index is set to {0} but the current number of available process modes is {1}.", CurrentModeIndex, AvailableModes.Count);
+                string message = $"The current process mode index is set to {CurrentModeIndex} but the current number of available process modes is {AvailableModes.Count}.";
                 throw new IndexOutOfRangeException(message);
             }
 
@@ -53,16 +55,16 @@ namespace VRBuilder.Core.Configuration.Modes
 
             if (ModeChanged != null)
             {
-                ModeChanged(this, new ModeChangedEventArgs(CurrentMode));
+                ModeChanged(this, new ModeChangedEventArgs(CurrentModeService));
             }
         }
 
         /// <inheritdoc />
-        public void SetMode(IMode mode)
+        public void SetMode(IModeService modeService)
         {
-            if (AvailableModes.Contains(mode))
+            if (AvailableModes.Contains(modeService))
             {
-                SetMode(AvailableModes.IndexOf(mode));
+                SetMode(AvailableModes.IndexOf(modeService));
             }
             else
             {

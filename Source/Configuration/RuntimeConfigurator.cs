@@ -261,7 +261,7 @@ namespace VRBuilder.Core.Configuration
 
         private static void EmitModeChanged()
         {
-            ModeChanged?.Invoke(Instance, new ModeChangedEventArgs(Instance.runtimeConfiguration.Modes.CurrentMode));
+            ModeChanged?.Invoke(Instance, new ModeChangedEventArgs(Instance.runtimeConfiguration.Modes.CurrentModeService));
         }
 
         private static void EmitRuntimeConfigurationChanged()

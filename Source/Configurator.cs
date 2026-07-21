@@ -22,6 +22,6 @@ namespace VRBuilder.Core
         }
 
         /// <inheritdoc />
-        public abstract void Configure(IMode mode, Stage stage);
+        public abstract void Configure(IModeService modeService, Stage stage);
     }
 }

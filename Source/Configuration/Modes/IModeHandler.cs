@@ -20,7 +20,7 @@ namespace VRBuilder.Core.Configuration.Modes
         /// <summary>
         /// The ordered collection of all available process modes.
         /// </summary>
-        ReadOnlyCollection<IMode> AvailableModes { get; }
+        ReadOnlyCollection<IModeService> AvailableModes { get; }
 
         /// <summary>
         /// The index of the current process mode.
@@ -30,7 +30,7 @@ namespace VRBuilder.Core.Configuration.Modes
         /// <summary>
         /// The current process mode.
         /// </summary>
-        IMode CurrentMode { get; }
+        IModeService CurrentModeService { get; }
 
         /// <summary>
         /// Set the current process mode.
@@ -41,7 +41,7 @@ namespace VRBuilder.Core.Configuration.Modes
         /// <summary>
         /// Set the current process mode, this process mode has to be one of the available modes.
         /// </summary>
-        /// <param name="mode">The desired process mode which should be set.</param>
-        void SetMode(IMode mode);
+        /// <param name="modeService">The desired process mode which should be set.</param>
+        void SetMode(IModeService modeService);
     }
 }

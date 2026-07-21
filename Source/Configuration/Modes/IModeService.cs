@@ -1,21 +1,28 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
-﻿using System;
+using System;
 
 namespace VRBuilder.Core.Configuration.Modes
 {
     /// <summary>
     /// The interface of a process mode. A process mode determines if an entity has to be skipped and provides configurable entities with parameters.
     /// </summary>
-    public interface IMode
+    public interface IModeService
     {
         /// <summary>
         /// The name of this process mode.
         /// </summary>
         string Name { get; }
-
+        
+        /// <summary>
+        /// Get or set the default or active mode.
+        /// </summary>
+        public IModeService ActiveOrDefaultMode { get; set; }
+        
         /// <summary>
         /// Returns whether the given <see cref="IOptional"/> type should be skipped in this process mode.
         /// </summary>

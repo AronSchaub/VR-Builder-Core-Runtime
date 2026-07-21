@@ -39,7 +39,7 @@ namespace VRBuilder.Core.EntityOwners.FoldedEntityCollection
 
                 Data.Current.LifeCycle.Activate();
 
-                if (Data.Current.LifeCycle.Stage == Stage.Activating && Data.Mode.CheckIfSkipped(Data.Current.GetType()))
+                if (Data.Current.LifeCycle.Stage == Stage.Activating && Data.ModeService.CheckIfSkipped(Data.Current.GetType()))
                 {
                     Data.Current.LifeCycle.MarkToFastForwardStage(Stage.Activating);
                 }

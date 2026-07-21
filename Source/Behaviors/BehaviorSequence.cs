@@ -78,7 +78,7 @@ namespace VRBuilder.Core.Behaviors
             }
 
             /// <inheritdoc />
-            public IMode Mode { get; set; }
+            public IModeService ModeService { get; set; }
 
             /// <inheritdoc />
             public bool IsBlocking { get; set; }

@@ -17,7 +17,7 @@ namespace VRBuilder.Core.EntityOwners
         }
 
         /// <inheritdoc />
-        public override void Configure(IMode mode, Stage stage)
+        public override void Configure(IModeService modeService, Stage stage)
         {
             if (stage == Stage.Inactive)
             {
@@ -36,7 +36,7 @@ namespace VRBuilder.Core.EntityOwners
                 return;
             }
 
-            if (mode.CheckIfSkipped(Data.Current.GetType()))
+            if (modeService.CheckIfSkipped(Data.Current.GetType()))
             {
                 Data.Current.LifeCycle.MarkToFastForwardStage(stage);
             }

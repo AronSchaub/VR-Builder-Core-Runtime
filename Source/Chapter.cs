@@ -59,7 +59,7 @@ namespace VRBuilder.Core
             }
 
             /// <inheritdoc />
-            public IMode Mode { get; set; }
+            public IModeService ModeService { get; set; }
 
             /// <inheritdoc />
             [IgnoreDataMember]

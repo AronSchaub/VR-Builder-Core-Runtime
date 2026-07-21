@@ -26,7 +26,7 @@ namespace VRBuilder.Core.EntityOwners.FoldedEntityCollection
         {
             foreach (TEntity child in Data.GetChildren()
                 .Where(child => child.LifeCycle.Stage == Stage.Active)
-                .Where(child => Data.Mode.CheckIfSkipped(child.GetType())))
+                .Where(child => Data.ModeService.CheckIfSkipped(child.GetType())))
             {
                 child.LifeCycle.MarkToFastForwardStage(Stage.Active);
             }

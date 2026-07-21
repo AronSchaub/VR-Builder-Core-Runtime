@@ -147,16 +147,16 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         }
 
         /// <inheritdoc />
-        public void Configure(IMode mode)
+        public void Configure(IModeService modeService)
         {
-            if (mode.ContainsParameter<bool>("LockOnProcessStart"))
+            if (modeService.ContainsParameter<bool>("LockOnProcessStart"))
             {
-                configuration.LockOnProcessStart = mode.GetParameter<bool>("LockOnProcessStart");
+                configuration.LockOnProcessStart = modeService.GetParameter<bool>("LockOnProcessStart");
             }
 
-            if (mode.ContainsParameter<bool>("LockOnProcessFinished"))
+            if (modeService.ContainsParameter<bool>("LockOnProcessFinished"))
             {
-                configuration.LockOnProcessFinished = mode.GetParameter<bool>("LockOnProcessFinished");
+                configuration.LockOnProcessFinished = modeService.GetParameter<bool>("LockOnProcessFinished");
             }
         }
 

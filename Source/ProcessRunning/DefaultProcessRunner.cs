@@ -37,8 +37,8 @@ namespace VRBuilder.Unity.ProcessRunning
         {
             if (currentProcess != null)
             {
-                currentProcess.Configure(args.Mode);
-                StepLockLocator.Current?.Configure(RuntimeConfigurator.Configuration.Modes.CurrentMode);
+                currentProcess.Configure(args.ModeService);
+                StepLockLocator.Current?.Configure(RuntimeConfigurator.Configuration.Modes.CurrentModeService);
             }
         }
 
@@ -114,9 +114,9 @@ namespace VRBuilder.Unity.ProcessRunning
             RuntimeConfigurator.ModeChanged += HandleModeChanged;
 
             currentProcess.LifeCycle.StageChanged += HandleProcessStageChanged;
-            currentProcess.Configure(RuntimeConfigurator.Configuration.Modes.CurrentMode);
+            currentProcess.Configure(RuntimeConfigurator.Configuration.Modes.CurrentModeService);
 
-            StepLockLocator.Current?.Configure(RuntimeConfigurator.Configuration.Modes.CurrentMode);
+            StepLockLocator.Current?.Configure(RuntimeConfigurator.Configuration.Modes.CurrentModeService);
             StepLockLocator.Current?.OnProcessStarted(currentProcess);
             currentProcess.LifeCycle.Activate();
 

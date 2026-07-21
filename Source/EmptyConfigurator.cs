@@ -12,7 +12,7 @@ namespace VRBuilder.Core
     public class EmptyConfigurator : IConfigurator
     {
         /// <inheritdoc />
-        public void Configure(IMode mode, Stage stage)
+        public void Configure(IModeService modeService, Stage stage)
         {
         }
     }

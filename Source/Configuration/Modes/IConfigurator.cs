@@ -9,8 +9,8 @@ namespace VRBuilder.Core.Configuration.Modes
     /// </summary>
     public interface IConfigurator
     {
-        /// <paramref name="mode">The current mode.</param>
+        /// <paramref name="modeService">The current mode.</param>
         /// <paramref name="stage">The current entity's stage.</param>
-        void Configure(IMode mode, Stage stage);
+        void Configure(IModeService modeService, Stage stage);
     }
 }

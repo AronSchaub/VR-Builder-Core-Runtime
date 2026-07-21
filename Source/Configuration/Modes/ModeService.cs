@@ -13,30 +13,29 @@ namespace VRBuilder.Core.Configuration.Modes
     /// A process mode that is defined by its name, IConfigurables activation policy and a collection of parameters.
     /// Immutable.
     /// </summary>
-    public sealed class Mode : IMode
+    public sealed class ModeService : IModeService
     {
-        /// <inheritdoc />
-        public string Name { get; private set; }
-
-        private readonly Dictionary<string, object> parameters;
-
         /// <summary>
         /// A rule that determines which <see cref="IOptional"/> implementations have to be skipped.
         /// </summary>
         private readonly TypeRule<IOptional> entitiesToSkip;
+        
+        private readonly Dictionary<string, object> parameters;
+        
+        /// <inheritdoc />
+        public string Name { get; private set; }
+        
+        public IModeService ActiveOrDefaultMode { get; set; } = new ModeService("Default", new WhitelistTypeRule<IOptional>());
 
         /// <param name="name">Name of the process mode.</param>
         /// <param name="entitiesToSkip">A type rule which determines if an <see cref="IOptional"/> has to be skipped, depending on its type.</param>
         /// <param name="parameters">A string-to-object dictionary of process mode parameters.</param>
-        public Mode(string name, TypeRule<IOptional> entitiesToSkip, Dictionary<string, object> parameters = null)
+        public ModeService(string name, TypeRule<IOptional> entitiesToSkip, Dictionary<string, object> parameters = null)
         {
             Name = name;
             this.entitiesToSkip = entitiesToSkip;
 
-            if (parameters == null)
-            {
-                parameters = new Dictionary<string, object>();
-            }
+            parameters ??= new Dictionary<string, object>();
             this.parameters = parameters.ToDictionary(entry => entry.Key, entry => entry.Value);
         }
 

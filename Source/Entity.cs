@@ -65,7 +65,7 @@ namespace VRBuilder.Core
         }
 
         /// <summary>
-        /// Override this method if your behavior or condition supports changing between process modes (<see cref="IMode"/>).
+        /// Override this method if your behavior or condition supports changing between process modes (<see cref="IModeService"/>).
         /// By default returns an empty configurator that does nothing.
         /// </summary>
         protected virtual IConfigurator GetConfigurator()
@@ -74,22 +74,22 @@ namespace VRBuilder.Core
         }
 
         /// <inheritdoc />
-        public virtual void Configure(IMode mode)
+        public virtual void Configure(IModeService modeService)
         {
             if (Data is IEntityCollectionData collectionData)
             {
                 foreach (IEntity child in collectionData.GetChildren().Distinct())
                 {
                     child.Parent = this;
-                    child.Configure(mode);
+                    child.Configure(modeService);
                 }
             }
 
-            GetConfigurator().Configure(mode, LifeCycle.Stage);
+            GetConfigurator().Configure(modeService, LifeCycle.Stage);
 
             if (Data is IModeData modeData)
             {
-                modeData.Mode = mode;
+                modeData.ModeService = modeService;
             }
         }
 

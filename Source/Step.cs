@@ -76,7 +76,7 @@ namespace VRBuilder.Core
             public IStepChild Current { get; set; }
 
             ///<inheritdoc />
-            public IMode Mode { get; set; }
+            public IModeService ModeService { get; set; }
 
             ///<inheritdoc />
             [DataMember]
@@ -95,13 +95,13 @@ namespace VRBuilder.Core
             }
         }
 
-        public override void Configure(IMode mode)
+        public override void Configure(IModeService modeService)
         {
 #if UNITY_EDITOR
             try
             {
 #endif
-                base.Configure(mode);
+                base.Configure(modeService);
 #if UNITY_EDITOR
             }
             catch (Exception e)

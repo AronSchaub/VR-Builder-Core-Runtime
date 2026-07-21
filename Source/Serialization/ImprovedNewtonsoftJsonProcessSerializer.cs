@@ -131,7 +131,7 @@ namespace VRBuilder.Core.Serialization
                     throw new NotImplementedException();
                 }
 
-                public void Configure(IMode mode)
+                public void Configure(IModeService modeService)
                 {
                     throw new NotImplementedException();
                 }

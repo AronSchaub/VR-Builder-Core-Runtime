@@ -7,19 +7,19 @@ using System;
 namespace VRBuilder.Core.Configuration.Modes
 {
     /// <summary>
-    /// This is a <see cref="EventArgs"/> used for <see cref="IMode"/> changes.
+    /// This is a <see cref="EventArgs"/> used for <see cref="IModeService"/> changes.
     /// If you want so see more about EventArgs, please visit: https://docs.microsoft.com/en-us/dotnet/standard/events/
     /// </summary>
     public class ModeChangedEventArgs : EventArgs
     {
         /// <summary>
-        /// The newly activated <see cref="IMode"/>.
+        /// The newly activated <see cref="IModeService"/>.
         /// </summary>
-        public IMode Mode { get; private set; }
+        public IModeService ModeService { get; private set; }
 
-        public ModeChangedEventArgs(IMode mode)
+        public ModeChangedEventArgs(IModeService modeService)
         {
-            Mode = mode;
+            ModeService = modeService;
         }
     }
 }

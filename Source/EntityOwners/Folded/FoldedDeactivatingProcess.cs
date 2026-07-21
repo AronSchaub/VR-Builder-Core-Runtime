@@ -43,7 +43,7 @@ namespace VRBuilder.Core.EntityOwners.FoldedEntityCollection
                     Data.Current.LifeCycle.Deactivate();
                 }
 
-                if (Data.Current.LifeCycle.Stage == Stage.Deactivating && Data.Mode.CheckIfSkipped(Data.Current.GetType()))
+                if (Data.Current.LifeCycle.Stage == Stage.Deactivating && Data.ModeService.CheckIfSkipped(Data.Current.GetType()))
                 {
                     Data.Current.LifeCycle.MarkToFastForwardStage(Stage.Deactivating);
                 }
