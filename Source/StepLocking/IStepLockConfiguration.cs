@@ -5,7 +5,7 @@ namespace VRBuilder.Core.StepLocking
 {
     public interface IStepLockConfiguration
     {
-        string StepLockHandlingTypeName { get; }
+        string ServiceTypeName { get; }
         bool LockOnProcessStart { get; set; } // = true;
         bool LockOnProcessFinished { get; set; } // = true;
     }

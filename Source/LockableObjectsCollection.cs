@@ -45,7 +45,7 @@ namespace VRBuilder.Core
             {
                 data.ToUnlock = data.ToUnlock.Where(propertyReference => propertyReference.TargetObject.Value != null).ToList();
                 ForwardingLogger.LogWarning($"Null references have been found and removed in the manually unlocked objects of step '{data.Name}'.\n" +
-                    $"Did you delete or reset any Process Scene Objects?");
+                                            $"Did you delete or reset any Process Scene Objects?");
             }
 
             foreach (LockablePropertyReference propertyReference in data.ToUnlock)
@@ -70,7 +70,7 @@ namespace VRBuilder.Core
 
         private void SortSceneObjectList()
         {
-            SceneObjects.Sort((obj1, obj2) => obj1.GameObject.ToString().CompareTo(obj2.GameObject.ToString()));
+            SceneObjects.Sort((obj1, obj2) => string.Compare(obj1.ToString(), obj2.ToString(), StringComparison.Ordinal));
         }
 
         public void RemoveSceneObject(ISceneObject sceneObject)

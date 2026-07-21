@@ -1,14 +1,17 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
-// Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 
 using System;
 using System.Collections.Generic;
+using VRBuilder.Core.ProcessRunning;
 using VRBuilder.Core.Properties;
 
 namespace VRBuilder.Core.SceneObjects
 {
-    public interface ISceneObjectRegistry
+    public interface ISceneObjectRegistry: IVRBService
     {
         /// <summary>
         /// Raised when registered scene objects or their group membership changes.
@@ -57,5 +60,6 @@ namespace VRBuilder.Core.SceneObjects
         /// </summary>
         void Refresh();
 
+        void MarkSceneObjectDirty(ISceneObject sceneObject);
     }
 }

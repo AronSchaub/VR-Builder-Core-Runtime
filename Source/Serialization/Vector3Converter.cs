@@ -5,7 +5,6 @@
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using UnityEngine;
 using VRBuilder.Core.Primitives;
 using VRBuilder.Core.Properties;
 

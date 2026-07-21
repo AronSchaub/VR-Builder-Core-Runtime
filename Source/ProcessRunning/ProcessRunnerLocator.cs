@@ -24,6 +24,7 @@ namespace VRBuilder.Core.ProcessRunning
         /// <summary>
         /// True if a process runner has been registered.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, nameof(Current))]
         public static bool IsRegistered => current != null;
     }
 }
