@@ -32,7 +32,7 @@ namespace VRBuilder.Core.Configuration
         /// </summary>
         public static string ManifestFileName => "ProcessManifest";
 
-        private ISceneConfiguration sceneConfiguration;
+        private ISceneService sceneService;
 
         /// <inheritdoc />
         public IProcessSerializer Serializer { get; set; } = new NewtonsoftJsonProcessSerializerV4();
@@ -98,27 +98,6 @@ namespace VRBuilder.Core.Configuration
                 }
 
                 return logConsole;
-            }
-        }
-
-        /// <inheritdoc />
-        public virtual ISceneConfiguration SceneConfiguration
-        {
-            get
-            {
-                if (sceneConfiguration == null)
-                {
-                    ISceneConfiguration configuration = RuntimeConfigurator.Instance.gameObject.GetComponent<ISceneConfiguration>();
-
-                    if (configuration == null)
-                    {
-                        configuration = RuntimeConfigurator.Instance.gameObject.AddComponent<SceneConfiguration>();
-                    }
-
-                    sceneConfiguration = configuration;
-                }
-
-                return sceneConfiguration;
             }
         }
 
