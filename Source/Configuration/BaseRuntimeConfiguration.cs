@@ -98,9 +98,6 @@ namespace VRBuilder.Core.Configuration
         /// <inheritdoc />
         public abstract IAudioPlayer AudioPlayer { get; }
 
-        /// <inheritdoc />
-        public abstract ISceneObjectManager SceneObjectManager { get; }
-
         public virtual string VRBConsolePrefab => "Prefabs/DefaultVRBConsole";
 
         protected ILogConsole logConsole;
