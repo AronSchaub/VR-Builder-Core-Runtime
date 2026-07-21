@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-namespace TinkerFlowDebug.addons.ProcessEngine.Source.Localization
+namespace VRBuilder.Core.Localization
 {
 	/// <summary>
 	/// Simple service locator for <see cref="ILanguageService"/>.

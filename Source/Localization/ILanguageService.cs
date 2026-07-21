@@ -8,7 +8,7 @@ using System.Linq;
 using VRBuilder.Core;
 using VRBuilder.Core.ProcessRunning;
 
-namespace TinkerFlowDebug.addons.ProcessEngine.Source.Localization
+namespace VRBuilder.Core.Localization
 {
 	/// <summary>
 	/// 
