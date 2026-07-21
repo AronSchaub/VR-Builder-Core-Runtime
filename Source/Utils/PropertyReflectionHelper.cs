@@ -106,7 +106,7 @@ namespace VRBuilder.Core.Utils
                 }
 
                 List<ISceneObject> sceneObjects = reference.Guids
-                    .SelectMany(guid => RuntimeConfigurator.Configuration.SceneObjectRegistry.GetObjects(guid))
+                    .SelectMany(guid => SceneObjectRegistryLocator.Current.GetObjects(guid))
                     .Distinct()
                     .ToList();
 

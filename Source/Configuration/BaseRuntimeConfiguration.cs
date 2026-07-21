@@ -78,26 +78,6 @@ namespace VRBuilder.Core.Configuration
         /// <inheritdoc />
         public IModeHandler Modes { get; protected set; }
 
-        /// <inheritdoc />
-        [Obsolete("Use User property instead.")]
-        public abstract UserSceneObject LocalUser { get; }
-
-        /// <summary>
-        /// Returns transform positions of the local user's head, hands and root.
-        /// </summary>
-        public abstract IXRRigTransform User { get; }
-
-        /// <inheritdoc />
-        public abstract AudioSource InstructionPlayer { get; }
-
-        /// <summary>
-        /// Returns transform data for all user rigs in the scene.
-        /// </summary>
-        public abstract IEnumerable<IXRRigTransform> UserTransforms { get; }
-
-        /// <inheritdoc />
-        public abstract IAudioPlayer AudioPlayer { get; }
-
         public virtual string VRBConsolePrefab => "Prefabs/DefaultVRBConsole";
 
         protected ILogConsole logConsole;

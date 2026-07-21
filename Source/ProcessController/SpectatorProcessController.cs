@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using VRBuilder.Core.Input;
-using VRBuilder.UI.Spectator;
 
 namespace VRBuilder.ProcessController
 {
@@ -24,7 +23,8 @@ namespace VRBuilder.ProcessController
         {
             List<Type> requiredSetupComponents = base.GetRequiredSetupComponents();
             requiredSetupComponents.Add(InputController.ConcreteType);
-            requiredSetupComponents.Add(typeof(SpectatorController));
+            //TODO: needs to be setup differently.
+            // requiredSetupComponents.Add(typeof(SpectatorController));
             return requiredSetupComponents;
         }
     }
