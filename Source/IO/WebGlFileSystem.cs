@@ -1,10 +1,11 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+
+#if !UNITY_EDITOR && UNITY_WEBGL
 using UnityEngine;
 using UnityEngine.Networking;
 
-#if !UNITY_EDITOR && UNITY_WEBGL
 namespace VRBuilder.Core.IO
 {
     public class WebGlFileSystem : DefaultFileSystem
