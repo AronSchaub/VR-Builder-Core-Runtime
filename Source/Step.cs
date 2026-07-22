@@ -16,6 +16,7 @@ using VRBuilder.Core.EntityOwners.FoldedEntityCollection;
 using VRBuilder.Core.EntityOwners.ParallelEntityCollection;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.RestrictiveEnvironment;
+using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.StepLocking;
 using VRBuilder.Core.Utils;
@@ -123,7 +124,7 @@ namespace VRBuilder.Core
 
                 foreach (Guid tag in Data.GroupsToUnlock.Keys)
                 {
-                    foreach (ISceneObject sceneObject in SceneObjectRegistryLocator.Current.GetObjects(tag))
+                    foreach (ISceneObject sceneObject in ServiceRegistry.Get<ISceneObjectRegistry>().GetObjects(tag))
                     {
                         toUnlock = toUnlock.Union(sceneObject.Properties.Where(property => Data.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as ILockableProperty))).ToList();
                     }
@@ -133,7 +134,7 @@ namespace VRBuilder.Core
             ///<inheritdoc />
             public override void Start()
             {
-                StepLockLocator.Current?.Unlock(Data, toUnlock);
+                ServiceRegistry.Get<IStepLockService>()?.Unlock(Data, toUnlock);
             }
 
             ///<inheritdoc />
@@ -163,7 +164,7 @@ namespace VRBuilder.Core
 
                 foreach (Guid tag in Data.GroupsToUnlock.Keys)
                 {
-                    foreach (ISceneObject sceneObject in SceneObjectRegistryLocator.Current.GetObjects(tag))
+                    foreach (ISceneObject sceneObject in ServiceRegistry.Get<ISceneObjectRegistry>().GetObjects(tag))
                     {
                         toUnlock = toUnlock.Union(sceneObject.Properties.Where(property => Data.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as ILockableProperty))).ToList();
                     }
@@ -184,7 +185,7 @@ namespace VRBuilder.Core
             ///<inheritdoc />
             public override void End()
             {
-                StepLockLocator.Current?.Lock(Data, toUnlock);
+                ServiceRegistry.Get<IStepLockService>()?.Lock(Data, toUnlock);
             }
 
             ///<inheritdoc />
@@ -236,7 +237,7 @@ namespace VRBuilder.Core
 
                 foreach (Guid tag in Data.GroupsToUnlock.Keys)
                 {
-                    foreach (ISceneObject sceneObject in SceneObjectRegistryLocator.Current.GetObjects(tag))
+                    foreach (ISceneObject sceneObject in ServiceRegistry.Get<ISceneObjectRegistry>().GetObjects(tag))
                     {
                         lockableProperties = lockableProperties.Union(sceneObject.Properties.Where(property => Data.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as ILockableProperty))).ToList();
                     }
@@ -245,7 +246,7 @@ namespace VRBuilder.Core
 
             public override void Start()
             {
-                StepLockLocator.Current?.Lock(Data, lockableProperties);
+                ServiceRegistry.Get<IStepLockService>()?.Lock(Data, lockableProperties);
             }
         }
 

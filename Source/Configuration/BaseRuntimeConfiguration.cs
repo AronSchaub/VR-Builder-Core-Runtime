@@ -10,11 +10,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using VRBuilder.Core.Configuration.Modes;
 using VRBuilder.Core.IO;
-using VRBuilder.Core.Properties;
-using VRBuilder.Core.RestrictiveEnvironment;
-using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.Serialization;
-using VRBuilder.Core.StepLocking;
 using VRBuilder.Core.Utils;
 using VRBuilder.UI.Console;
 
@@ -32,48 +28,10 @@ namespace VRBuilder.Core.Configuration
         /// </summary>
         public static string ManifestFileName => "ProcessManifest";
 
-        private ISceneConfiguration sceneConfiguration;
+        private ISceneService sceneService;
 
         /// <inheritdoc />
         public IProcessSerializer Serializer { get; set; } = new NewtonsoftJsonProcessSerializerV4();
-
-        /// <summary>
-        /// Default input action asset which is used when no customization of key bindings are done.
-        /// Should be stored inside the VR Builder package.
-        /// </summary>
-        public virtual string DefaultInputActionAssetPath { get; } = "KeyBindings/BuilderDefaultKeyBindings";
-
-        /// <summary>
-        /// Custom InputActionAsset path which is used when key bindings are modified.
-        /// Should be stored in project path.
-        /// </summary>
-        public virtual string CustomInputActionAssetPath { get; } = "KeyBindings/BuilderCustomKeyBindings";
-
-#if ENABLE_INPUT_SYSTEM && INPUT_SYSTEM_PACKAGE
-        private UnityEngine.InputSystem.InputActionAsset inputActionAsset;
-
-        /// <summary>
-        /// Current active InputActionAsset.
-        /// </summary>
-        public virtual UnityEngine.InputSystem.InputActionAsset CurrentInputActionAsset
-        {
-            get
-            {
-                if (inputActionAsset == null)
-                {
-                    inputActionAsset = Resources.Load<UnityEngine.InputSystem.InputActionAsset>(CustomInputActionAssetPath);
-                    if (inputActionAsset == null)
-                    {
-                        inputActionAsset = Resources.Load<UnityEngine.InputSystem.InputActionAsset>(DefaultInputActionAssetPath);
-                    }
-                }
-
-                return inputActionAsset;
-            }
-
-            set => inputActionAsset = value;
-        }
-#endif
 
         /// <inheritdoc />
         public IModeHandler Modes { get; protected set; }
@@ -98,27 +56,6 @@ namespace VRBuilder.Core.Configuration
                 }
 
                 return logConsole;
-            }
-        }
-
-        /// <inheritdoc />
-        public virtual ISceneConfiguration SceneConfiguration
-        {
-            get
-            {
-                if (sceneConfiguration == null)
-                {
-                    ISceneConfiguration configuration = RuntimeConfigurator.Instance.gameObject.GetComponent<ISceneConfiguration>();
-
-                    if (configuration == null)
-                    {
-                        configuration = RuntimeConfigurator.Instance.gameObject.AddComponent<SceneConfiguration>();
-                    }
-
-                    sceneConfiguration = configuration;
-                }
-
-                return sceneConfiguration;
             }
         }
 

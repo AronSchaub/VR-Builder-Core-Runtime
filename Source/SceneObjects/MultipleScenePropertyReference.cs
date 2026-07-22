@@ -1,9 +1,13 @@
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Properties;
+using VRBuilder.Core.Runtime.Registry;
 
 namespace VRBuilder.Core.SceneObjects
 {
@@ -33,7 +37,7 @@ namespace VRBuilder.Core.SceneObjects
 
             foreach (Guid guid in Guids)
             {
-                value = value.Concat(SceneObjectRegistryLocator.Current.GetProperties<T>(guid)).Distinct();
+                value = value.Concat(ServiceRegistry.Get<ISceneObjectRegistry>().GetProperties<T>(guid)).Distinct();
             }
 
             return value;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using VRBuilder.Core.Configuration;
+using VRBuilder.Core.Runtime.Registry;
 
 namespace VRBuilder.Core.SceneObjects
 {
@@ -38,7 +39,7 @@ namespace VRBuilder.Core.SceneObjects
 
             foreach (Guid guid in Guids)
             {
-                sceneObjects = sceneObjects.Concat(SceneObjectRegistryLocator.Current.GetObjects(guid)).Distinct();
+                sceneObjects = sceneObjects.Concat(ServiceRegistry.Get<ISceneObjectRegistry>().GetObjects(guid)).Distinct();
             }
 
             if (sceneObjects.Count() > 0)

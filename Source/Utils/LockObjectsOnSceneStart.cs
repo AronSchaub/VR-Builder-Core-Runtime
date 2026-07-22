@@ -1,12 +1,11 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
-// Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
-using System.Linq;
-using VRBuilder.Core.Properties;
-using VRBuilder.Unity;
 using UnityEngine;
-using VRBuilder.Core.Configuration;
+using VRBuilder.Core.Properties;
+using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.SceneObjects;
 
 namespace VRBuilder.Core.Utils
@@ -23,7 +22,7 @@ namespace VRBuilder.Core.Utils
         // Start is called before the first frame update
         private void Start()
         {
-            foreach(ILockableProperty lockable in SceneObjectRegistryLocator.Current.GetAllProperties<ILockableProperty>())
+            foreach(ILockableProperty lockable in ServiceRegistry.Get<ISceneObjectRegistry>().GetAllProperties<ILockableProperty>())
             {
                 if(lockable.InheritSceneObjectLockState && !lockable.IsAlwaysUnlocked)
                 {

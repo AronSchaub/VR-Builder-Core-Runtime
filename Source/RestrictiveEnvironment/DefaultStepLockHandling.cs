@@ -6,10 +6,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Configuration.Modes;
-using VRBuilder.Core.ProcessRunning;
 using VRBuilder.Core.Properties;
+using VRBuilder.Core.Registry;
+using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.StepLocking;
 using VRBuilder.Core.Utils;
@@ -23,9 +23,9 @@ namespace VRBuilder.Core.RestrictiveEnvironment
     {
         private IStepLockConfiguration configuration;
 
-        public void SetConfiguration(object config)
+        public void SetConfiguration(IStepLockConfiguration config)
         {
-            configuration = config as IStepLockConfiguration;
+            configuration = config;
         }
 
         public void Initialize()
@@ -60,13 +60,13 @@ namespace VRBuilder.Core.RestrictiveEnvironment
                 IStepData nextStepData = GetNextStep(completedTransition);
                 IEnumerable<LockablePropertyData> nextStepProperties = PropertyReflectionHelper.ExtractLockablePropertiesFromStep(nextStepData);
 
-                if (nextStepData is ILockableStepData lockableStepData && SceneObjectRegistryLocator.IsRegistered)
+                if (nextStepData is ILockableStepData lockableStepData && ServiceRegistry.Has<ISceneObjectRegistry>())
                 {
                     IEnumerable<LockablePropertyData> toUnlock = lockableStepData.ToUnlock.Select(reference => new LockablePropertyData(reference.GetProperty()));
 
                     foreach (Guid tag in lockableStepData.GroupsToUnlock.Keys)
                     {
-                        foreach (ISceneObject sceneObject in SceneObjectRegistryLocator.Current.GetObjects(tag))
+                        foreach (ISceneObject sceneObject in ServiceRegistry.Get<ISceneObjectRegistry>().GetObjects(tag))
                         {
                             toUnlock = toUnlock.Union(sceneObject.Properties.Where(property => lockableStepData.GroupsToUnlock[tag].Contains(property.GetType())).Select(property => new LockablePropertyData(property as ILockableProperty))).ToList();
                         }
@@ -122,12 +122,12 @@ namespace VRBuilder.Core.RestrictiveEnvironment
                 return completedTransition.Data.TargetStep.Data;
             }
 
-            if (!ProcessRunnerLocator.IsRegistered || !ProcessRunnerLocator.Current.IsRunning)
+            if (!ServiceRegistry.Has<IProcessRunner>() || !ServiceRegistry.Get<IProcessRunner>().IsRunning)
             {
                 return null;
             }
 
-            IProcessData process = ProcessRunnerLocator.Current.CurrentProcess.Data;
+            IProcessData process = ServiceRegistry.Get<IProcessRunner>().CurrentProcess.Data;
             // Test all chapters, but the last.
             for (int i = 0; i < process.Chapters.Count - 1; i++)
             {
@@ -163,9 +163,9 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         /// <inheritdoc />
         public void OnProcessStarted(IProcess process)
         {
-            if (configuration.LockOnProcessStart && SceneObjectRegistryLocator.IsRegistered)
+            if (configuration.LockOnProcessStart && ServiceRegistry.Has<ISceneObjectRegistry>())
             {
-                foreach (ILockableProperty prop in SceneObjectRegistryLocator.Current.GetAllProperties<ILockableProperty>())
+                foreach (ILockableProperty prop in ServiceRegistry.Get<ISceneObjectRegistry>().GetAllProperties<ILockableProperty>())
                 {
                     if (prop.InheritSceneObjectLockState && !prop.IsAlwaysUnlocked)
                     {
@@ -178,9 +178,9 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         /// <inheritdoc />
         public void OnProcessFinished(IProcess process)
         {
-            if (configuration.LockOnProcessFinished && SceneObjectRegistryLocator.IsRegistered)
+            if (configuration.LockOnProcessFinished && ServiceRegistry.Has<ISceneObjectRegistry>())
             {
-                foreach (ILockableProperty prop in SceneObjectRegistryLocator.Current.GetAllProperties<ILockableProperty>())
+                foreach (ILockableProperty prop in ServiceRegistry.Get<ISceneObjectRegistry>().GetAllProperties<ILockableProperty>())
                 {
                     if (prop.InheritSceneObjectLockState && !prop.IsAlwaysUnlocked)
                     {

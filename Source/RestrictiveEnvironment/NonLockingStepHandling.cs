@@ -4,7 +4,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Collections.Generic;
-using System.Linq;
 using VRBuilder.Core.Configuration.Modes;
 using VRBuilder.Core.StepLocking;
 
@@ -38,7 +37,7 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         {
         }
 
-        public void SetConfiguration(object configuration)
+        public void SetConfiguration(IStepLockConfiguration configuration)
         {
         }
 

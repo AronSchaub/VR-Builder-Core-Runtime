@@ -3,15 +3,14 @@
 // Modifications copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-
 using System;
 using System.Collections.Generic;
-using VRBuilder.Core.ProcessRunning;
 using VRBuilder.Core.Properties;
+using VRBuilder.Core.Registry;
 
 namespace VRBuilder.Core.SceneObjects
 {
-    public interface ISceneObjectRegistry: IVRBService
+    public interface ISceneObjectRegistry: IService<ISceneObjectRegistryConfiguration>
     {
         /// <summary>
         /// Raised when registered scene objects or their group membership changes.

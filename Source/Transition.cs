@@ -132,19 +132,19 @@ namespace VRBuilder.Core
         ///<inheritdoc />
         public override IStageProcess GetActivatingProcess()
         {
-            return new CompositeProcess(new EntityOwners.ParallelEntityCollection.ParallelActivatingProcess<EntityData>(Data), new ActivatingProcess(Data));
+            return new CompositeProcess(new ParallelActivatingProcess<EntityData>(Data), new ActivatingProcess(Data));
         }
 
         ///<inheritdoc />
         public override IStageProcess GetActiveProcess()
         {
-            return new CompositeProcess(new EntityOwners.ParallelEntityCollection.ParallelActiveProcess<EntityData>(Data), new ActiveProcess(Data));
+            return new CompositeProcess(new ParallelActiveProcess<EntityData>(Data), new ActiveProcess(Data));
         }
 
         ///<inheritdoc />
         public override IStageProcess GetDeactivatingProcess()
         {
-            return new EntityOwners.ParallelEntityCollection.ParallelDeactivatingProcess<EntityData>(Data);
+            return new ParallelDeactivatingProcess<EntityData>(Data);
         }
 
         /// <inheritdoc />

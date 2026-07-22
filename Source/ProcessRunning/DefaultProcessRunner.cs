@@ -1,14 +1,14 @@
 // Copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using VRBuilder.Core;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Configuration.Modes;
 using VRBuilder.Core.ProcessRunning;
-using VRBuilder.Core.RestrictiveEnvironment;
+using VRBuilder.Core.Registry;
+using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.StepLocking;
 
 namespace VRBuilder.Unity.ProcessRunning
@@ -38,7 +38,7 @@ namespace VRBuilder.Unity.ProcessRunning
             if (currentProcess != null)
             {
                 currentProcess.Configure(args.ModeService);
-                StepLockLocator.Current?.Configure(RuntimeConfigurator.Configuration.Modes.CurrentModeService);
+                ServiceRegistry.Get<IStepLockService>()?.Configure(RuntimeConfigurator.Configuration.Modes.CurrentModeService);
             }
         }
 
@@ -81,12 +81,12 @@ namespace VRBuilder.Unity.ProcessRunning
             if (currentProcess.LifeCycle.Stage == Stage.Active)
             {
                 currentProcess.LifeCycle.Deactivate();
-                StepLockLocator.Current?.OnProcessFinished(currentProcess);
+                ServiceRegistry.Get<IStepLockService>()?.OnProcessFinished(currentProcess);
                 Events.ProcessFinished?.Invoke(this, new ProcessEventArgs(currentProcess));
             }
         }
 
-        public void SetConfiguration(object configuration)
+        public void SetConfiguration(IProcessRunnerConfiguration configuration)
         {
             this.configuration = configuration as IProcessRunnerConfiguration;
         }
@@ -116,8 +116,9 @@ namespace VRBuilder.Unity.ProcessRunning
             currentProcess.LifeCycle.StageChanged += HandleProcessStageChanged;
             currentProcess.Configure(RuntimeConfigurator.Configuration.Modes.CurrentModeService);
 
-            StepLockLocator.Current?.Configure(RuntimeConfigurator.Configuration.Modes.CurrentModeService);
-            StepLockLocator.Current?.OnProcessStarted(currentProcess);
+            var stepLockService = ServiceRegistry.Get<IStepLockService>();
+            stepLockService?.Configure(RuntimeConfigurator.Configuration.Modes.CurrentModeService);
+            stepLockService?.OnProcessStarted(currentProcess);
             currentProcess.LifeCycle.Activate();
 
             Events.ProcessStarted?.Invoke(this, new ProcessEventArgs(currentProcess));
