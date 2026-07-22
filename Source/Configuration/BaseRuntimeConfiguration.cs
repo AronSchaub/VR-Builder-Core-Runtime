@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using VRBuilder.Core.Configuration.Modes;
 using VRBuilder.Core.IO;
+using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.Serialization;
 using VRBuilder.Core.Utils;
 using VRBuilder.UI.Console;
@@ -84,7 +85,7 @@ namespace VRBuilder.Core.Configuration
                 IProcessAssetStrategy assetStrategy = ReflectionUtils.CreateInstanceOfType(ReflectionUtils.GetConcreteImplementationsOf<IProcessAssetStrategy>().FirstOrDefault(type => type.FullName == manifest.AssetStrategyTypeName)) as IProcessAssetStrategy;
 
                 string processAssetPath = $"{processFolder}/{manifest.ProcessFileName}.{Serializer.FileFormat}";
-                byte[] processData = await FileManager.Read(processAssetPath);
+                byte[] processData = await ServiceRegistry.Get<IPlatformFileSystem>().Read(processAssetPath);
                 List<byte[]> additionalData = await GetAdditionalProcessData(processFolder, manifest);
 
                 return assetStrategy.GetProcessFromSerializedData(processData, additionalData, Serializer);
@@ -104,9 +105,9 @@ namespace VRBuilder.Core.Configuration
             {
                 string filePath = $"{processFolder}/{fileName}.{Serializer.FileFormat}";
 
-                if (await FileManager.Exists(filePath))
+                if (await ServiceRegistry.Get<IPlatformFileSystem>().Exists(filePath))
                 {
-                    additionalData.Add(await FileManager.Read(filePath));
+                    additionalData.Add(await ServiceRegistry.Get<IPlatformFileSystem>().Read(filePath));
                 }
                 else
                 {
@@ -121,9 +122,9 @@ namespace VRBuilder.Core.Configuration
         {
             IProcessAssetManifest manifest;
 
-            if (await FileManager.Exists(manifestPath))
+            if (await ServiceRegistry.Get<IPlatformFileSystem>().Exists(manifestPath))
             {
-                byte[] manifestData = await FileManager.Read(manifestPath);
+                byte[] manifestData = await ServiceRegistry.Get<IPlatformFileSystem>().Read(manifestPath);
                 manifest = Serializer.ManifestFromByteArray(manifestData);
             }
             else
