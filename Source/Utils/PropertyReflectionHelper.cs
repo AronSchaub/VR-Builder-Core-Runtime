@@ -10,6 +10,7 @@ using VRBuilder.Core.Conditions;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.RestrictiveEnvironment;
+using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Unity;
 
@@ -106,7 +107,7 @@ namespace VRBuilder.Core.Utils
                 }
 
                 List<ISceneObject> sceneObjects = reference.Guids
-                    .SelectMany(guid => SceneObjectRegistryLocator.Current.GetObjects(guid))
+                    .SelectMany(guid => ServiceRegistry.Get<ISceneObjectRegistry>().GetObjects(guid))
                     .Distinct()
                     .ToList();
 

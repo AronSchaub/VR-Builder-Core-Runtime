@@ -6,7 +6,8 @@ using System.Collections;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
-using VRBuilder.Core.ProcessRunning;
+using VRBuilder.Core.Registry;
+using VRBuilder.Core.Runtime.Registry;
 #if UNITY_6000_0_OR_NEWER
 using System.Linq;
 #endif
@@ -62,7 +63,7 @@ namespace VRBuilder.Core.Behaviors
                 }
 
 #if UNITY_6000_0_OR_NEWER
-                var processRunner = ProcessRunnerLocator.Current;
+                var processRunner = ServiceRegistry.Get<IProcessRunner>();
                 IChapter chapter = processRunner.CurrentProcess.Data.Chapters.FirstOrDefault(chapter => chapter.ChapterMetadata.Guid == Data.ChapterGuid);
 
                 if (chapter != null)

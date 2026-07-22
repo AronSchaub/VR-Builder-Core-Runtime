@@ -1,13 +1,16 @@
+// Copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using System;
 using System.Collections.Generic;
-using VRBuilder.Core.ProcessRunning;
+using VRBuilder.Core.Registry;
 
 namespace VRBuilder.Core.Configuration
 {
     /// <summary>
     /// Handles configuration specific to this scene.
     /// </summary>
-    public interface ISceneService : IVRBService
+    public interface ISceneService : IService<ISceneConfiguration>
     {
         /// <summary>
         /// Lists all assemblies whose property extensions will be used in the current scene.

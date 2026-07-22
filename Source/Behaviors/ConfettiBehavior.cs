@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Properties;
+using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.Utils;
 
@@ -109,9 +110,9 @@ namespace VRBuilder.Core.Behaviors
             Data.ExecutionStages = executionStages;
 
 #if UNITY_6000_0_OR_NEWER
-            if (string.IsNullOrEmpty(Data.ConfettiMachinePrefabPath) && VRBuilder.Core.Configuration.RuntimeConfigurator.Exists)
+            if (string.IsNullOrEmpty(Data.ConfettiMachinePrefabPath) && ServiceRegistry.Has<ISceneService>())
             {
-                Data.ConfettiMachinePrefabPath = SceneServiceLocator.Current?.DefaultConfettiPrefab;
+                Data.ConfettiMachinePrefabPath = ServiceRegistry.Get<ISceneService>().DefaultConfettiPrefab;
             }
 #endif
         }

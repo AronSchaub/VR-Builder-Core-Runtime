@@ -5,7 +5,7 @@
 
 using System.Collections.Generic;
 using VRBuilder.Core.Configuration.Modes;
-using VRBuilder.Core.ProcessRunning;
+using VRBuilder.Core.Registry;
 using VRBuilder.Core.RestrictiveEnvironment;
 
 namespace VRBuilder.Core.StepLocking
@@ -13,7 +13,7 @@ namespace VRBuilder.Core.StepLocking
     /// <summary>
     /// Allows to implement strategies which restrict interaction with scene objects for specific steps.
     /// </summary>
-    public interface IStepLockService : IVRBService
+    public interface IStepLockService : IService<IStepLockConfiguration>
     {
         /// <summary>
         /// Unlocks the restrictive environment and allows interaction with scene objects required for this Step to complete.

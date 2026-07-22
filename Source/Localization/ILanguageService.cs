@@ -3,14 +3,14 @@
 
 using System;
 using System.Globalization;
-using VRBuilder.Core.ProcessRunning;
+using VRBuilder.Core.Registry;
 
 namespace VRBuilder.Core.Localization
 {
 	/// <summary>
 	/// Language service to load current language-based settings from <see cref="LanguageSettings"/>.
 	/// </summary>
-	public interface ILanguageService: IVRBService
+	public interface ILanguageService: IService<ILanguageConfiguration>
 	{
 		/// <summary>
 		/// String localization table used by the current process.

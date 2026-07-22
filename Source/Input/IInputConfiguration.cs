@@ -1,6 +1,8 @@
+using VRBuilder.Core.Registry;
+
 namespace VRBuilder.Core.Input
 {
-    public interface IInputConfiguration
+    public interface IInputConfiguration: IServiceConfiguration
     {
         /// <summary>
         /// Default input action asset which is used when no customization of key bindings are done.

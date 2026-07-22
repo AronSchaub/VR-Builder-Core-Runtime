@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.Settings;
 
@@ -34,7 +35,6 @@ namespace VRBuilder.Core.SceneObjects
 
         public IEnumerable<Guid> RegisteredGuids => registeredObjects.Keys;
 
-        /// <inheritdoc/>
         public ISceneObject this[Guid guid] => GetByGuid(guid);
 
         /// <inheritdoc/>
@@ -43,7 +43,6 @@ namespace VRBuilder.Core.SceneObjects
             return registeredObjects.ContainsKey(guid);
         }
 
-        /// <inheritdoc/>
         public ISceneObject GetByGuid(Guid guid)
         {
             return registeredObjects.TryGetValue(guid, out var o) ? o.FirstOrDefault() : null;
@@ -267,10 +266,9 @@ namespace VRBuilder.Core.SceneObjects
             return new HashSet<Guid> { obj.Guid }.Concat(obj.Guids);
         }
 
-        public void SetConfiguration(object configuration)
+        public void SetConfiguration(ISceneObjectRegistryConfiguration configuration)
         {
-            if (configuration is ISceneObjectRegistryConfiguration config)
-                this.configuration = config;
+            this.configuration = configuration;
         }
 
         public void Initialize()

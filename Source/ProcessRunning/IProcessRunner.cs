@@ -1,14 +1,16 @@
 // Copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-namespace VRBuilder.Core.ProcessRunning
+using VRBuilder.Core.ProcessRunning;
+
+namespace VRBuilder.Core.Registry
 {
     /// <summary>
     /// Contract for running a process.
     /// This is the service-oriented counterpart to the static <see cref="VRBuilder.Core.ProcessRunner"/>.
     /// The default implementation is registered automatically — access via <see cref="VRBuilder.Core.Configuration.ProcessRunnerLocator"/>.
     /// </summary>
-    public interface IProcessRunner: IVRBService
+    public interface IProcessRunner: IService<IProcessRunnerConfiguration>
     {
         /// <summary>
         /// The currently running process, or <c>null</c> if none is running.
@@ -32,7 +34,7 @@ namespace VRBuilder.Core.ProcessRunning
 
         /// <summary>
         /// Lifecycle events for the current process.
-        /// These mirror the events on the static <see cref="VRBuilder.Core.ProcessRunner.Events"/>.
+        /// These mirror the events on the static <see cref="UnityEditor.PackageManager.Events"/>.
         /// </summary>
         ProcessEvents Events { get; }
 

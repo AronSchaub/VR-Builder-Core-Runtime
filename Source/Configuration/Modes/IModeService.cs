@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using VRBuilder.Core.Registry;
 
 namespace VRBuilder.Core.Configuration.Modes
 {

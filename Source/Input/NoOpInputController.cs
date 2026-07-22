@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
 
+using VRBuilder.Core.Registry;
+
 namespace VRBuilder.Core.Input
 {
     /// <summary>
@@ -9,14 +11,6 @@ namespace VRBuilder.Core.Input
     /// </summary>
     public class NoOpInputController : IInputController
     {
-        public void SetConfiguration(object configuration)
-        {
-        }
-
-        public void Initialize()
-        {
-        }
-
         public void SetupInputActions()
         {
         }
@@ -28,6 +22,10 @@ namespace VRBuilder.Core.Input
         public bool UsesCustomKeyBindingAsset()
         {
             return false;
+        }
+
+        public void SetConfiguration(IInputConfiguration configuration)
+        {
         }
     }
 }

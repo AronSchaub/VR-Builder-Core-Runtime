@@ -1,8 +1,8 @@
-using VRBuilder.Core.ProcessRunning;
+using VRBuilder.Core.Registry;
 
 namespace VRBuilder.Core.Input
 {
-    public interface IInputController : IVRBService
+    public interface IInputController : IService<IInputConfiguration>
     {
         void SetupInputActions();
         void LoadInputActions();
