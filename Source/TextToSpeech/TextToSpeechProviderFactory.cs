@@ -74,21 +74,23 @@ namespace VRBuilder.Core.TextToSpeech
         /// </summary>
         public ITextToSpeechProvider CreateProvider()
         {
-            TextToSpeechSettings settings = RuntimeConfigurator.Configuration.GetTextToSpeechSettings();
-
-            if (string.IsNullOrEmpty(settings.Provider))
-            {
-                throw new NoConfigurationFoundException($"There is not a valid provider set in '{settings.GetType().Name}'!");
-            }
-
-            if (!registeredProvider.ContainsKey(settings.Provider))
-            {
-                throw new NoMatchingProviderFoundException($"No matching provider with name '{settings.Provider}' found!");
-            }
-
-            ITextToSpeechProvider provider = registeredProvider[settings.Provider].Create();
-
-            return provider;
+            //TODO: we can get Provider now directly
+            // TextToSpeechSettings settings = RuntimeConfigurator.Configuration.GetTextToSpeechSettings();
+            //
+            // if (string.IsNullOrEmpty(settings.Provider))
+            // {
+            //     throw new NoConfigurationFoundException($"There is not a valid provider set in '{settings.GetType().Name}'!");
+            // }
+            //
+            // if (!registeredProvider.ContainsKey(settings.Provider))
+            // {
+            //     throw new NoMatchingProviderFoundException($"No matching provider with name '{settings.Provider}' found!");
+            // }
+            //
+            // ITextToSpeechProvider provider = registeredProvider[settings.Provider].Create();
+            //
+            // return provider;
+            return null;
         }
 
         public class NoMatchingProviderFoundException : Exception

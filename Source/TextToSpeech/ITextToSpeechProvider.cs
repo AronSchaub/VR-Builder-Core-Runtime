@@ -30,5 +30,7 @@ namespace VRBuilder.Core.TextToSpeech.Providers
         /// </summary>
         /// <returns>Returns configuration for the provider if successful</returns>
         public ITextToSpeechConfiguration LoadConfig();
+
+        string StreamingAssetCacheDirectoryName { get; set; }
     }
 }

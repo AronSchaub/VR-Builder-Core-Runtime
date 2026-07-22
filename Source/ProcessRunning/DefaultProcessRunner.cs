@@ -38,7 +38,7 @@ namespace VRBuilder.Unity.ProcessRunning
             if (currentProcess != null)
             {
                 currentProcess.Configure(args.ModeService);
-                ServiceRegistry.Get<IStepLockService>()?.Configure(RuntimeConfigurator.Configuration.Modes.CurrentModeService);
+                ServiceRegistry.Get<IStepLockService>()?.Configure(ServiceRegistry.Get<IModeService>());
             }
         }
 
@@ -46,7 +46,8 @@ namespace VRBuilder.Unity.ProcessRunning
         {
             if (e.Stage == Stage.Inactive)
             {
-                RuntimeConfigurator.ModeChanged -= HandleModeChanged;
+                if (ServiceRegistry.Has<ModeService>())
+                    ServiceRegistry.Get<ModeService>().ModeHandler.ModeChanged -= HandleModeChanged;
                 Stop();
             }
         }
@@ -88,7 +89,7 @@ namespace VRBuilder.Unity.ProcessRunning
 
         public void SetConfiguration(IProcessRunnerConfiguration configuration)
         {
-            this.configuration = configuration as IProcessRunnerConfiguration;
+            this.configuration = configuration;
         }
 
         public void Initialize()
@@ -111,13 +112,14 @@ namespace VRBuilder.Unity.ProcessRunning
 
             Events.ProcessSetup?.Invoke(this, new ProcessEventArgs(currentProcess));
 
-            RuntimeConfigurator.ModeChanged += HandleModeChanged;
+            if (ServiceRegistry.Has<ModeService>())
+                ServiceRegistry.Get<ModeService>().ModeHandler.ModeChanged += HandleModeChanged;
 
             currentProcess.LifeCycle.StageChanged += HandleProcessStageChanged;
-            currentProcess.Configure(RuntimeConfigurator.Configuration.Modes.CurrentModeService);
+            currentProcess.Configure(ServiceRegistry.Get<IModeService>());
 
             var stepLockService = ServiceRegistry.Get<IStepLockService>();
-            stepLockService?.Configure(RuntimeConfigurator.Configuration.Modes.CurrentModeService);
+            stepLockService?.Configure(ServiceRegistry.Get<IModeService>());
             stepLockService?.OnProcessStarted(currentProcess);
             currentProcess.LifeCycle.Activate();
 

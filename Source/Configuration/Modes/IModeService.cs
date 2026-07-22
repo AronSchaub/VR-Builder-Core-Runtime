@@ -22,7 +22,9 @@ namespace VRBuilder.Core.Configuration.Modes
         /// <summary>
         /// Get or set the default or active mode.
         /// </summary>
-        public IModeService ActiveOrDefaultMode { get; set; }
+        IModeService ActiveOrDefaultMode { get; set; }
+        
+        IModeHandler ModeHandler { get; set; }
         
         /// <summary>
         /// Returns whether the given <see cref="IOptional"/> type should be skipped in this process mode.
