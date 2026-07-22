@@ -6,12 +6,12 @@ using VRBuilder.Core.Primitives;
 namespace VRBuilder.TextToSpeech
 {
     /// <summary>
-    ///  Allows to convert audio into or out of AudioClips
+    ///  Allows converting audio into or out of AudioClips
     /// </summary>
     public interface IAudioConverter
     {       
         /// <summary>
-        /// This method uses NAudio to convert a mp3 file given as byte array to an AudioClip in .wav format.
+        /// This method uses NAudio to convert a mp3 file given as byte array to an AudioClip in .mp3 format.
         /// </summary>
         /// <param name="data">Data are the bytes of an mp3 file</param>
         IAudioClip CreateAudioClipFromMp3(byte[] data);

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: lgpl-3.0-or-later
 
 using System.Globalization;
+using Source.TextToSpeech;
 
 namespace VRBuilder.Core.TextToSpeech.Utils
 {
@@ -39,7 +40,7 @@ namespace VRBuilder.Core.TextToSpeech.Utils
         /// <summary>
         /// Used format of the text-to-speech audio.
         /// </summary>
-        TextToSpeechSettings.SupportedAudioType Format { get; set; }
+        ITextToSpeechConfiguration.SupportedAudioType Format { get; set; }
 
         /// <summary>
         /// Sets the used key if localization is used returns the instance for chaining.
@@ -81,7 +82,7 @@ namespace VRBuilder.Core.TextToSpeech.Utils
         /// </summary>
         /// <param name="format">The format value to set.</param>
         /// <returns>The instance for chaining.</returns>
-        ITextToSpeechFileNameBuilder WithFormat(TextToSpeechSettings.SupportedAudioType format);
+        ITextToSpeechFileNameBuilder WithFormat(ITextToSpeechConfiguration.SupportedAudioType format);
 
         /// <summary>
         /// Generates the filename based on the properties using the factory's logic on this object.

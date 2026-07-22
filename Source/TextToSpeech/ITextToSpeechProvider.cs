@@ -16,7 +16,7 @@ namespace VRBuilder.Core.TextToSpeech.Providers
         /// <summary>
         /// Used for setting the config file.
         /// </summary>
-        void SetConfig(ITextToSpeechConfiguration configuration);
+        void SetConfig(ITextToSpeechProviderConfiguration providerConfiguration);
 
         /// <summary>
         /// Loads the AudioClip file for the given text.
@@ -29,6 +29,6 @@ namespace VRBuilder.Core.TextToSpeech.Providers
         /// Load config while editor- and runtime
         /// </summary>
         /// <returns>Returns configuration for the provider if successful</returns>
-        public ITextToSpeechConfiguration LoadConfig();
+        public ITextToSpeechProviderConfiguration LoadConfig();
     }
 }
