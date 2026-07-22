@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using VRBuilder.Core.Serialization;
 
 namespace VRBuilder.Core.IO
