@@ -1,7 +1,9 @@
 // Copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-namespace VRBuilder.Core.Registry
+using VRBuilder.Core.Registry;
+
+namespace VRBuilder.Core.ProcessRunning
 {
     /// <summary>
     /// Configuration for the <see cref="IProcessRunner"/> service.

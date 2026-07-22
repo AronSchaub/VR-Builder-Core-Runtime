@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using VRBuilder.Core.Configuration.Modes;
+using VRBuilder.Core.ProcessRunning;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.Registry;
 using VRBuilder.Core.Runtime.Registry;
