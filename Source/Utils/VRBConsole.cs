@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using VRBuilder.Core.Configuration;
+using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.UI.Console;
 
 namespace VRBuilder.Core.Utils
@@ -12,16 +13,39 @@ namespace VRBuilder.Core.Utils
     {
         private static ILogConsole console;
         private static Queue<Action> executionQueue = new Queue<Action>();
-
+        
+        //TODO: make a VRBConsoleService or put it into RuntimeService
+        // public virtual string VRBConsolePrefab => "Prefabs/DefaultVRBConsole";
+        //
+        // protected ILogConsole logConsole;
+        //
+        // public ILogConsole VRBConsole
+        // {
+        //     get
+        //     {
+        //         if (logConsole == null)
+        //         {
+        //             GameObject logConsoleObj = GameObject.Instantiate(Resources.Load<GameObject>(VRBConsolePrefab));
+        //             logConsole = logConsoleObj.GetComponent<ILogConsole>();
+        //         }
+        //
+        //         if (logConsole == null)
+        //         {
+        //             throw new NullReferenceException("Failed to load world console prefab.");
+        //         }
+        //
+        //         return logConsole;
+        //     }
+        // }
         private static ILogConsole Console
         {
             get
             {
-                if (console == null && RuntimeConfigurator.Exists)
+                if (console == null && ServiceRegistry.Has<IRuntimeService>())
                 {
                     try
                     {
-                        console = RuntimeConfigurator.Configuration.VRBConsole;
+                        // console = RuntimeConfigurator.Configuration.VRBConsole;
                     }
                     catch (Exception ex)
                     {

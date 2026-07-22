@@ -20,7 +20,7 @@ namespace VRBuilder.Core.SceneObjects
         /// <inheritdoc/>
         protected override IEnumerable<T> DetermineValue(IEnumerable<T> cachedValue)
         {
-            if (RuntimeConfigurator.Exists == false || IsEmpty())
+            if (!ServiceRegistry.Has<IRuntimeService>() || IsEmpty())
             {
                 return new List<T>();
             }
