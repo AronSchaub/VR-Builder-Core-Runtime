@@ -41,6 +41,10 @@ namespace VRBuilder.Core.Configuration
 
         protected ILogConsole logConsole;
 
+        /// <summary>
+        /// Logger prefab loader for runtime based console log.
+        /// </summary>
+        /// <exception cref="NullReferenceException">Throw execution if prefab is not found.</exception>
         public ILogConsole VRBConsole
         {
             get
@@ -59,8 +63,13 @@ namespace VRBuilder.Core.Configuration
                 return logConsole;
             }
         }
-
-        /// <inheritdoc />
+        
+        /// <summary>
+        /// Loads the process according to the platform and the serializer.
+        /// </summary>
+        /// <param name="path">Path to the process json.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Throw if process is not found.</exception>
         public virtual async Task<IProcess> LoadProcess(string path)
         {
             try
@@ -76,12 +85,8 @@ namespace VRBuilder.Core.Configuration
                 string manifestPath = $"{processFolder}/{ManifestFileName}.{Serializer.FileFormat}";
 
                 IProcessAssetManifest manifest;
-
-#if !UNITY_EDITOR && UNITY_WEBGL
-                manifest = FetchManifestWebGL(processName, manifestPath);
-#else
-                manifest = await FetchManifest(processName, manifestPath);
-#endif
+                
+                manifest = await ServiceRegistry.Get<IPlatformFileSystem>().FetchManifest(processName, manifestPath, Serializer);
                 IProcessAssetStrategy assetStrategy = ReflectionUtils.CreateInstanceOfType(ReflectionUtils.GetConcreteImplementationsOf<IProcessAssetStrategy>().FirstOrDefault(type => type.FullName == manifest.AssetStrategyTypeName)) as IProcessAssetStrategy;
 
                 string processAssetPath = $"{processFolder}/{manifest.ProcessFileName}.{Serializer.FileFormat}";
@@ -116,39 +121,6 @@ namespace VRBuilder.Core.Configuration
             }
 
             return additionalData;
-        }
-
-        private async Task<IProcessAssetManifest> FetchManifest(string processName, string manifestPath)
-        {
-            IProcessAssetManifest manifest;
-
-            if (await ServiceRegistry.Get<IPlatformFileSystem>().Exists(manifestPath))
-            {
-                byte[] manifestData = await ServiceRegistry.Get<IPlatformFileSystem>().Read(manifestPath);
-                manifest = Serializer.ManifestFromByteArray(manifestData);
-            }
-            else
-            {
-                manifest = new ProcessAssetManifest()
-                {
-                    AssetStrategyTypeName = typeof(SingleFileProcessAssetStrategy).FullName,
-                    ProcessFileName = processName,
-                    AdditionalFileNames = Array.Empty<string>(),
-                };
-            }
-
-            return manifest;
-        }
-
-        private IProcessAssetManifest FetchManifestWebGL(string processName, string manifestPath)
-        {
-            IProcessAssetManifest manifest = new ProcessAssetManifest()
-            {
-                AssetStrategyTypeName = typeof(SingleFileProcessAssetStrategy).FullName,
-                ProcessFileName = processName,
-                AdditionalFileNames = Array.Empty<string>(),
-            };
-            return manifest;
         }
 
         private static string GetProcessNameFromPath(string path)
