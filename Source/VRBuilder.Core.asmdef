@@ -2,8 +2,6 @@
     "name": "VRBuilder.Core",
     "rootNamespace": "",
     "references": [
-        "Unity.InputSystem",
-        "Unity.Localization"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -14,19 +12,13 @@
     ],
     "autoReferenced": true,
     "defineConstraints": [
-        "NEWTONSOFT_JSON",
-        "UNITY_LOCALIZATION"
+        "NEWTONSOFT_JSON"
     ],
     "versionDefines": [
         {
             "name": "com.unity.nuget.newtonsoft-json",
             "expression": "",
             "define": "NEWTONSOFT_JSON"
-        },
-        {
-            "name": "com.unity.localization",
-            "expression": "",
-            "define": "UNITY_LOCALIZATION"
         }
     ],
     "noEngineReferences": true

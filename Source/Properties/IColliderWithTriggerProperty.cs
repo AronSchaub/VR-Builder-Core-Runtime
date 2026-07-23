@@ -1,12 +1,6 @@
 // copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-#if UNITY_6000_0_OR_NEWER
-using UnityEngine;
-#elif GODOT
-using Godot;
-#endif
-
 using System;
 using VRBuilder.Core.SceneObjects;
 
@@ -46,21 +40,4 @@ namespace VRBuilder.Core.Properties
     public interface IColliderWithTriggerEventArgs
     {
     }
-
-#if UNITY_6000_0_OR_NEWER
-
-#elif GODOT
-    public partial class ColliderWithTriggerEventArgs : GodotObject
-    {
-        /// <summary>
-        /// The object that entered or exited the trigger.
-        /// </summary>
-        public readonly Node CollidedObject;
-
-        public ColliderWithTriggerEventArgs(Node collidedObject)
-        {
-            CollidedObject = collidedObject;
-        }
-    }
-#endif
 }

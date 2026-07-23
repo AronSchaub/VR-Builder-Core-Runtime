@@ -14,12 +14,12 @@ namespace VRBuilder.Core.SceneObjects
         /// <summary>
         /// Will be called when the object containing this interface is locked.
         /// </summary>
-        event EventHandler<LockStateChangedEventArgs> Locked;
+        event Action<ILockStateChangedEventArgs> LockedAction;
 
         /// <summary>
         /// Will be called when the object containing this interface is unlocked.
         /// </summary>
-        event EventHandler<LockStateChangedEventArgs> Unlocked;
+        event Action<ILockStateChangedEventArgs> UnlockedAction;
 
         /// <summary>
         /// Returns if the object is locked.
@@ -40,10 +40,14 @@ namespace VRBuilder.Core.SceneObjects
         /// Manually removes a step data keeping the object unlocked.
         /// </summary>
         bool RemoveUnlocker(IStepData data);
-        
+
         /// <summary>
         /// If true, the object is never automatically locked by the VRBuilder process.
         /// </summary>
         bool IsAlwaysUnlocked { get; }
+    }
+
+    public interface ILockStateChangedEventArgs
+    {
     }
 }

@@ -5,11 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-#if UNITY_6000_0_OR_NEWER
-using UnityEngine;
-#elif GODOT
-using Godot;
-#endif
 using VRBuilder.Core.Properties;
 
 namespace VRBuilder.Core.SceneObjects
@@ -44,14 +39,6 @@ namespace VRBuilder.Core.SceneObjects
         /// </summary>
         Guid Guid { get; }
 
-//         /// <summary>
-//         /// Target GameObject, used for applying stuff.
-//         /// </summary>
-// #if UNITY_6000_0_OR_NEWER
-//         GameObject GameObject { get; }
-// #elif GODOT
-//         Node GameObject { get; } //was GameObject
-// #endif
         /// <summary>
         /// Properties on the scene object.
         /// </summary>
