@@ -255,11 +255,17 @@ namespace VRBuilder.Core
 
             if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogChapters)
             {
-                LifeCycle.StageChanged += (sender, args) =>
-                {
-                    ForwardingLogger.LogFormat("<b>Chapter</b> <i>'{0}'</i> is <b>{1}</b>.\n", Data.Name, LifeCycle.Stage.ToString());
-                };
+                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("<b>Chapter</b> <i>'{0}'</i> is <b>{1}</b>.\n", Data.Name, LifeCycle.Stage.ToString()); };
             }
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="IChapter"/>.
+        /// </summary>
+        /// <param name="name"><see cref="IChapter"/>'s name.</param>
+        public static IChapter Create(string name)
+        {
+            return new Chapter(name, null);
         }
     }
 }

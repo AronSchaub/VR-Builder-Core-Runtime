@@ -204,5 +204,13 @@ namespace VRBuilder.Core
             clonedTransition.Data.TargetStep = Data.TargetStep;
             return clonedTransition;
         }
+        
+        /// <summary>
+        /// Creates a new <see cref="ITransition"/>.
+        /// </summary>
+        public static ITransition Create()
+        {
+            return new Transition();
+        }
     }
 }

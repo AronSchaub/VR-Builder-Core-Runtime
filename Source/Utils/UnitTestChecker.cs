@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
 
-namespace VRBuilder.Unity
+namespace VRBuilder.Utils
 {
     /// <summary>
     /// Allows to check if we are unit testing right now.

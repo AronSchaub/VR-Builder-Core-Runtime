@@ -18,7 +18,7 @@ namespace VRBuilder.Core.Entities.Factories
         /// </summary>
         public static IStep CreateStep(string name, IVector2 position = default, string stepType = "default")
         {
-            IStep step = StepFactory.Instance.Create(name);
+            IStep step = Step.Create(name);
             step.StepMetadata.Position = position;
             step.StepMetadata.StepType = stepType;
             PostProcessEntity<IStep>(step);
@@ -31,7 +31,7 @@ namespace VRBuilder.Core.Entities.Factories
         /// </summary>
         public static ITransition CreateTransition()
         {
-            ITransition transition = TransitionFactory.Instance.Create();
+            ITransition transition = Transition.Create();
             PostProcessEntity<ITransition>(transition);
 
             return transition;
@@ -42,7 +42,7 @@ namespace VRBuilder.Core.Entities.Factories
         /// </summary>
         public static IChapter CreateChapter(string name)
         {
-            IChapter chapter = ChapterFactory.Instance.Create(name);
+            IChapter chapter = Chapter.Create(name);
             PostProcessEntity<IChapter>(chapter);
 
             return chapter;
@@ -53,7 +53,7 @@ namespace VRBuilder.Core.Entities.Factories
         /// </summary>
         public static IProcess CreateProcess(string name)
         {
-            IProcess process = ProcessFactory.Instance.Create(name);
+            IProcess process = Process.Create(name);
             PostProcessEntity<IProcess>(process);
 
             return process;

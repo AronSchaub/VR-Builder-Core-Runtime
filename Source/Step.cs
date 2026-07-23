@@ -324,5 +324,14 @@ namespace VRBuilder.Core
                 LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("{0}<b>Step</b> <i>'{1}'</i> is <b>{2}</b>.\n", ConsoleUtils.GetTabs(), Data.Name, LifeCycle.Stage); };
             }
         }
+
+        /// <summary>
+        /// Creates a new <see cref="IStep"/>.
+        /// </summary>
+        /// <param name="name"><see cref="IStep"/>'s name.</param>
+        public static IStep Create(string name)
+        {
+            return new Step(name);
+        }
     }
 }

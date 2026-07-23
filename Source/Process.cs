@@ -174,5 +174,15 @@ namespace VRBuilder.Core
             Data.Chapters = chapters.ToList();
             Data.Name = name;
         }
+
+        /// <summary>
+        /// Creates a new <see cref="IProcess"/>.
+        /// </summary>
+        /// <param name="name"><see cref="IProcess"/>'s name.</param>
+        /// <param name="firstStep">Initial <see cref="IStep"/> for this <see cref="IProcess"/>.</param>
+        public static IProcess Create(string name, IStep firstStep = null)
+        {
+            return new Process(name, new Chapter("Chapter 1", firstStep));
+        }
     }
 }
