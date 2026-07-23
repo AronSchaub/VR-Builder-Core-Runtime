@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.Registry;
+using VRBuilder.Core.Settings;
 
 namespace VRBuilder.Core.SceneObjects
 {
@@ -16,6 +17,8 @@ namespace VRBuilder.Core.SceneObjects
         /// Raised when registered scene objects or their group membership changes.
         /// </summary>
         event Action Changed;
+
+        ISceneObjectGroups SceneObjectGroups { get; }
 
         /// <summary>
         /// Returns if the Guid is registered in the registry.

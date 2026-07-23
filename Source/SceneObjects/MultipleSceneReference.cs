@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.Settings;
 
 namespace VRBuilder.Core.SceneObjects
@@ -44,9 +45,9 @@ namespace VRBuilder.Core.SceneObjects
 
         public override string ToString()
         {
-            if (Guids.Count == 1 && SceneObjectGroups.Instance.GroupExists(Guids.First()))
+            if (Guids.Count == 1 && ServiceRegistry.Get<ISceneObjectRegistry>().SceneObjectGroups.GroupExists(Guids.First()))
             {
-                return $"objects in '{SceneObjectGroups.Instance.GetLabel(Guids.First())}'";
+                return $"objects in '{ServiceRegistry.Get<ISceneObjectRegistry>().SceneObjectGroups.GetLabel(Guids.First())}'";
             }
 
             if (HasValue() == false)

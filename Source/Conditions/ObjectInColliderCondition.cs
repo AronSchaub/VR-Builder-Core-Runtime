@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Properties;
+using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.Settings;
 using VRBuilder.Core.Utils;
@@ -56,7 +57,7 @@ namespace VRBuilder.Core.Conditions
                 {
                     if (ObjectsRequiredInTrigger > 1 && TargetObjects.Values.Count() > 1)
                     {
-                        return $"Move {ObjectsRequiredInTrigger} of {TargetObjects.Values.Count()} '{SceneObjectGroups.Instance.GetLabel(TargetObjects.Guids.First())}' in collider {TriggerObject}";
+                        return $"Move {ObjectsRequiredInTrigger} of {TargetObjects.Values.Count()} '{ServiceRegistry.Get<ISceneObjectRegistry>().SceneObjectGroups.GetLabel(TargetObjects.Guids.First())}' in collider {TriggerObject}";
                     }
 
                     return $"Move {TargetObjects} in collider {TriggerObject}";

@@ -5,7 +5,9 @@
 
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using VRBuilder.Core.Configuration;
 using VRBuilder.Core.RestrictiveEnvironment;
+using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.Utils;
 using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Utils;
@@ -20,7 +22,7 @@ namespace VRBuilder.Core.Conditions
     {
         protected Condition()
         {
-            if (LifeCycleLoggingConfig.Instance.LogConditions)
+            if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogConditions)
             {
                 LifeCycle.StageChanged += (sender, args) =>
                 {

@@ -7,10 +7,12 @@ using System.Linq;
 using System.Runtime.Serialization;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Conditions;
+using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Configuration.Modes;
 using VRBuilder.Core.EntityOwners;
 using VRBuilder.Core.EntityOwners.ParallelEntityCollection;
 using VRBuilder.Core.RestrictiveEnvironment;
+using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Utils;
 
@@ -171,7 +173,7 @@ namespace VRBuilder.Core
             Data.Conditions = new List<ICondition>();
             Data.TargetStep = null;
 
-            if (LifeCycleLoggingConfig.Instance.LogTransitions)
+            if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogTransitions)
             {
                 LifeCycle.StageChanged += (sender, args) =>
                 {
