@@ -2,12 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-#if UNITY_6000_0_OR_NEWER
-using UnityEngine;
-using UnityEngine.Events;
-#elif GODOT
-using Godot;
-#endif
 using VRBuilder.Core.Primitives;
 
 namespace VRBuilder.Core.Properties
@@ -20,12 +14,12 @@ namespace VRBuilder.Core.Properties
         /// <summary>
         /// Emitted when the object gets highlighted.
         /// </summary>
-        event Action<HighlightPropertyEventArgs> HighlightStartedAction;
+        event Action<IHighlightPropertyEventArgs> HighlightStartedAction;
 
         /// <summary>
         /// Emitted when the object gets unhighlighted.
         /// </summary>
-        event Action<HighlightPropertyEventArgs> HighlightEndedAction;
+        event Action<IHighlightPropertyEventArgs> HighlightEndedAction;
 
         /// <summary>
         /// Is object currently highlighted.
@@ -44,17 +38,7 @@ namespace VRBuilder.Core.Properties
         void Unhighlight();
     }
 
-#if UNITY_6000_0_OR_NEWER
-    public class HighlightPropertyEventArgs : EventArgs
-#elif GODOT
-    public partial class HighlightPropertyEventArgs : GodotObject
-#endif
+    public interface IHighlightPropertyEventArgs
     {
-        public readonly IColor? HighlightColor;
-
-        public HighlightPropertyEventArgs(IColor? highlightColor)
-        {
-            HighlightColor = highlightColor;
-        }
     }
 }

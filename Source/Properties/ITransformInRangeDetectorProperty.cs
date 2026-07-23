@@ -2,12 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-#if UNITY_6000_0_OR_NEWER
-using UnityEngine;
-#elif GODOT
-using Godot;
-#endif
-
 using VRBuilder.Core.SceneObjects;
 
 namespace VRBuilder.Core.Properties
@@ -25,12 +19,12 @@ namespace VRBuilder.Core.Properties
         /// <summary>
         /// Emitted when the tracked transform enters range.
         /// </summary>
-        event Action<RangeEventArgs> EnteredRangeAction;
+        event Action<IRangeEventArgs> EnteredRangeAction;
 
         /// <summary>
         /// Emitted when the tracked transform exits range.
         /// </summary>
-        event Action<RangeEventArgs> ExitedRangeAction;
+        event Action<IRangeEventArgs> ExitedRangeAction;
 
         /// <summary>
         /// Returns true if the tracked <see cref="ISceneObject"/> is within <see cref="DetectionRange"/>.
@@ -52,31 +46,7 @@ namespace VRBuilder.Core.Properties
     /// <summary>
     /// Event arguments for range enter and exit events.
     /// </summary>
-#if UNITY_6000_0_OR_NEWER
-    public class RangeEventArgs : EventArgs
+    public interface IRangeEventArgs
     {
-        /// <summary>
-        /// The tracked object's GameObject.
-        /// </summary>
-        public readonly GameObject TrackedTransform;
-
-        public RangeEventArgs(GameObject trackedTransform)
-        {
-            TrackedTransform = trackedTransform;
-        }
     }
-#elif GODOT
-    public partial class RangeEventArgs : GodotObject
-    {
-        /// <summary>
-        /// The tracked object's Node.
-        /// </summary>
-        public readonly Node TrackedTransform;
-
-        public RangeEventArgs(Node trackedTransform)
-        {
-            TrackedTransform = trackedTransform;
-        }
-    }
-#endif
 }

@@ -20,12 +20,12 @@ namespace VRBuilder.Core.Properties
         /// <summary>
         /// Emitted when a collider enters this trigger.
         /// </summary>
-        event Action<ColliderWithTriggerEventArgs> EnteredTriggerAction;
+        event Action<IColliderWithTriggerEventArgs> EnteredTriggerAction;
 
         /// <summary>
         /// Emitted when a collider exits this trigger.
         /// </summary>
-        event Action<ColliderWithTriggerEventArgs> ExitedTriggerAction;
+        event Action<IColliderWithTriggerEventArgs> ExitedTriggerAction;
 
         /// <summary>
         /// Returns true if the given <see cref="ISceneObject"/>'s transform is inside this trigger.
@@ -43,19 +43,12 @@ namespace VRBuilder.Core.Properties
     /// <summary>
     /// Event arguments for trigger enter and exit events.
     /// </summary>
-#if UNITY_6000_0_OR_NEWER
-        public class ColliderWithTriggerEventArgs : EventArgs
-        {
-            /// <summary>
-            /// The object that entered or exited the trigger.
-            /// </summary>
-            public readonly GameObject CollidedObject;
+    public interface IColliderWithTriggerEventArgs
+    {
+    }
 
-            public ColliderWithTriggerEventArgs(GameObject collidedObject)
-            {
-                CollidedObject = collidedObject;
-            }
-        }
+#if UNITY_6000_0_OR_NEWER
+
 #elif GODOT
     public partial class ColliderWithTriggerEventArgs : GodotObject
     {
