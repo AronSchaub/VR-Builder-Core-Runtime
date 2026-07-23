@@ -29,5 +29,5 @@
             "define": "UNITY_LOCALIZATION"
         }
     ],
-    "noEngineReferences": false
+    "noEngineReferences": true
 }
