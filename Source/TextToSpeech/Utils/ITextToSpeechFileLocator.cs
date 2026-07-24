@@ -10,7 +10,7 @@ namespace VRBuilder.Core.TextToSpeech.Utils
     /// Interface for text-to-speech properties used to generate unique file names for audio files.
     /// Only non-null/non-empty fields are included in the generated filename.
     /// </summary>
-    public interface ITextToSpeechFileNameBuilder
+    public interface ITextToSpeechFileLocator
     {
         /// <summary>
         /// Used key of the text-to-speech audio data.
@@ -47,42 +47,42 @@ namespace VRBuilder.Core.TextToSpeech.Utils
         /// </summary>
         /// <param name="key">The key value to set.</param>
         /// <returns>The instance for chaining.</returns>
-        ITextToSpeechFileNameBuilder WithKey(string key);
+        ITextToSpeechFileLocator WithKey(string key);
 
         /// <summary>
         /// Sets the text content of the text-to-speech file and returns the instance for chaining.
         /// </summary>
         /// <param name="text">The text value to set.</param>
         /// <returns>The instance for chaining.</returns>
-        ITextToSpeechFileNameBuilder WithText(string text);
+        ITextToSpeechFileLocator WithText(string text);
 
         /// <summary>
         /// Sets the locale of the text-to-speech file and returns the instance for chaining.
         /// </summary>
         /// <param name="locale">The locale value to set.</param>
         /// <returns>The instance for chaining.</returns>
-        ITextToSpeechFileNameBuilder WithLocale(CultureInfo locale);
+        ITextToSpeechFileLocator WithLocale(CultureInfo locale);
 
         /// <summary>
         /// Sets the used localization table of the text-to-speech file and returns the instance for chaining.
         /// </summary>
         /// <param name="table">The table value to set.</param>
         /// <returns>The instance for chaining.</returns>
-        ITextToSpeechFileNameBuilder WithTable(string table);
+        ITextToSpeechFileLocator WithTable(string table);
 
         /// <summary>
         /// Sets the speaker of the text-to-speech file and returns the instance for chaining.
         /// </summary>
         /// <param name="speaker">The speaker value to set.</param>
         /// <returns>The instance for chaining.</returns>
-        ITextToSpeechFileNameBuilder WithSpeaker(string speaker);
+        ITextToSpeechFileLocator WithSpeaker(string speaker);
 
         /// <summary>
         /// Sets the format of the text-to-speech file and returns the instance for chaining.
         /// </summary>
         /// <param name="format">The format value to set.</param>
         /// <returns>The instance for chaining.</returns>
-        ITextToSpeechFileNameBuilder WithFormat(ITextToSpeechConfiguration.SupportedAudioType format);
+        ITextToSpeechFileLocator WithFormat(ITextToSpeechConfiguration.SupportedAudioType format);
 
         /// <summary>
         /// Generates the filename based on the properties using the factory's logic on this object.
