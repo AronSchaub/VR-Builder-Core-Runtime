@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using VRBuilder.Core.Configuration.Modes;
 
@@ -16,14 +18,14 @@ namespace VRBuilder.Core.EntityOwners
         }
 
         /// <inheritdoc />
-        public override void Configure(IModeService modeService, Stage stage)
+        public override void Configure(IMode mode, Stage stage)
         {
             foreach (TEntity child in Data.GetChildren())
             {
                 if (child is IOptional)
                 {
-                    bool wasSkipped = Data.ModeService != null && Data.ModeService.CheckIfSkipped(child.GetType());
-                    bool isSkipped = modeService.CheckIfSkipped(child.GetType());
+                    bool wasSkipped = Data.Mode != null && Data.Mode.CheckIfSkipped(child.GetType());
+                    bool isSkipped = mode.CheckIfSkipped(child.GetType());
 
                     if (wasSkipped == isSkipped)
                     {
@@ -51,15 +53,15 @@ namespace VRBuilder.Core.EntityOwners
                             child.LifeCycle.MarkToFastForwardStage(Stage.Activating);
                             child.LifeCycle.MarkToFastForwardStage(Stage.Active);
                         }
-
-                        if (stage == Stage.Activating || stage == Stage.Active)
+                        else if (stage is Stage.Activating or Stage.Active)
                         {
                             child.LifeCycle.Activate();
                         }
+
                     }
                 }
 
-                child.Configure(modeService);
+                child.Configure(mode);
             }
         }
     }

@@ -20,8 +20,6 @@ using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.StepLocking;
 using VRBuilder.Core.Utils;
-using VRBuilder.Core.Utils.Logging;
-using VRBuilder.Unity;
 using VRBuilder.Utils;
 
 namespace VRBuilder.Core
@@ -77,9 +75,6 @@ namespace VRBuilder.Core
             public IStepChild Current { get; set; }
 
             ///<inheritdoc />
-            public IModeService ModeService { get; set; }
-
-            ///<inheritdoc />
             [DataMember]
             [HideInProcessInspector]
             public IEnumerable<LockablePropertyReference> ToUnlock { get; set; } = new List<LockablePropertyReference>();
@@ -94,15 +89,20 @@ namespace VRBuilder.Core
             public EntityData()
             {
             }
+            public IMode Mode
+            {
+                get;
+                set;
+            }
         }
 
-        public override void Configure(IModeService modeService)
+        public override void Configure(IMode mode)
         {
 #if UNITY_EDITOR
             try
             {
 #endif
-                base.Configure(modeService);
+                base.Configure(mode);
 #if UNITY_EDITOR
             }
             catch (Exception e)

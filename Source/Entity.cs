@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System.Linq;
 using System.Runtime.Serialization;
@@ -65,7 +67,7 @@ namespace VRBuilder.Core
         }
 
         /// <summary>
-        /// Override this method if your behavior or condition supports changing between process modes (<see cref="IModeService"/>).
+        /// Override this method if your behavior or condition supports changing between process modes (<see cref="IMode"/>).
         /// By default returns an empty configurator that does nothing.
         /// </summary>
         protected virtual IConfigurator GetConfigurator()
@@ -74,22 +76,22 @@ namespace VRBuilder.Core
         }
 
         /// <inheritdoc />
-        public virtual void Configure(IModeService modeService)
+        public virtual void Configure(IMode mode)
         {
             if (Data is IEntityCollectionData collectionData)
             {
                 foreach (IEntity child in collectionData.GetChildren().Distinct())
                 {
                     child.Parent = this;
-                    child.Configure(modeService);
+                    child.Configure(mode);
                 }
             }
 
-            GetConfigurator().Configure(modeService, LifeCycle.Stage);
+            GetConfigurator().Configure(mode, LifeCycle.Stage);
 
             if (Data is IModeData modeData)
             {
-                modeData.ModeService = modeService;
+                modeData.Mode = mode;
             }
         }
 

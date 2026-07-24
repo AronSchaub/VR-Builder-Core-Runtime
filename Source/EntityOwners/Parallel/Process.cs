@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System.Collections.Generic;
 using System.Linq;
@@ -16,13 +18,13 @@ namespace VRBuilder.Core.EntityOwners.ParallelEntityCollection
     internal abstract class Process<TData> : Core.StageProcess<TData> where TData : class, IEntityCollectionData, IModeData
     {
         /// <summary>
-        /// Takes a <paramref name="collection"/> of entities and filters out the ones that must be skipped due to <paramref name="modeService"/>
+        /// Takes a <paramref name="collection"/> of entities and filters out the ones that must be skipped due to <paramref name="IMode"/>
         /// or contains a <seealso cref="IBackgroundBehaviorData"/> with `IsBlocking` set to false.
         /// </summary>
-        protected IEnumerable<IEntity> GetBlockingChildren(IEntityCollectionData collection, IModeService modeService)
+        protected IEnumerable<IEntity> GetBlockingChildren(IEntityCollectionData collection, IMode mode)
         {
             return collection.GetChildren()
-                .Where(child => modeService.CheckIfSkipped(child.GetType()) == false)
+                .Where(child => !mode.CheckIfSkipped(child.GetType()))
                 .Where(child =>
                 {
                     IDataOwner dataOwner = child as IDataOwner;

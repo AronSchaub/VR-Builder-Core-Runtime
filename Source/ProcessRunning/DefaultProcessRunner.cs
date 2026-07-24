@@ -37,8 +37,8 @@ namespace VRBuilder.Unity.ProcessRunning
         {
             if (currentProcess != null)
             {
-                currentProcess.Configure(args.ModeService);
-                ServiceRegistry.Get<IStepLockService>()?.Configure(ServiceRegistry.Get<IModeService>());
+                currentProcess.Configure(args.Mode);
+                ServiceRegistry.Get<IStepLockService>()?.Configure(ServiceRegistry.Get<IModeService>().ActiveOrDefaultMode);
             }
         }
 
@@ -116,10 +116,10 @@ namespace VRBuilder.Unity.ProcessRunning
                 ServiceRegistry.Get<ModeService>().ModeHandler.ModeChanged += HandleModeChanged;
 
             currentProcess.LifeCycle.StageChanged += HandleProcessStageChanged;
-            currentProcess.Configure(ServiceRegistry.Get<IModeService>());
+            currentProcess.Configure(ServiceRegistry.Get<IModeService>().ActiveOrDefaultMode);
 
             var stepLockService = ServiceRegistry.Get<IStepLockService>();
-            stepLockService?.Configure(ServiceRegistry.Get<IModeService>());
+            stepLockService?.Configure(ServiceRegistry.Get<IModeService>().ActiveOrDefaultMode);
             stepLockService?.OnProcessStarted(currentProcess);
             currentProcess.LifeCycle.Activate();
 

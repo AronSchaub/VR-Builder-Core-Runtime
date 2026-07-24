@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
-// Copyright (c) 2026 Aron Schaub
+// Modifications copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
@@ -9,7 +9,7 @@ using System;
 namespace VRBuilder.Core.Configuration.Modes
 {
     /// <summary>
-    /// ModeParameter is responsible for fetching its parameter value from a <see cref="IModeService"/>.
+    /// ModeParameter is responsible for fetching its parameter value from a <see cref="IMode"/>.
     /// If the value changes while being configured, an event will be triggered.
     /// </summary>
     public class ModeParameter<T>
@@ -59,11 +59,11 @@ namespace VRBuilder.Core.Configuration.Modes
         /// <summary>
         /// Configures this parameter with the given mode.
         /// </summary>
-        public void Configure(IModeService modeService)
+        public void Configure(IMode mode)
         {
-            if (modeService.ContainsParameter<T>(key))
+            if (mode.ContainsParameter<T>(key))
             {
-                Value = modeService.GetParameter<T>(key);
+                Value = mode.GetParameter<T>(key);
             }
             else
             {

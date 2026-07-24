@@ -32,7 +32,7 @@ namespace VRBuilder.Core.StepLocking
         /// <summary>
         /// Will be called whenever the mode is changed, allows to adapt to lock handling to it.
         /// </summary>
-        public void Configure(IModeService modeService);
+        public void Configure(IMode mode);
 
         /// <summary>
         /// Will be called once when a process is started.
