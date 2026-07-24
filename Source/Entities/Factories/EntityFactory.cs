@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
 
-using System; 
+using System;
 using VRBuilder.Core.Primitives;
 using VRBuilder.Core.Utils;
 
@@ -61,6 +61,7 @@ namespace VRBuilder.Core.Entities.Factories
 
         private static void PostProcessEntity<T>(IEntity entity) where T : IEntity
         {
+            // TODO: Replace with ProcessTypeRegistry.GetImplementationsOf once registry pattern lands
             foreach (Type postprocessingType in ReflectionUtils.GetConcreteImplementationsOf<EntityPostProcessing<T>>())
             {
                 if (ReflectionUtils.CreateInstanceOfType(postprocessingType) is EntityPostProcessing<T> postProcessing)

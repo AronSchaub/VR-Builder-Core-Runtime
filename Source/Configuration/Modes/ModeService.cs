@@ -25,8 +25,13 @@ namespace VRBuilder.Core.Configuration.Modes
         /// <inheritdoc />
         public string Name { get; private set; }
         
-        public IModeService ActiveOrDefaultMode { get; set; } = new ModeService("Default", new WhitelistTypeRule<IOptional>());
+        public IModeService ActiveOrDefaultMode { get; set; }
         public IModeHandler ModeHandler { get; set; }
+
+        public ModeService(): this("Default", new WhitelistTypeRule<IOptional>())
+        {
+            ActiveOrDefaultMode = this;
+        }
 
         /// <param name="name">Name of the process mode.</param>
         /// <param name="entitiesToSkip">A type rule which determines if an <see cref="IOptional"/> has to be skipped, depending on its type.</param>
