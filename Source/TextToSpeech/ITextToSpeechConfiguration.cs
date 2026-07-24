@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2026 Aron Schaub
-// SPDX-License-Identifier: lgpl-3.0-or-later
+﻿// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System;
 using VRBuilder.Core.Registry;

@@ -21,9 +21,9 @@ namespace VRBuilder.Core.TextToSpeech.Providers
         /// <summary>
         /// Loads the AudioClip file for the given text.
         /// </summary>
-        /// <param name="requestFileNameBuilder">Properties containing all information about the text-to-speech audio data.</param>
+        /// <param name="requestFileLocator">Properties containing all information about the text-to-speech audio data.</param>
         /// <returns>ready to play Audioclip</returns>
-        Task<IAudioClip> ConvertTextToSpeech(ITextToSpeechFileNameBuilder requestFileNameBuilder);
+        Task<IAudioClip> ConvertTextToSpeech(ITextToSpeechFileLocator requestFileLocator);
 
         /// <summary>
         /// Load config while editor- and runtime
