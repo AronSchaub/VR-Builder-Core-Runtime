@@ -4,10 +4,10 @@ using VRBuilder.Core.Utils.Logging;
 
 namespace VRBuilder.Core.Configuration
 {
-    public interface IRuntimeService : IService<IRuntimeConfiguration>
+    public interface IRuntimeService : IService<IRuntimeServiceConfiguration>
     {
-        string SelectedProcess { get; set; }
-        string ManifestFileName { get; set; }
+        string? SelectedProcess { get; set; }
+        string? ManifestFileName { get; set; }
         string SelectedProcessStreamingAssetsPath { get; set; }
         IRuntimeConfigurator Configurator { get; set; }
         ILifeCycleLoggingConfiguration LifeCycleLogging { get; }
