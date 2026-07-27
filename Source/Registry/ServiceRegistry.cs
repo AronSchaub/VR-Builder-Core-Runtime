@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using VRBuilder.Core.Registry;
 
 namespace VRBuilder.Core.Runtime.Registry
@@ -42,16 +43,13 @@ namespace VRBuilder.Core.Runtime.Registry
 
             foreach (var (key, value) in services) //e.g. DefaultProcessRunner won't be found above, so we have to allow subtypes as well.
             {
-                if (typeof(T).IsAssignableFrom(key))
+                if (typeof(T).IsAssignableTo(key))
                     return value as T;
             }
 
             return null;
         }
 
-        public static bool Has<T>()
-        {
-            return services.ContainsKey(typeof(T));
-        }
+        public static bool Has<T>() => services.Keys.Any(key => typeof(T).IsAssignableTo(key));
     }
 }
