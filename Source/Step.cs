@@ -14,6 +14,7 @@ using VRBuilder.Core.Configuration.Modes;
 using VRBuilder.Core.EntityOwners;
 using VRBuilder.Core.EntityOwners.FoldedEntityCollection;
 using VRBuilder.Core.EntityOwners.ParallelEntityCollection;
+using VRBuilder.Core.Primitives;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.Runtime.Registry;
@@ -329,9 +330,14 @@ namespace VRBuilder.Core
         /// Creates a new <see cref="IStep"/>.
         /// </summary>
         /// <param name="name"><see cref="IStep"/>'s name.</param>
-        public static IStep Create(string name)
+        public static IStep Create(string name, IVector2 position = default, string stepType = "default")
         {
-            return new Step(name);
+            IStep step = new Step(name);
+            step.StepMetadata.Position = position;
+            step.StepMetadata.StepType = stepType;
+            // PostProcessEntity<IStep>(step);
+
+            return step;
         }
     }
 }

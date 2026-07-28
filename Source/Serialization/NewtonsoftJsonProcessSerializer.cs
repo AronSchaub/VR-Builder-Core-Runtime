@@ -8,6 +8,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using VRBuilder.Core.IO;
 using VRBuilder.Core.UI.Drawers.Metadata;
@@ -170,6 +171,11 @@ namespace VRBuilder.Core.Serialization.NewtonsoftJson
                 {
                     return typeof(ReorderableElementMetadata);
                 }
+
+                if (typeName.StartsWith("VRBuilder") || typeName.StartsWith("TinkerFlow"))
+                    return Type.GetType(typeName);
+                
+                typeName = typeName.Replace(", TinkerFlow]]", $", {GetType().Assembly.GetName().Name}]]");
 
                 return base.BindToType(assemblyName, typeName);
             }
