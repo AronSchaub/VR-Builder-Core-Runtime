@@ -3,21 +3,17 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using VRBuilder.Core;
-using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Configuration.Modes;
-using VRBuilder.Core.ProcessRunning;
-using VRBuilder.Core.Registry;
 using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.StepLocking;
 
-namespace VRBuilder.Unity.ProcessRunning
+namespace VRBuilder.Core.ProcessRunning
 {
     public class DefaultProcessRunner : IProcessRunner
     {
         private IProcessRunnerConfiguration configuration;
-        private ProcessEvents events;
         private IProcess currentProcess;
+        private ProcessEvents events;
 
         public IProcess CurrentProcess => currentProcess;
         public IChapter CurrentChapter => CurrentProcess?.Data.Current;
@@ -30,25 +26,6 @@ namespace VRBuilder.Unity.ProcessRunning
             {
                 events ??= new ProcessEvents();
                 return events;
-            }
-        }
-
-        private void HandleModeChanged(object sender, ModeChangedEventArgs args)
-        {
-            if (currentProcess != null)
-            {
-                currentProcess.Configure(args.ModeService);
-                ServiceRegistry.Get<IStepLockService>()?.Configure(ServiceRegistry.Get<IModeService>());
-            }
-        }
-
-        private void HandleProcessStageChanged(object sender, ActivationStateChangedEventArgs e)
-        {
-            if (e.Stage == Stage.Inactive)
-            {
-                if (ServiceRegistry.Has<ModeService>())
-                    ServiceRegistry.Get<ModeService>().ModeHandler.ModeChanged -= HandleModeChanged;
-                Stop();
             }
         }
 
@@ -90,10 +67,6 @@ namespace VRBuilder.Unity.ProcessRunning
         public void SetConfiguration(IProcessRunnerConfiguration configuration)
         {
             this.configuration = configuration;
-        }
-
-        public void Initialize()
-        {
         }
 
         public void Initialize(IProcess process)
@@ -191,6 +164,29 @@ namespace VRBuilder.Unity.ProcessRunning
         }
 
         public void Stop()
+        {
+        }
+
+        private void HandleModeChanged(object sender, ModeChangedEventArgs args)
+        {
+            if (currentProcess != null)
+            {
+                currentProcess.Configure(args.ModeService);
+                ServiceRegistry.Get<IStepLockService>()?.Configure(ServiceRegistry.Get<IModeService>());
+            }
+        }
+
+        private void HandleProcessStageChanged(object sender, ActivationStateChangedEventArgs e)
+        {
+            if (e.Stage == Stage.Inactive)
+            {
+                if (ServiceRegistry.Has<ModeService>())
+                    ServiceRegistry.Get<ModeService>().ModeHandler.ModeChanged -= HandleModeChanged;
+                Stop();
+            }
+        }
+
+        public void Initialize()
         {
         }
     }

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace VRBuilder.ProcessController
+namespace VRBuilder.Core.ProcessRunning
 {
     /// <summary>
     /// Controller for managing the process.
