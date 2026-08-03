@@ -1,10 +1,10 @@
 // Modifications copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
@@ -19,6 +19,46 @@ namespace VRBuilder.Core.Behaviors
     [HelpLink("https://mindport-gmbh.github.io/VR-Builder-Documentation/articles/core/set-parent-behavior.html?utm_source=unity_editor&utm_medium=referral&utm_campaign=from_unity&utm_id=from_unity")]
     public class SetParentBehavior : Behavior<SetParentBehavior.EntityData>
     {
+        /// <summary>
+        /// Creates a set-parent behavior with empty targets.
+        /// </summary>
+        [JsonConstructor]
+        public SetParentBehavior() : this(Guid.Empty, Guid.Empty)
+        {
+        }
+
+        /// <summary>
+        /// Creates a set-parent behavior that reparents the target object to the parent object.
+        /// </summary>
+        /// <param name="target">The object to reparent.</param>
+        /// <param name="parent">The new parent object, or <c>null</c> to unparent the target.</param>
+        /// <param name="snapToParentTransform">If <c>true</c>, the object is moved to the parent's transform.</param>
+        public SetParentBehavior(ISceneObject target, ISceneObject parent, bool snapToParentTransform = false) : this(ProcessReferenceUtils.GetUniqueIdFrom(target), ProcessReferenceUtils.GetUniqueIdFrom(parent), snapToParentTransform)
+        {
+        }
+
+        /// <summary>
+        /// Creates a set-parent behavior from the unique ids of the target and parent objects.
+        /// </summary>
+        /// <param name="target">The unique id of the object to reparent.</param>
+        /// <param name="parent">The unique id of the new parent object, or <see cref="Guid.Empty"/> to unparent the target.</param>
+        /// <param name="snapToParentTransform">If <c>true</c>, the object is moved to the parent's transform.</param>
+        public SetParentBehavior(Guid target, Guid parent, bool snapToParentTransform = false)
+        {
+            Data.TargetObject = new SingleScenePropertyReference<IModifyParentProperty>(target);
+            Data.ParentObject = new SingleSceneObjectReference(parent);
+            Data.SnapToParentTransform = snapToParentTransform;
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetActivatingProcess()
+        {
+            return new ActivatingProcess(Data);
+        }
+
+        /// <summary>
+        /// The data for a <see cref="SetParentBehavior"/>.
+        /// </summary>
         [DisplayName("Set Parent")]
         [DataContract(IsReference = true)]
         public class EntityData : IBehaviorData
@@ -46,26 +86,12 @@ namespace VRBuilder.Core.Behaviors
             [DisplayName("Snap to parent transform")]
             public bool SnapToParentTransform { get; set; }
 
+            /// <inheritdoc />
             public Metadata Metadata { get; set; }
 
+            /// <inheritdoc />
             [IgnoreDataMember]
             public string Name => ParentObject.HasValue() ? $"Make {TargetObject} child of {ParentObject}" : $"Unparent {TargetObject}";
-        }
-
-        [JsonConstructor]
-        public SetParentBehavior() : this(Guid.Empty, Guid.Empty)
-        {
-        }
-
-        public SetParentBehavior(ISceneObject target, ISceneObject parent, bool snapToParentTransform = false) : this(ProcessReferenceUtils.GetUniqueIdFrom(target), ProcessReferenceUtils.GetUniqueIdFrom(parent), snapToParentTransform)
-        {
-        }
-
-        public SetParentBehavior(Guid target, Guid parent, bool snapToParentTransform = false)
-        {
-            Data.TargetObject = new SingleScenePropertyReference<IModifyParentProperty>(target);
-            Data.ParentObject = new SingleSceneObjectReference(parent);
-            Data.SnapToParentTransform = snapToParentTransform;
         }
 
         private class ActivatingProcess : StageProcess<EntityData>
@@ -98,12 +124,6 @@ namespace VRBuilder.Core.Behaviors
             public override void FastForward()
             {
             }
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetActivatingProcess()
-        {
-            return new ActivatingProcess(Data);
         }
     }
 }

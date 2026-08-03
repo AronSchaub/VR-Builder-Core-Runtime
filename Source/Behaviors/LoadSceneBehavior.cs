@@ -21,6 +21,20 @@ namespace VRBuilder.Core.Behaviors
     public class LoadSceneBehavior : Behavior<LoadSceneBehavior.EntityData>
     {
         /// <summary>
+        /// Creates a new <see cref="LoadSceneBehavior"/> without a scene configured.
+        /// </summary>
+        [JsonConstructor]
+        public LoadSceneBehavior()
+        {
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetActivatingProcess()
+        {
+            return new ActivatingProcess(Data);
+        }
+
+        /// <summary>
         /// The data class for a load scene behavior.
         /// </summary>        
         [DataContract(IsReference = true)]
@@ -34,10 +48,13 @@ namespace VRBuilder.Core.Behaviors
             [DisplayName("Scene to load")]
             public string ScenePath { get; set; }
 
+            /// <summary>
+            /// Scene property that performs the actual scene loading.
+            /// </summary>
             [DataMember]
             [DisplayName("Scene Controller")]
             public SingleScenePropertyReference<ISceneProperty> SceneProperty { get; set; }
-            
+
             /// <summary>
             /// If true, the scene will be loaded additively.
             /// </summary>
@@ -52,8 +69,10 @@ namespace VRBuilder.Core.Behaviors
             [DisplayName("Load asynchronously")]
             public bool LoadAsynchronously { get; set; }
 
+            /// <inheritdoc />
             public Metadata Metadata { get; set; }
 
+            /// <inheritdoc />
             [IgnoreDataMember]
             public string Name
             {
@@ -67,15 +86,10 @@ namespace VRBuilder.Core.Behaviors
             }
         }
 
-        [JsonConstructor]
-        public LoadSceneBehavior()
-        {
-        }
-
         private class ActivatingProcess : StageProcess<EntityData>
         {
-            bool isLoading = false;
             IAsyncCallback asyncHandler;
+            bool isLoading = false;
 
             public ActivatingProcess(EntityData data) : base(data)
             {
@@ -92,7 +106,6 @@ namespace VRBuilder.Core.Behaviors
                 {
                     Data.SceneProperty.Value.LoadSynchronously(Data.ScenePath, Data.LoadAdditively);
                 }
-
             }
 
             /// <inheritdoc />
@@ -130,12 +143,6 @@ namespace VRBuilder.Core.Behaviors
                 }
             }
         }
-
-        /// <inheritdoc />
-        public override IStageProcess GetActivatingProcess()
-        {
-            return new ActivatingProcess(Data);
-        }
     }
 
     /// <summary>
@@ -143,6 +150,10 @@ namespace VRBuilder.Core.Behaviors
     /// </summary>
     public class LoadSceneBehaviorException : Exception
     {
+        /// <summary>
+        /// Creates a new load scene behavior exception with the specified <paramref name="message"/>.
+        /// </summary>
+        /// <param name="message">Message describing the scene loading failure.</param>
         public LoadSceneBehaviorException(string message) : base(message)
         {
         }

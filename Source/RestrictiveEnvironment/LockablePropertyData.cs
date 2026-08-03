@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
 
-using VRBuilder.Core.Behaviors;
 using VRBuilder.Core.Properties;
 
 namespace VRBuilder.Core.RestrictiveEnvironment
@@ -22,14 +21,30 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         /// </summary>
         public bool EndStepLocked = true;
 
-        public LockablePropertyData(ILockableProperty property) : this(property, property.EndStepLocked) { }
+        /// <summary>
+        /// Initializes a new <see cref="LockablePropertyData"/> that uses the property's own <see cref="ILockableProperty.EndStepLocked"/> value.
+        /// </summary>
+        /// <param name="property">The lockable property this data describes; must not be <c>null</c>.</param>
+        public LockablePropertyData(ILockableProperty property) : this(property, property.EndStepLocked)
+        {
+        }
 
+        /// <summary>
+        /// Initializes a new <see cref="LockablePropertyData"/> with an explicit end-of-step lock state.
+        /// </summary>
+        /// <param name="property">The lockable property this data describes; must not be <c>null</c>.</param>
+        /// <param name="endStepLocked">If <c>true</c>, the property is locked at the end of a step.</param>
         public LockablePropertyData(ILockableProperty property, bool endStepLocked)
         {
             EndStepLocked = endStepLocked;
             Property = property;
         }
 
+        /// <summary>
+        /// Determines whether this instance refers to the same <see cref="LockableProperty"/> as <paramref name="other"/>.
+        /// </summary>
+        /// <param name="other">The <see cref="LockablePropertyData"/> to compare against.</param>
+        /// <returns><c>true</c> if both instances reference the same property; otherwise, <c>false</c>.</returns>
         protected bool Equals(LockablePropertyData other)
         {
             return Equals(Property, other.Property);

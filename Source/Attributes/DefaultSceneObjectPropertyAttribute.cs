@@ -13,11 +13,18 @@ namespace VRBuilder.Core.Attributes
     [AttributeUsage(AttributeTargets.Class)]
     public class DefaultSceneObjectPropertyAttribute : Attribute
     {
+        /// <summary>
+        /// Creates an attribute that specifies <paramref name="concreteType"/> as the default for the scene object property interface.
+        /// </summary>
+        /// <param name="concreteType">The concrete type used as the default.</param>
         public DefaultSceneObjectPropertyAttribute(Type concreteType)
         {
             ConcreteType = concreteType;
         }
 
+        /// <summary>
+        /// The concrete type used as the default for the scene object property interface.
+        /// </summary>
         public Type ConcreteType { get; }
     }
 }

@@ -15,7 +15,6 @@ using VRBuilder.Core.EntityOwners.ParallelEntityCollection;
 using VRBuilder.Core.Exceptions;
 using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.Utils;
-using VRBuilder.Core.Utils.Logging;
 
 namespace VRBuilder.Core
 {
@@ -25,6 +24,112 @@ namespace VRBuilder.Core
     [DataContract(IsReference = true)]
     public class Chapter : Entity<Chapter.EntityData>, IChapter
     {
+        /// <summary>
+        /// Creates a chapter with no name and no first step.
+        /// </summary>
+        protected Chapter() : this(null, null)
+        {
+        }
+
+        /// <summary>
+        /// Creates a chapter with the given name and first step.
+        /// </summary>
+        /// <param name="name">The name of the chapter.</param>
+        /// <param name="firstStep">The first step of the chapter, or <c>null</c>.</param>
+        public Chapter(string name, IStep firstStep)
+        {
+            ChapterMetadata = new ChapterMetadata();
+            ChapterMetadata.Guid = Guid.NewGuid();
+
+            Data.Name = name;
+            Data.FirstStep = firstStep;
+            Data.Steps = new List<IStep>();
+
+            if (firstStep != null)
+            {
+                Data.Steps.Add(firstStep);
+            }
+
+            if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogChapters)
+            {
+                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("<b>Chapter</b> <i>'{0}'</i> is <b>{1}</b>.\n", Data.Name, LifeCycle.Stage.ToString()); };
+            }
+        }
+
+        /// <inheritdoc />
+        [DataMember]
+        public ChapterMetadata ChapterMetadata { get; set; }
+
+        /// <inheritdoc />
+        public override IStageProcess GetActivatingProcess()
+        {
+            return new ActivatingProcess(Data);
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetDeactivatingProcess()
+        {
+            return new StopEntityIteratingProcess<IStep>(Data);
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetAbortingProcess()
+        {
+            return new ParallelAbortingProcess<EntityData>(Data);
+        }
+
+        /// <inheritdoc />
+        public IChapter Clone()
+        {
+            IChapter clonedChapter = new Chapter(Data.Name, null);
+            clonedChapter.ChapterMetadata.EntryNodePosition = ChapterMetadata.EntryNodePosition;
+
+            Dictionary<IStep, IStep> clonedSteps = new Dictionary<IStep, IStep>();
+
+            foreach (IStep step in Data.Steps)
+            {
+                IStep clonedStep = step.Clone();
+                clonedChapter.Data.Steps.Add(clonedStep);
+                if (Data.FirstStep == step)
+                {
+                    clonedChapter.Data.FirstStep = clonedStep;
+                }
+
+                clonedSteps.Add(step, clonedStep);
+            }
+
+            foreach (ITransition transition in clonedChapter.Data.Steps.SelectMany(step => step.Data.Transitions.Data.Transitions))
+            {
+                if (transition.Data.TargetStep != null && clonedSteps.ContainsKey(transition.Data.TargetStep))
+                {
+                    transition.Data.TargetStep = clonedSteps[transition.Data.TargetStep];
+                }
+            }
+
+            return clonedChapter;
+        }
+
+        /// <inheritdoc />
+        IChapterData IDataOwner<IChapterData>.Data
+        {
+            get { return Data; }
+        }
+
+        /// <inheritdoc />
+        protected override IConfigurator GetConfigurator()
+        {
+            return new SequenceConfigurator<IStep>(Data);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="IChapter"/>.
+        /// </summary>
+        /// <param name="name"><see cref="IChapter"/>'s name.</param>
+        public static IChapter Create(string name)
+        {
+            return new Chapter(name, null);
+        }
+
         /// <summary>
         /// The chapter's data class.
         /// </summary>
@@ -75,12 +180,12 @@ namespace VRBuilder.Core
         {
             private readonly IStep firstStep;
 
+            private IEnumerator<IStep> enumerator;
+
             public ActivatingProcess(IChapterData data) : base(data)
             {
                 firstStep = data.FirstStep;
             }
-
-            private IEnumerator<IStep> enumerator;
 
             private IEnumerator<IStep> GetChildren()
             {
@@ -168,104 +273,6 @@ namespace VRBuilder.Core
                     Data.Current = step;
                 }
             }
-        }
-
-        /// <inheritdoc />
-        [DataMember]
-        public ChapterMetadata ChapterMetadata { get; set; }
-
-        /// <inheritdoc />
-        public override IStageProcess GetActivatingProcess()
-        {
-            return new ActivatingProcess(Data);
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetDeactivatingProcess()
-        {
-            return new StopEntityIteratingProcess<IStep>(Data);
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetAbortingProcess()
-        {
-            return new ParallelAbortingProcess<EntityData>(Data);
-        }
-
-        /// <inheritdoc />
-        protected override IConfigurator GetConfigurator()
-        {
-            return new SequenceConfigurator<IStep>(Data);
-        }
-
-        /// <inheritdoc />
-        public IChapter Clone()
-        {
-            IChapter clonedChapter = new Chapter(Data.Name, null);
-            clonedChapter.ChapterMetadata.EntryNodePosition = ChapterMetadata.EntryNodePosition;
-
-            Dictionary<IStep, IStep> clonedSteps = new Dictionary<IStep, IStep>();
-
-            foreach (IStep step in Data.Steps)
-            {
-                IStep clonedStep = step.Clone();
-                clonedChapter.Data.Steps.Add(clonedStep);
-                if (Data.FirstStep == step)
-                {
-                    clonedChapter.Data.FirstStep = clonedStep;
-                }
-
-                clonedSteps.Add(step, clonedStep);
-            }
-
-            foreach (ITransition transition in clonedChapter.Data.Steps.SelectMany(step => step.Data.Transitions.Data.Transitions))
-            {
-                if (transition.Data.TargetStep != null && clonedSteps.ContainsKey(transition.Data.TargetStep))
-                {
-                    transition.Data.TargetStep = clonedSteps[transition.Data.TargetStep];
-                }
-            }
-
-            return clonedChapter;
-        }
-
-        /// <inheritdoc />
-        IChapterData IDataOwner<IChapterData>.Data
-        {
-            get { return Data; }
-        }
-
-        protected Chapter() : this(null, null)
-        {
-        }
-
-        public Chapter(string name, IStep firstStep)
-        {
-            ChapterMetadata = new ChapterMetadata();
-            ChapterMetadata.Guid = Guid.NewGuid();
-
-            Data.Name = name;
-            Data.FirstStep = firstStep;
-            Data.Steps = new List<IStep>();
-
-            if (firstStep != null)
-            {
-                Data.Steps.Add(firstStep);
-            }
-
-            if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogChapters)
-            {
-                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("<b>Chapter</b> <i>'{0}'</i> is <b>{1}</b>.\n", Data.Name, LifeCycle.Stage.ToString()); };
-            }
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="IChapter"/>.
-        /// </summary>
-        /// <param name="name"><see cref="IChapter"/>'s name.</param>
-        public static IChapter Create(string name)
-        {
-            return new Chapter(name, null);
         }
     }
 }

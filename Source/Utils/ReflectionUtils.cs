@@ -11,6 +11,9 @@ using VRBuilder.Core.Attributes;
 
 namespace VRBuilder.Core.Utils
 {
+    /// <summary>
+    /// Utility methods for reflection-based type discovery, instance creation and property/field access.
+    /// </summary>
     public static class ReflectionUtils
     {
         private static Type[] cachedTypes;

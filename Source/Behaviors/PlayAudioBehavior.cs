@@ -21,6 +21,58 @@ namespace VRBuilder.Core.Behaviors
     public class PlayAudioBehavior : Behavior<PlayAudioBehavior.EntityData>, IOptional
     {
         /// <summary>
+        /// Creates an empty play audio behavior, used by the JSON deserializer.
+        /// </summary>
+        [JsonConstructor]
+        protected PlayAudioBehavior() : this(Guid.Empty, null, BehaviorExecutionStages.None)
+        {
+        }
+
+        /// <summary>
+        /// Creates a behavior that plays <paramref name="audioData"/> on the audio player identified by <paramref name="audioPlayer"/> at the given <paramref name="executionStages"/>.
+        /// </summary>
+        /// <param name="audioPlayer">Unique id of the audio player scene property that plays the audio.</param>
+        /// <param name="audioData">Audio data containing the clip to play.</param>
+        /// <param name="executionStages">Stages at which the audio is played.</param>
+        public PlayAudioBehavior(Guid audioPlayer, IAudioData audioData, BehaviorExecutionStages executionStages)
+        {
+            Data.AudioData = audioData;
+            Data.ExecutionStages = executionStages;
+            Data.AudioProperty = new SingleScenePropertyReference<IAudioPlayer>(audioPlayer);
+            Data.IsBlocking = true;
+        }
+
+        /// <summary>
+        /// Creates a behavior that plays <paramref name="audioData"/> on the audio player identified by <paramref name="audioPlayer"/> at the given <paramref name="executionStages"/>, optionally blocking step completion.
+        /// </summary>
+        /// <param name="audioPlayer">Unique id of the audio player scene property that plays the audio.</param>
+        /// <param name="audioData">Audio data containing the clip to play.</param>
+        /// <param name="executionStages">Stages at which the audio is played.</param>
+        /// <param name="isBlocking">If <c>true</c>, the behavior prevents step completion until the audio has finished playing.</param>
+        public PlayAudioBehavior(Guid audioPlayer, IAudioData audioData, BehaviorExecutionStages executionStages, bool isBlocking) : this(audioPlayer, audioData, executionStages)
+        {
+            Data.IsBlocking = isBlocking;
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetActivatingProcess()
+        {
+            return new PlayAudioProcess(BehaviorExecutionStages.Activation, Data);
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetDeactivatingProcess()
+        {
+            return new PlayAudioProcess(BehaviorExecutionStages.Deactivation, Data);
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetAbortingProcess()
+        {
+            return new AbortingProcess(Data);
+        }
+
+        /// <summary>
         /// The "play audio" behavior's data.
         /// </summary>
         [DataContract(IsReference = true)]
@@ -38,10 +90,6 @@ namespace VRBuilder.Core.Behaviors
             /// </summary>
             [DataMember]
             public IAudioData AudioData { get; set; }
-
-            /// <inheritdoc />
-            [DataMember]
-            public BehaviorExecutionStages ExecutionStages { get; set; }
 
             /// <summary>
             /// Audio volume this audio file should be played with.
@@ -81,6 +129,10 @@ namespace VRBuilder.Core.Behaviors
 
             /// <inheritdoc />
             public bool IsBlocking { get; set; }
+
+            /// <inheritdoc />
+            [DataMember]
+            public BehaviorExecutionStages ExecutionStages { get; set; }
         }
 
         private class PlayAudioProcess : StageProcess<EntityData>
@@ -113,7 +165,7 @@ namespace VRBuilder.Core.Behaviors
 
                     //start playing
                     if (Data.AudioData.HasAudio)
-                    { 
+                    {
                         Data.AudioProperty.Value.PlayAudio(Data.AudioData, Data.Volume);
                     }
 
@@ -155,41 +207,6 @@ namespace VRBuilder.Core.Behaviors
                 ForwardingLogger.Log("Aborting");
                 Data.AudioProperty.Value.StopAudio();
             }
-        }
-
-        [JsonConstructor]
-        protected PlayAudioBehavior() : this(Guid.Empty, null, BehaviorExecutionStages.None)
-        {
-        }
-
-        public PlayAudioBehavior(Guid audioPlayer, IAudioData audioData, BehaviorExecutionStages executionStages)
-        {
-            Data.AudioData = audioData;
-            Data.ExecutionStages = executionStages;
-            Data.AudioProperty = new SingleScenePropertyReference<IAudioPlayer>(audioPlayer);
-            Data.IsBlocking = true;
-        }
-
-        public PlayAudioBehavior(Guid audioPlayer, IAudioData audioData, BehaviorExecutionStages executionStages, bool isBlocking) : this(audioPlayer, audioData, executionStages)
-        {
-            Data.IsBlocking = isBlocking;
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetActivatingProcess()
-        {
-            return new PlayAudioProcess(BehaviorExecutionStages.Activation, Data);
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetDeactivatingProcess()
-        {
-            return new PlayAudioProcess(BehaviorExecutionStages.Deactivation, Data);
-        }
-
-        public override IStageProcess GetAbortingProcess()
-        {
-            return new AbortingProcess(Data);
         }
     }
 }

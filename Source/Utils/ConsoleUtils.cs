@@ -4,6 +4,9 @@
 
 namespace VRBuilder.Utils
 {
+    /// <summary>
+    /// Helpers for formatting console output.
+    /// </summary>
     public static class ConsoleUtils
     {
         private const string tab = "    ";
@@ -12,7 +15,7 @@ namespace VRBuilder.Utils
         /// Returns a string containing tabs. One tab is four spaces.
         /// </summary>
         /// <param name="tabsCount">Amount of tabs.</param>
-        /// <returns></returns>
+        /// <returns>A string of <paramref name="tabsCount"/> consecutive tabs.</returns>
         public static string GetTabs(uint tabsCount = 1)
         {
             string result = "";

@@ -12,14 +12,18 @@ namespace VRBuilder.Core
     public abstract class Configurator<TData> : IConfigurator where TData : IData
     {
         /// <summary>
-        /// The data to configure.
+        /// Creates a configurator for the given data.
         /// </summary>
-        protected TData Data { get; }
-
+        /// <param name="data">The data to configure.</param>
         protected Configurator(TData data)
         {
             Data = data;
         }
+
+        /// <summary>
+        /// The data to configure.
+        /// </summary>
+        protected TData Data { get; }
 
         /// <inheritdoc />
         public abstract void Configure(IModeService modeService, Stage stage);

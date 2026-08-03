@@ -1,9 +1,9 @@
 // Modifications copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
@@ -18,6 +18,53 @@ namespace VRBuilder.Core.Conditions
     [HelpLink("https://mindport-gmbh.github.io/VR-Builder-Documentation/articles/core/object-nearby-condition.html?utm_source=unity_editor&utm_medium=referral&utm_campaign=from_unity&utm_id=from_unity")]
     public class ObjectInRangeCondition : Condition<ObjectInRangeCondition.EntityData>
     {
+        /// <summary>
+        /// Creates an empty "object in range" condition, used by the JSON deserializer.
+        /// </summary>
+        [JsonConstructor]
+        public ObjectInRangeCondition() : this(Guid.Empty, Guid.Empty, 0f)
+        {
+        }
+
+        /// <summary>
+        /// Creates an "object in range" condition for the given target and range detector.
+        /// </summary>
+        /// <param name="target">The tracked object whose distance to the reference is measured.</param>
+        /// <param name="detector">The reference detector object used to measure distance from the tracked object.</param>
+        /// <param name="range">Maximum distance in Unity units between the tracked and reference objects.</param>
+        /// <param name="requiredTimeInTarget">How long the tracked object must stay within range, in seconds.</param>
+        public ObjectInRangeCondition(ISceneObject target, ITransformInRangeDetectorProperty detector, float range, float requiredTimeInTarget = 0)
+            : this(ProcessReferenceUtils.GetUniqueIdFrom(target), ProcessReferenceUtils.GetUniqueIdFrom(detector), range, requiredTimeInTarget)
+        {
+        }
+
+        /// <summary>
+        /// Creates an "object in range" condition from the unique ids of the target and range detector.
+        /// </summary>
+        /// <param name="targetId">Unique id of the tracked object whose distance is measured.</param>
+        /// <param name="detector">Unique id of the reference detector object used to measure distance.</param>
+        /// <param name="range">Maximum distance in Unity units between the tracked and reference objects.</param>
+        /// <param name="requiredTimeInTarget">How long the tracked object must stay within range, in seconds.</param>
+        public ObjectInRangeCondition(Guid targetId, Guid detector, float range, float requiredTimeInTarget = 0)
+        {
+            Data.TargetObject = new SingleSceneObjectReference(targetId);
+            Data.ReferenceObject = new SingleScenePropertyReference<ITransformInRangeDetectorProperty>(detector);
+            Data.Range = range;
+            Data.RequiredTimeInside = requiredTimeInTarget;
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetActiveProcess()
+        {
+            return new ActiveProcess(Data);
+        }
+
+        /// <inheritdoc />
+        protected override IAutocompleter GetAutocompleter()
+        {
+            return new EntityAutocompleter(Data);
+        }
+
         /// <summary>
         /// The data of "object in range" condition.
         /// </summary>
@@ -59,29 +106,13 @@ namespace VRBuilder.Core.Conditions
             [DisplayTooltip("How long the tracked object must stay within range, in seconds.")]
             public float RequiredTimeInside { get; set; }
 
-            /// <inheritdoc />
+            /// <summary>
+            /// True if the tracked object has been within range of the reference object for the required time.
+            /// </summary>
             public bool IsCompleted { get; set; }
 
             /// <inheritdoc />
             public Metadata Metadata { get; set; }
-        }
-
-        [JsonConstructor]
-        public ObjectInRangeCondition() : this(Guid.Empty, Guid.Empty, 0f)
-        {
-        }
-
-        public ObjectInRangeCondition(ISceneObject target, ITransformInRangeDetectorProperty detector, float range, float requiredTimeInTarget = 0)
-            : this(ProcessReferenceUtils.GetUniqueIdFrom(target), ProcessReferenceUtils.GetUniqueIdFrom(detector), range, requiredTimeInTarget)
-        {
-        }
-
-        public ObjectInRangeCondition(Guid targetId, Guid detector, float range, float requiredTimeInTarget = 0)
-        {
-            Data.TargetObject = new SingleSceneObjectReference(targetId);
-            Data.ReferenceObject = new SingleScenePropertyReference<ITransformInRangeDetectorProperty>(detector);
-            Data.Range = range;
-            Data.RequiredTimeInside = requiredTimeInTarget;
         }
 
         private class ActiveProcess : ObjectInTargetActiveProcess<EntityData>
@@ -116,18 +147,6 @@ namespace VRBuilder.Core.Conditions
             {
                 Data.ReferenceObject.Value.ForceMoveToTracked();
             }
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetActiveProcess()
-        {
-            return new ActiveProcess(Data);
-        }
-
-        /// <inheritdoc />
-        protected override IAutocompleter GetAutocompleter()
-        {
-            return new EntityAutocompleter(Data);
         }
     }
 }

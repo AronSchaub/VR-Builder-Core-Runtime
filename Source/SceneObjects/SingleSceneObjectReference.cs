@@ -13,8 +13,31 @@ namespace VRBuilder.Core.SceneObjects
     [DataContract(IsReference = true)]
     public class SingleSceneObjectReference : SingleSceneReference<ISceneObject>
     {
+        /// <summary>
+        /// Initializes a new instance of <see cref="SingleSceneObjectReference"/> referencing no objects.
+        /// </summary>
+        public SingleSceneObjectReference() : base()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="SingleSceneObjectReference"/> referencing the object with the given guid.
+        /// </summary>
+        /// <param name="guid">The guid of the object this reference should point to.</param>
+        public SingleSceneObjectReference(Guid guid) : base(guid)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="SingleSceneObjectReference"/> with the given set of guids.
+        /// </summary>
+        /// <param name="guids">The guids this reference should point to.</param>
+        public SingleSceneObjectReference(IEnumerable<Guid> guids) : base(guids)
+        {
+        }
+
         /// <inheritdoc/>
-        protected override ISceneObject DetermineValue(ISceneObject cached)
+        protected override ISceneObject? DetermineValue(ISceneObject? cached)
         {
             if (!ServiceRegistry.Has<IRuntimeService>() || IsEmpty())
             {
@@ -49,9 +72,5 @@ namespace VRBuilder.Core.SceneObjects
 
             return value;
         }
-
-        public SingleSceneObjectReference() : base() { }
-        public SingleSceneObjectReference(Guid guid) : base(guid) { }
-        public SingleSceneObjectReference(IEnumerable<Guid> guids) : base(guids) { }
     }
 }

@@ -12,6 +12,16 @@ namespace VRBuilder.Core.SceneObjects
     public interface ILockable
     {
         /// <summary>
+        /// Returns if the object is locked.
+        /// </summary>
+        bool IsLocked { get; }
+
+        /// <summary>
+        /// If true, the object is never automatically locked by the VRBuilder process.
+        /// </summary>
+        bool IsAlwaysUnlocked { get; }
+
+        /// <summary>
         /// Will be called when the object containing this interface is locked.
         /// </summary>
         event Action<ILockStateChangedEventArgs> LockedAction;
@@ -20,11 +30,6 @@ namespace VRBuilder.Core.SceneObjects
         /// Will be called when the object containing this interface is unlocked.
         /// </summary>
         event Action<ILockStateChangedEventArgs> UnlockedAction;
-
-        /// <summary>
-        /// Returns if the object is locked.
-        /// </summary>
-        bool IsLocked { get; }
 
         /// <summary>
         /// Changes the lock state of the object.
@@ -40,13 +45,11 @@ namespace VRBuilder.Core.SceneObjects
         /// Manually removes a step data keeping the object unlocked.
         /// </summary>
         bool RemoveUnlocker(IStepData data);
-
-        /// <summary>
-        /// If true, the object is never automatically locked by the VRBuilder process.
-        /// </summary>
-        bool IsAlwaysUnlocked { get; }
     }
 
+    /// <summary>
+    /// Event arguments that describe a change in the lock state of an <see cref="ILockable"/> object.
+    /// </summary>
     public interface ILockStateChangedEventArgs
     {
     }

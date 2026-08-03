@@ -11,14 +11,21 @@ using VRBuilder.Core.Settings;
 
 namespace VRBuilder.Core.SceneObjects
 {
-    public interface ISceneObjectRegistry: IService<ISceneObjectRegistryConfiguration>
+    /// <summary>
+    /// Tracks the <see cref="ISceneObject"/>s of the current scene and their named groups,
+    /// providing lookup by guid and by the <see cref="ISceneObjectProperty"/>s attached to them.
+    /// </summary>
+    public interface ISceneObjectRegistry : IService<ISceneObjectRegistryConfiguration>
     {
+        /// <summary>
+        /// The named groups of scene objects maintained by the registry.
+        /// </summary>
+        ISceneObjectGroups SceneObjectGroups { get; }
+
         /// <summary>
         /// Raised when registered scene objects or their group membership changes.
         /// </summary>
         event Action Changed;
-
-        ISceneObjectGroups SceneObjectGroups { get; }
 
         /// <summary>
         /// Returns if the Guid is registered in the registry.
@@ -39,7 +46,7 @@ namespace VRBuilder.Core.SceneObjects
         /// Returns all registered properties of the specified type across all registered scene objects.
         /// </summary>
         IEnumerable<T> GetAllProperties<T>() where T : ISceneObjectProperty;
-        
+
         /// <summary>
         /// Registers an SceneObject in the registry. If there is an SceneObject with the same name
         /// already registered, an NameNotUniqueException will be thrown. Also if the Guid
@@ -62,6 +69,10 @@ namespace VRBuilder.Core.SceneObjects
         /// </summary>
         void Refresh();
 
+        /// <summary>
+        /// Marks the given scene object as changed so the registry re-evaluates it on the next refresh.
+        /// </summary>
+        /// <param name="sceneObject">The scene object whose state changed.</param>
         void MarkSceneObjectDirty(ISceneObject sceneObject);
     }
 }

@@ -21,6 +21,87 @@ namespace VRBuilder.Core
     public class Process : Entity<Process.EntityData>, IProcess
     {
         /// <summary>
+        /// Creates an empty process with no chapters.
+        /// </summary>
+        protected Process() : this(null, Array.Empty<IChapter>())
+        {
+        }
+
+        /// <summary>
+        /// Creates a process with the given name and a single chapter.
+        /// </summary>
+        /// <param name="name">The name of the process.</param>
+        /// <param name="chapter">The initial chapter of the process.</param>
+        public Process(string name, IChapter chapter) : this(name, new List<IChapter> { chapter })
+        {
+        }
+
+        /// <summary>
+        /// Creates a process with the given name and chapters.
+        /// </summary>
+        /// <param name="name">The name of the process.</param>
+        /// <param name="chapters">The chapters of the process.</param>
+        public Process(string name, IEnumerable<IChapter> chapters)
+        {
+            ProcessMetadata = new ProcessMetadata();
+            ProcessMetadata.Guid = Guid.NewGuid();
+
+            Data.Chapters = chapters.ToList();
+            Data.Name = name;
+        }
+
+        /// <summary>
+        /// Step that is currently being executed.
+        /// </summary>
+        [DataMember]
+        public IStep CurrentStep { get; protected set; }
+
+        /// <inheritdoc />
+        [DataMember]
+        public ProcessMetadata ProcessMetadata { get; set; }
+
+        /// <inheritdoc />
+        IProcessData IDataOwner<IProcessData>.Data
+        {
+            get { return Data; }
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetActivatingProcess()
+        {
+            return new ActivatingProcess(Data);
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetDeactivatingProcess()
+        {
+            return new StopEntityIteratingProcess<IChapter>(Data);
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetAbortingProcess()
+        {
+            return new ParallelAbortingProcess<EntityData>(Data);
+        }
+
+        /// <inheritdoc />
+        public IProcess Clone()
+        {
+            IEnumerable<IChapter> clonedChapters = Data.Chapters.Select(chapter => chapter.Clone());
+            return new Process(Data.Name, clonedChapters);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="IProcess"/>.
+        /// </summary>
+        /// <param name="name"><see cref="IProcess"/>'s name.</param>
+        /// <param name="firstStep">Initial <see cref="IStep"/> for this <see cref="IProcess"/>.</param>
+        public static IProcess Create(string name, IStep firstStep = null)
+        {
+            return new Process(name, new Chapter("Chapter 1", firstStep));
+        }
+
+        /// <summary>
         /// The data class for a process.
         /// </summary>
         public class EntityData : EntityCollectionData<IChapter>, IProcessData
@@ -51,6 +132,9 @@ namespace VRBuilder.Core
             [IgnoreDataMember]
             public IChapter Current { get; set; }
 
+            /// <summary>
+            /// The chapter to jump to next, overriding the normal chapter order.
+            /// </summary>
             [IgnoreDataMember]
             public IChapter OverrideNext { get; set; }
 
@@ -65,16 +149,6 @@ namespace VRBuilder.Core
             /// <inheritdoc />
             IEntity IEntitySequenceData.Current => Current;
         }
-
-        /// <summary>
-        /// Step that is currently being executed.
-        /// </summary>
-        [DataMember]
-        public IStep CurrentStep { get; protected set; }
-
-        /// <inheritdoc />
-        [DataMember]
-        public ProcessMetadata ProcessMetadata { get; set; }
 
         private class ActivatingProcess : EntityIteratingProcess<IEntityNonLinearSequenceDataWithMode<IChapter>, IChapter>
         {
@@ -125,64 +199,6 @@ namespace VRBuilder.Core
                     return true;
                 }
             }
-        }
-
-        /// <inheritdoc />
-        IProcessData IDataOwner<IProcessData>.Data
-        {
-            get { return Data; }
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetActivatingProcess()
-        {
-            return new ActivatingProcess(Data);
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetDeactivatingProcess()
-        {
-            return new StopEntityIteratingProcess<IChapter>(Data);
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetAbortingProcess()
-        {
-            return new ParallelAbortingProcess<EntityData>(Data);
-        }
-
-        /// <inheritdoc />
-        public IProcess Clone()
-        {
-            IEnumerable<IChapter> clonedChapters = Data.Chapters.Select(chapter => chapter.Clone());
-            return new Process(Data.Name, clonedChapters);
-        }
-
-        protected Process() : this(null, Array.Empty<IChapter>())
-        {
-        }
-
-        public Process(string name, IChapter chapter) : this(name, new List<IChapter> { chapter })
-        {
-        }
-
-        public Process(string name, IEnumerable<IChapter> chapters)
-        {
-            ProcessMetadata = new ProcessMetadata();
-            ProcessMetadata.Guid = Guid.NewGuid();
-
-            Data.Chapters = chapters.ToList();
-            Data.Name = name;
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="IProcess"/>.
-        /// </summary>
-        /// <param name="name"><see cref="IProcess"/>'s name.</param>
-        /// <param name="firstStep">Initial <see cref="IStep"/> for this <see cref="IProcess"/>.</param>
-        public static IProcess Create(string name, IStep firstStep = null)
-        {
-            return new Process(name, new Chapter("Chapter 1", firstStep));
         }
     }
 }

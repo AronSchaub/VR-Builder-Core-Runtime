@@ -15,53 +15,83 @@ using VRBuilder.Core.SceneObjects;
 
 namespace VRBuilder.Core.Behaviors
 {
-    // This behavior linearly changes scale of a Target object over Duration seconds, until it matches TargetScale.
+    /// <summary>
+    /// Linearly changes the scale of the target objects over the duration until it matches the target scale.
+    /// </summary>
     [DataContract(IsReference = true)]
     [HelpLink("https://mindport-gmbh.github.io/VR-Builder-Documentation/articles/core/scale-objects-behavior.html?utm_source=unity_editor&utm_medium=referral&utm_campaign=from_unity&utm_id=from_unity")]
     public class ScalingBehavior : Behavior<ScalingBehavior.EntityData>
     {
-        [DisplayName("Scale Object")]
-        [DataContract(IsReference = true)]
-        public class EntityData : IBehaviorData
-        {
-            // Process object to scale.
-            [DataMember]
-            [DisplayName("Target Objects")]
-            public MultipleScenePropertyReference<IScaleProperty> Targets { get; set; }
-
-            // Target scale.
-            [DataMember]
-            [DisplayName("Target Scale")]
-            public IVector3 TargetScale { get; set; }
-
-            // Duration of the animation in seconds.
-            [DataMember]
-            [DisplayName("Animation Duration")]
-            [DisplayTooltip("Duration of the animation in seconds.")]
-            public float Duration { get; set; }
-
-            [DataMember]
-            [DisplayName("Animation curve")]
-            public IAnimationCurve AnimationCurve { get; set; }
-
-            public Metadata Metadata { get; set; }
-
-            /// <inheritdoc />
-            [IgnoreDataMember]
-            public string Name => $"Scale {Targets} to {TargetScale}";
-        }
-
+        /// <summary>
+        /// Creates a scaling behavior with default values.
+        /// </summary>
         [JsonConstructor]
         public ScalingBehavior() : this(Array.Empty<ISceneObject>(), Vector3Data.One, 0f)
         {
         }
 
+        /// <summary>
+        /// Creates a scaling behavior that scales the given objects to the target scale over the duration.
+        /// </summary>
+        /// <param name="targets">The objects to scale.</param>
+        /// <param name="targetScale">The scale the objects should end at.</param>
+        /// <param name="duration">The duration of the animation in seconds.</param>
         public ScalingBehavior(IEnumerable<ISceneObject> targets, IVector3 targetScale, float duration)
         {
             Data.Targets = new MultipleScenePropertyReference<IScaleProperty>(targets.Select(target => target.Guid));
             Data.TargetScale = targetScale;
             Data.Duration = duration;
             Data.AnimationCurve = AnimationCurveData.Linear(0f, 0f, 1f, 1f);
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetActivatingProcess()
+        {
+            return new ActivatingProcess(Data);
+        }
+
+        /// <summary>
+        /// The data for a <see cref="ScalingBehavior"/>.
+        /// </summary>
+        [DisplayName("Scale Object")]
+        [DataContract(IsReference = true)]
+        public class EntityData : IBehaviorData
+        {
+            /// <summary>
+            /// The process objects to scale.
+            /// </summary>
+            [DataMember]
+            [DisplayName("Target Objects")]
+            public MultipleScenePropertyReference<IScaleProperty> Targets { get; set; }
+
+            /// <summary>
+            /// The target scale of the objects.
+            /// </summary>
+            [DataMember]
+            [DisplayName("Target Scale")]
+            public IVector3 TargetScale { get; set; }
+
+            /// <summary>
+            /// Duration of the animation in seconds.
+            /// </summary>
+            [DataMember]
+            [DisplayName("Animation Duration")]
+            [DisplayTooltip("Duration of the animation in seconds.")]
+            public float Duration { get; set; }
+
+            /// <summary>
+            /// The curve used to interpolate the scale over time.
+            /// </summary>
+            [DataMember]
+            [DisplayName("Animation curve")]
+            public IAnimationCurve AnimationCurve { get; set; }
+
+            /// <inheritdoc />
+            public Metadata Metadata { get; set; }
+
+            /// <inheritdoc />
+            [IgnoreDataMember]
+            public string Name => $"Scale {Targets} to {TargetScale}";
         }
 
         private class ActivatingProcess : StageProcess<EntityData>
@@ -119,12 +149,6 @@ namespace VRBuilder.Core.Behaviors
             public override void FastForward()
             {
             }
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetActivatingProcess()
-        {
-            return new ActivatingProcess(Data);
         }
     }
 }

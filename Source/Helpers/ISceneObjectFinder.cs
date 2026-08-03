@@ -21,6 +21,11 @@ namespace VRBuilder.Core.Helpers
     /// </remarks>
     public interface ISceneObjectFinder
     {
+        /// <summary>
+        /// Returns all scene objects that implement or derive from <typeparamref name="T"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of scene object to find. Must be a reference type.</typeparam>
+        /// <returns>All discovered scene objects assignable to <typeparamref name="T"/>.</returns>
         IEnumerable<T> FindAllSceneObjects<T>() where T : class;
     }
 }

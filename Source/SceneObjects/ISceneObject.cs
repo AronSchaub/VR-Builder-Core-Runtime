@@ -14,9 +14,21 @@ namespace VRBuilder.Core.SceneObjects
     /// </summary>
     public class UniqueIdChangedEventArgs : EventArgs
     {
+        /// <summary>
+        /// The new unique id.
+        /// </summary>
         public readonly Guid NewId;
+
+        /// <summary>
+        /// The previous unique id.
+        /// </summary>
         public readonly Guid PreviousId;
 
+        /// <summary>
+        /// Creates event args for a unique id change.
+        /// </summary>
+        /// <param name="previousId">The previous unique id.</param>
+        /// <param name="newId">The new unique id.</param>
         public UniqueIdChangedEventArgs(Guid previousId, Guid newId)
         {
             NewId = newId;
@@ -30,11 +42,6 @@ namespace VRBuilder.Core.SceneObjects
     public interface ISceneObject : ILockable, IGuidContainer
     {
         /// <summary>
-        /// Called when the object's object id has been changed.
-        /// </summary>
-        event EventHandler<UniqueIdChangedEventArgs> ObjectIdChanged;
-
-        /// <summary>
         /// Unique Guid for each entity, which is required
         /// </summary>
         Guid Guid { get; }
@@ -43,6 +50,11 @@ namespace VRBuilder.Core.SceneObjects
         /// Properties on the scene object.
         /// </summary>
         ICollection<ISceneObjectProperty> Properties { get; }
+
+        /// <summary>
+        /// Called when the object's object id has been changed.
+        /// </summary>
+        event EventHandler<UniqueIdChangedEventArgs> ObjectIdChanged;
 
         /// <summary>
         /// True if the scene object has a property of the specified type.

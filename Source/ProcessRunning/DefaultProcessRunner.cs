@@ -9,17 +9,38 @@ using VRBuilder.Core.StepLocking;
 
 namespace VRBuilder.Core.ProcessRunning
 {
+    /// <summary>
+    /// Default implementation of <see cref="IProcessRunner"/> that drives the lifecycle of a single process.
+    /// </summary>
     public class DefaultProcessRunner : IProcessRunner
     {
         private IProcessRunnerConfiguration configuration;
-        private IProcess currentProcess;
+        private IProcess? currentProcess;
         private ProcessEvents events;
 
-        public IProcess CurrentProcess => currentProcess;
-        public IChapter CurrentChapter => CurrentProcess?.Data.Current;
-        public IStep CurrentStep => CurrentChapter?.Data.Current;
+        /// <summary>
+        /// The currently running process, or <c>null</c> if none has been initialized.
+        /// </summary>
+        public IProcess? CurrentProcess => currentProcess;
+
+        /// <summary>
+        /// The current chapter of the running process, or <c>null</c> if none is active.
+        /// </summary>
+        public IChapter? CurrentChapter => CurrentProcess?.Data.Current;
+
+        /// <summary>
+        /// The current step of the running process, or <c>null</c> if none is active.
+        /// </summary>
+        public IStep? CurrentStep => CurrentChapter?.Data.Current;
+
+        /// <summary>
+        /// <c>true</c> if a process has been initialized and is currently active.
+        /// </summary>
         public bool IsRunning => CurrentProcess != null && CurrentProcess.LifeCycle.Stage != Stage.Inactive;
 
+        /// <summary>
+        /// Lifecycle events raised by the runner.
+        /// </summary>
         public ProcessEvents Events
         {
             get
@@ -29,6 +50,9 @@ namespace VRBuilder.Core.ProcessRunning
             }
         }
 
+        /// <summary>
+        /// Advances the running process and raises the corresponding lifecycle events.
+        /// </summary>
         public void Update()
         {
             if (currentProcess == null)
@@ -64,11 +88,19 @@ namespace VRBuilder.Core.ProcessRunning
             }
         }
 
+        /// <summary>
+        /// Sets the configuration used by the runner.
+        /// </summary>
+        /// <param name="configuration">The configuration to use.</param>
         public void SetConfiguration(IProcessRunnerConfiguration configuration)
         {
             this.configuration = configuration;
         }
 
+        /// <summary>
+        /// Initializes the runner with the given process without starting it.
+        /// </summary>
+        /// <param name="process">The process to run.</param>
         public void Initialize(IProcess process)
         {
             currentProcess = process;
@@ -158,11 +190,18 @@ namespace VRBuilder.Core.ProcessRunning
             currentChapter.LifeCycle.Deactivate();
         }
 
+        /// <summary>
+        /// Resets the runner state when a scene is unloaded.
+        /// </summary>
+        /// <param name="sceneName">The name of the unloaded scene.</param>
         public void OnSceneUnloaded(string sceneName)
         {
             events = null;
         }
 
+        /// <summary>
+        /// Stops the running process and releases runner state.
+        /// </summary>
         public void Stop()
         {
         }
@@ -186,6 +225,9 @@ namespace VRBuilder.Core.ProcessRunning
             }
         }
 
+        /// <summary>
+        /// Initializes the runner without a process.
+        /// </summary>
         public void Initialize()
         {
         }

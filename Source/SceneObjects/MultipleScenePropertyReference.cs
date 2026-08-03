@@ -17,6 +17,29 @@ namespace VRBuilder.Core.SceneObjects
     [DataContract(IsReference = true)]
     public class MultipleScenePropertyReference<T> : MultipleSceneReference<T> where T : class, ISceneObjectProperty
     {
+        /// <summary>
+        /// Initializes a new instance of <see cref="MultipleScenePropertyReference{T}"/> referencing no properties.
+        /// </summary>
+        public MultipleScenePropertyReference() : base()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="MultipleScenePropertyReference{T}"/> referencing the property with the given guid.
+        /// </summary>
+        /// <param name="guid">The guid of the property this reference should point to.</param>
+        public MultipleScenePropertyReference(Guid guid) : base(guid)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="MultipleScenePropertyReference{T}"/> with the given set of guids.
+        /// </summary>
+        /// <param name="guids">The guids this reference should point to.</param>
+        public MultipleScenePropertyReference(IEnumerable<Guid> guids) : base(guids)
+        {
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<T> DetermineValue(IEnumerable<T> cachedValue)
         {
@@ -42,9 +65,5 @@ namespace VRBuilder.Core.SceneObjects
 
             return value;
         }
-
-        public MultipleScenePropertyReference() : base() { }
-        public MultipleScenePropertyReference(Guid guid) : base(guid) { }
-        public MultipleScenePropertyReference(IEnumerable<Guid> guids) : base(guids) { }
     }
 }

@@ -2,7 +2,11 @@ using VRBuilder.Core.Registry;
 
 namespace VRBuilder.Core.Input
 {
-    public interface IInputConfiguration: IServiceConfiguration
+    /// <summary>
+    /// Configuration for the <see cref="IInputController"/>, defining the input action assets used
+    /// for default and customized key bindings.
+    /// </summary>
+    public interface IInputConfiguration : IServiceConfiguration
     {
         /// <summary>
         /// Default input action asset which is used when no customization of key bindings are done.
@@ -15,6 +19,5 @@ namespace VRBuilder.Core.Input
         /// Should be stored in project path.
         /// </summary>
         public string CustomInputActionAssetPath { get; }
-
     }
 }

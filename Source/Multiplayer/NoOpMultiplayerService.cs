@@ -3,7 +3,11 @@ using VRBuilder.Core.SceneObjects;
 
 namespace VRBuilder.Core.Multiplayer
 {
-    public class NoOpMultiplayerService: IMultiplayerService
+    /// <summary>
+    /// A <see cref="IMultiplayerService"/> implementation that performs no network synchronization and
+    /// grants authority to the requesting caller immediately.
+    /// </summary>
+    public class NoOpMultiplayerService : IMultiplayerService
     {
         /// <inheritdoc/>
         public void RequestAuthority(ISceneObject sceneObject, Action<ISceneObject> onAuthorityGranted = null)

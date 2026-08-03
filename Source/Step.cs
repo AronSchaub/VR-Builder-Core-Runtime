@@ -30,10 +30,17 @@ namespace VRBuilder.Core
     [DataContract(IsReference = true)]
     public class Step : Entity<Step.EntityData>, IStep
     {
+        /// <summary>
+        /// Creates a new step with no name.
+        /// </summary>
         protected Step() : this(null)
         {
         }
 
+        /// <summary>
+        /// Creates a new step with the given name.
+        /// </summary>
+        /// <param name="name">The name of the step.</param>
         public Step(string name)
         {
             StepMetadata = new StepMetadata();
@@ -49,6 +56,7 @@ namespace VRBuilder.Core
             }
         }
 
+        /// <inheritdoc/>
         public override void Configure(IModeService modeService)
         {
 #if UNITY_EDITOR
@@ -96,6 +104,7 @@ namespace VRBuilder.Core
         }
 
         ///<inheritdoc />
+        /// <inheritdoc/>
         public IStep Clone()
         {
             Step clonedStep = new Step(Data.Name);
@@ -140,8 +149,14 @@ namespace VRBuilder.Core
             return step;
         }
 
+        /// <summary>
+        /// The data of a <see cref="Step"/>.
+        /// </summary>
         public class EntityData : EntityCollectionData<IStepChild>, IStepData, ILockableStepData
         {
+            /// <summary>
+            /// Creates an empty step data.
+            /// </summary>
             public EntityData()
             {
             }
@@ -151,6 +166,9 @@ namespace VRBuilder.Core
             [HideInProcessInspector]
             public IEnumerable<LockablePropertyReference> ToUnlock { get; set; } = new List<LockablePropertyReference>();
 
+            /// <summary>
+            /// The groups to unlock when the step completes.
+            /// </summary>
             [DataMember]
             [HideInProcessInspector]
             public IDictionary<Guid, IEnumerable<Type>> GroupsToUnlock { get; set; } = new Dictionary<Guid, IEnumerable<Type>>();

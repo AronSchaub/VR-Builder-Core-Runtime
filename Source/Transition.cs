@@ -13,7 +13,6 @@ using VRBuilder.Core.EntityOwners;
 using VRBuilder.Core.EntityOwners.ParallelEntityCollection;
 using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.Runtime.Registry;
-using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Utils;
 
 namespace VRBuilder.Core
@@ -24,6 +23,92 @@ namespace VRBuilder.Core
     [DataContract(IsReference = true)]
     public class Transition : CompletableEntity<Transition.EntityData>, ITransition, ILockablePropertiesProvider
     {
+        /// <inheritdoc />
+        public Transition()
+        {
+            Data.Conditions = new List<ICondition>();
+            Data.TargetStep = null;
+
+            if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogTransitions)
+            {
+                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("{0}<b>Transition to</b> <i>{1}</i> is <b>{2}</b>.\n", ConsoleUtils.GetTabs(3), Data.TargetStep != null ? Data.TargetStep.Data.Name + " (Step)" : "chapter's end", LifeCycle.Stage); };
+            }
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<LockablePropertyData> GetLockableProperties()
+        {
+            IEnumerable<LockablePropertyData> lockable = new List<LockablePropertyData>();
+            foreach (ICondition condition in Data.Conditions)
+            {
+                if (condition is ILockablePropertiesProvider lockableCondition)
+                {
+                    lockable = lockable.Union(lockableCondition.GetLockableProperties());
+                }
+            }
+
+            return lockable;
+        }
+
+        ///<inheritdoc />
+        ITransitionData IDataOwner<ITransitionData>.Data
+        {
+            get { return Data; }
+        }
+
+        ///<inheritdoc />
+        public override IStageProcess GetActivatingProcess()
+        {
+            return new CompositeProcess(new ParallelActivatingProcess<EntityData>(Data), new ActivatingProcess(Data));
+        }
+
+        ///<inheritdoc />
+        public override IStageProcess GetActiveProcess()
+        {
+            return new CompositeProcess(new ParallelActiveProcess<EntityData>(Data), new ActiveProcess(Data));
+        }
+
+        ///<inheritdoc />
+        public override IStageProcess GetDeactivatingProcess()
+        {
+            return new ParallelDeactivatingProcess<EntityData>(Data);
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetAbortingProcess()
+        {
+            return new ParallelAbortingProcess<EntityData>(Data);
+        }
+
+        /// <inheritdoc />
+        public ITransition Clone()
+        {
+            Transition clonedTransition = new Transition();
+            clonedTransition.Data.Conditions = Data.Conditions.Select(condition => condition.Clone()).ToList();
+            clonedTransition.Data.TargetStep = Data.TargetStep;
+            return clonedTransition;
+        }
+
+        ///<inheritdoc />
+        protected override IConfigurator GetConfigurator()
+        {
+            return new ParallelConfigurator<ICondition>(Data);
+        }
+
+        ///<inheritdoc />
+        protected override IAutocompleter GetAutocompleter()
+        {
+            return new EntityAutocompleter(Data);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ITransition"/>.
+        /// </summary>
+        public static ITransition Create()
+        {
+            return new Transition();
+        }
+
         /// <summary>
         /// The transition's data class.
         /// </summary>
@@ -52,6 +137,7 @@ namespace VRBuilder.Core
             ///<inheritdoc />
             public bool IsCompleted { get; set; }
 
+            /// <inheritdoc />
             [IgnoreDataMember]
             [IgnoreInStepInspector]
             public string Name
@@ -123,94 +209,6 @@ namespace VRBuilder.Core
                     condition.Autocomplete();
                 }
             }
-        }
-
-        ///<inheritdoc />
-        ITransitionData IDataOwner<ITransitionData>.Data
-        {
-            get { return Data; }
-        }
-
-        ///<inheritdoc />
-        public override IStageProcess GetActivatingProcess()
-        {
-            return new CompositeProcess(new ParallelActivatingProcess<EntityData>(Data), new ActivatingProcess(Data));
-        }
-
-        ///<inheritdoc />
-        public override IStageProcess GetActiveProcess()
-        {
-            return new CompositeProcess(new ParallelActiveProcess<EntityData>(Data), new ActiveProcess(Data));
-        }
-
-        ///<inheritdoc />
-        public override IStageProcess GetDeactivatingProcess()
-        {
-            return new ParallelDeactivatingProcess<EntityData>(Data);
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetAbortingProcess()
-        {
-            return new ParallelAbortingProcess<EntityData>(Data);
-        }
-
-        ///<inheritdoc />
-        protected override IConfigurator GetConfigurator()
-        {
-            return new ParallelConfigurator<ICondition>(Data);
-        }
-
-        ///<inheritdoc />
-        protected override IAutocompleter GetAutocompleter()
-        {
-            return new EntityAutocompleter(Data);
-        }
-
-        /// <inheritdoc />
-        public Transition()
-        {
-            Data.Conditions = new List<ICondition>();
-            Data.TargetStep = null;
-
-            if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogTransitions)
-            {
-                LifeCycle.StageChanged += (sender, args) =>
-                {
-                    ForwardingLogger.LogFormat("{0}<b>Transition to</b> <i>{1}</i> is <b>{2}</b>.\n", ConsoleUtils.GetTabs(3), Data.TargetStep != null ? Data.TargetStep.Data.Name + " (Step)" : "chapter's end", LifeCycle.Stage);
-                };
-            }
-        }
-
-        /// <inheritdoc />
-        public IEnumerable<LockablePropertyData> GetLockableProperties()
-        {
-            IEnumerable<LockablePropertyData> lockable = new List<LockablePropertyData>();
-            foreach (ICondition condition in Data.Conditions)
-            {
-                if (condition is ILockablePropertiesProvider lockableCondition)
-                {
-                    lockable = lockable.Union(lockableCondition.GetLockableProperties());
-                }
-            }
-            return lockable;
-        }
-
-        /// <inheritdoc />
-        public ITransition Clone()
-        {
-            Transition clonedTransition = new Transition();
-            clonedTransition.Data.Conditions = Data.Conditions.Select(condition => condition.Clone()).ToList();
-            clonedTransition.Data.TargetStep = Data.TargetStep;
-            return clonedTransition;
-        }
-        
-        /// <summary>
-        /// Creates a new <see cref="ITransition"/>.
-        /// </summary>
-        public static ITransition Create()
-        {
-            return new Transition();
         }
     }
 }

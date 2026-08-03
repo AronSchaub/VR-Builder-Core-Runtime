@@ -11,6 +11,10 @@ namespace VRBuilder.Core.EntityOwners
     /// </summary>
     public class SequenceConfigurator<TEntity> : Configurator<IEntitySequenceData<TEntity>> where TEntity : IEntity
     {
+        /// <summary>
+        /// Creates a configurator for the given entity sequence data.
+        /// </summary>
+        /// <param name="data">The sequence data to configure.</param>
         public SequenceConfigurator(IEntitySequenceData<TEntity> data) : base(data)
         {
         }

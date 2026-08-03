@@ -15,6 +15,13 @@ namespace VRBuilder.Core
     public class ChapterMetadata : IMetadata
     {
         /// <summary>
+        /// Creates empty chapter metadata.
+        /// </summary>
+        public ChapterMetadata()
+        {
+        }
+
+        /// <summary>
         /// Reference to last selected <see cref="IStep"/>.
         /// </summary>
         [DataMember]
@@ -37,9 +44,5 @@ namespace VRBuilder.Core
         /// </summary>
         [DataMember]
         public ViewTransform ViewTransform { get; set; }
-
-        public ChapterMetadata()
-        {
-        }
     }
 }

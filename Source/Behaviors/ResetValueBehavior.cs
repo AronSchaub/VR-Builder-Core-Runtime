@@ -19,16 +19,27 @@ namespace VRBuilder.Core.Behaviors
     [HelpLink("https://www.mindport.co/vr-builder-tutorials/states-data-add-on")]
     public class ResetValueBehavior : Behavior<ResetValueBehavior.EntityData>
     {
+        /// <summary>
+        /// Creates a new <see cref="ResetValueBehavior"/>; the target property must be configured later.
+        /// </summary>
         [JsonConstructor]
         public ResetValueBehavior() : this(Guid.Empty)
         {
         }
 
+        /// <summary>
+        /// Creates a behavior that resets the data property identified by <paramref name="propertyId"/>.
+        /// </summary>
+        /// <param name="propertyId">Unique id of the data property to reset.</param>
         public ResetValueBehavior(Guid propertyId)
         {
             Data.Properties = new MultipleScenePropertyReference<IDataPropertyBase>(propertyId);
         }
 
+        /// <summary>
+        /// Creates a behavior that resets <paramref name="property"/> to its default value.
+        /// </summary>
+        /// <param name="property">Data property to reset.</param>
         public ResetValueBehavior(IDataPropertyBase property) : this(ProcessReferenceUtils.GetUniqueIdFrom(property))
         {
         }
@@ -46,6 +57,9 @@ namespace VRBuilder.Core.Behaviors
         [DataContract(IsReference = true)]
         public class EntityData : IBehaviorData
         {
+            /// <summary>
+            /// Data properties that are reset to their default values on activation.
+            /// </summary>
             [DataMember]
             [DisplayName("Data Properties")]
             public MultipleScenePropertyReference<IDataPropertyBase> Properties;

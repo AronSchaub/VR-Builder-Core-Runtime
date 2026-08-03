@@ -16,6 +16,29 @@ namespace VRBuilder.Core.Conditions
     public class TimeoutCondition : Condition<TimeoutCondition.EntityData>
     {
         /// <summary>
+        /// Creates an empty timeout condition, used by the JSON deserializer.
+        /// </summary>
+        [JsonConstructor]
+        public TimeoutCondition() : this(0)
+        {
+        }
+
+        /// <summary>
+        /// Creates a timeout condition that completes after <paramref name="timeout"/> seconds.
+        /// </summary>
+        /// <param name="timeout">Delay before the condition completes, in seconds.</param>
+        public TimeoutCondition(float timeout)
+        {
+            Data.Timeout = timeout;
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetActiveProcess()
+        {
+            return new ActiveProcess(Data);
+        }
+
+        /// <summary>
         /// The data for timeout condition.
         /// </summary>
         [DisplayName("Timeout")]
@@ -29,7 +52,9 @@ namespace VRBuilder.Core.Conditions
             [DisplayTooltip("Delay before the condition completes, in seconds.")]
             public float Timeout { get; set; }
 
-            /// <inheritdoc />
+            /// <summary>
+            /// True if the configured timeout has elapsed.
+            /// </summary>
             public bool IsCompleted { get; set; }
 
             /// <inheritdoc />
@@ -70,22 +95,6 @@ namespace VRBuilder.Core.Conditions
                 base.End();
                 stopWatch.Stop();
             }
-        }
-
-        [JsonConstructor]
-        public TimeoutCondition() : this(0)
-        {
-        }
-
-        public TimeoutCondition(float timeout)
-        {
-            Data.Timeout = timeout;
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetActiveProcess()
-        {
-            return new ActiveProcess(Data);
         }
     }
 }

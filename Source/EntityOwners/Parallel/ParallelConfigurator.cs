@@ -11,6 +11,10 @@ namespace VRBuilder.Core.EntityOwners
     /// </summary>
     public class ParallelConfigurator<TEntity> : Configurator<IEntityCollectionDataWithMode<TEntity>> where TEntity : IEntity
     {
+        /// <summary>
+        /// Creates a configurator for the given entity collection data.
+        /// </summary>
+        /// <param name="data">The collection data to configure.</param>
         public ParallelConfigurator(IEntityCollectionDataWithMode<TEntity> data) : base(data)
         {
         }

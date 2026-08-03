@@ -25,22 +25,29 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         {
         }
 
+        /// <inheritdoc/>
         public void Configure(IModeService modeService)
         {
         }
 
+        /// <inheritdoc/>
         public void OnProcessStarted(IProcess process)
         {
         }
 
+        /// <inheritdoc/>
         public void OnProcessFinished(IProcess process)
         {
         }
 
+        /// <inheritdoc/>
         public void SetConfiguration(IStepLockConfiguration configuration)
         {
         }
 
+        /// <summary>
+        /// Initializes this service; this implementation does nothing.
+        /// </summary>
         public void Initialize()
         {
         }

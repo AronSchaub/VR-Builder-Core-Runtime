@@ -5,7 +5,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using VRBuilder.Core.Registry;
 
 namespace VRBuilder.Core.Configuration.Modes
 {
@@ -18,14 +17,17 @@ namespace VRBuilder.Core.Configuration.Modes
         /// The name of this process mode.
         /// </summary>
         string Name { get; }
-        
+
         /// <summary>
         /// Get or set the default or active mode.
         /// </summary>
         IModeService ActiveOrDefaultMode { get; set; }
-        
+
+        /// <summary>
+        /// Gets or sets the mode handler that manages the process modes during runtime.
+        /// </summary>
         IModeHandler ModeHandler { get; set; }
-        
+
         /// <summary>
         /// Returns whether the given <see cref="IOptional"/> type should be skipped in this process mode.
         /// </summary>

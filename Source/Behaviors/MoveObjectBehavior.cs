@@ -24,6 +24,44 @@ namespace VRBuilder.Core.Behaviors
     public class MoveObjectBehavior : Behavior<MoveObjectBehavior.EntityData>
     {
         /// <summary>
+        /// Creates a new <see cref="MoveObjectBehavior"/>; the target and final position must be configured later.
+        /// </summary>
+        [JsonConstructor]
+        public MoveObjectBehavior() : this(Guid.Empty, Guid.Empty, 0f)
+        {
+        }
+
+        /// <summary>
+        /// Creates a behavior that moves <paramref name="target"/> to the position and rotation of <paramref name="positionProvider"/> over <paramref name="duration"/> seconds.
+        /// </summary>
+        /// <param name="target">Scene object to move.</param>
+        /// <param name="positionProvider">Scene object whose position and rotation are used as the target's final transform.</param>
+        /// <param name="duration">Duration of the transition in seconds. If zero or less, movement is instantaneous.</param>
+        public MoveObjectBehavior(ISceneObject target, ISceneObject positionProvider, float duration) : this(ProcessReferenceUtils.GetUniqueIdFrom(target), ProcessReferenceUtils.GetUniqueIdFrom(positionProvider), duration)
+        {
+        }
+
+        /// <summary>
+        /// Creates a behavior that moves the scene object identified by <paramref name="targetObjectId"/> to the position and rotation of the scene object identified by <paramref name="finalPositionId"/> over <paramref name="duration"/> seconds.
+        /// </summary>
+        /// <param name="targetObjectId">Unique id of the scene object to move.</param>
+        /// <param name="finalPositionId">Unique id of the scene object whose position and rotation are used as the target's final transform.</param>
+        /// <param name="duration">Duration of the transition in seconds. If zero or less, movement is instantaneous.</param>
+        public MoveObjectBehavior(Guid targetObjectId, Guid finalPositionId, float duration)
+        {
+            Data.TargetObject = new SingleScenePropertyReference<IMoveProperty>(targetObjectId);
+            Data.FinalPosition = new SingleSceneObjectReference(finalPositionId);
+            Data.Duration = duration;
+            Data.AnimationCurve = AnimationCurveData.Linear(0f, 0f, 1f, 1f);
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetActivatingProcess()
+        {
+            return new ActivatingProcess(Data);
+        }
+
+        /// <summary>
         /// The "move object" behavior's data.
         /// </summary>
         [DisplayName("Move Object")]
@@ -52,6 +90,9 @@ namespace VRBuilder.Core.Behaviors
             [DisplayTooltip("Duration of the transition in seconds. If zero or less, movement is instantaneous.")]
             public float Duration { get; set; }
 
+            /// <summary>
+            /// Curve that drives the interpolation of the target's position and rotation over the duration.
+            /// </summary>
             [DataMember]
             [DisplayName("Animation curve")]
             public IAnimationCurve AnimationCurve { get; set; }
@@ -104,29 +145,6 @@ namespace VRBuilder.Core.Behaviors
                 Data.TargetObject.Value.MoveTo(Data.FinalPosition.Value, 1f);
                 Data.TargetObject.Value.EnablePhysics();
             }
-        }
-
-        [JsonConstructor]
-        public MoveObjectBehavior() : this(Guid.Empty, Guid.Empty, 0f)
-        {
-        }
-
-        public MoveObjectBehavior(ISceneObject target, ISceneObject positionProvider, float duration) : this(ProcessReferenceUtils.GetUniqueIdFrom(target), ProcessReferenceUtils.GetUniqueIdFrom(positionProvider), duration)
-        {
-        }
-
-        public MoveObjectBehavior(Guid targetObjectId, Guid finalPositionId, float duration)
-        {
-            Data.TargetObject = new SingleScenePropertyReference<IMoveProperty>(targetObjectId);
-            Data.FinalPosition = new SingleSceneObjectReference(finalPositionId);
-            Data.Duration = duration;
-            Data.AnimationCurve = AnimationCurveData.Linear(0f, 0f, 1f, 1f);
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetActivatingProcess()
-        {
-            return new ActivatingProcess(Data);
         }
     }
 }

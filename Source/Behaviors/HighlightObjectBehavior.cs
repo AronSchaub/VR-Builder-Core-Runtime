@@ -1,9 +1,9 @@
 // Modifications copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Configuration.Modes;
 using VRBuilder.Core.Primitives;
@@ -23,6 +23,52 @@ namespace VRBuilder.Core.Behaviors
         private static readonly ColorData defaultHighlightColor = new ColorData(231, 64, 255, 126);
 
         /// <summary>
+        /// Creates a new <see cref="HighlightObjectBehavior"/>; the target object must be configured later.
+        /// </summary>
+        [JsonConstructor]
+        public HighlightObjectBehavior() : this(Guid.Empty, defaultHighlightColor)
+        {
+        }
+
+        /// <summary>
+        /// Creates a behavior that highlights the scene object identified by <paramref name="objectId"/> with <paramref name="highlightColor"/>.
+        /// </summary>
+        /// <param name="objectId">Unique id of the scene object to highlight.</param>
+        /// <param name="highlightColor">Color used for the highlight.</param>
+        public HighlightObjectBehavior(Guid objectId, IColor highlightColor) : base(objectId, highlightColor)
+        {
+        }
+
+        /// <summary>
+        /// Creates a behavior that highlights <paramref name="target"/> with the default highlight color.
+        /// </summary>
+        /// <param name="target">Scene object property to highlight.</param>
+        public HighlightObjectBehavior(IHighlightProperty target) : this(target, defaultHighlightColor)
+        {
+        }
+
+        /// <summary>
+        /// Creates a behavior that highlights <paramref name="target"/> with <paramref name="highlightColor"/>.
+        /// </summary>
+        /// <param name="target">Scene object property to highlight.</param>
+        /// <param name="highlightColor">Color used for the highlight.</param>
+        public HighlightObjectBehavior(IHighlightProperty target, IColor highlightColor) : this(ProcessReferenceUtils.GetUniqueIdFrom(target), highlightColor)
+        {
+        }
+
+        /// <inheritdoc />
+        protected override void ApplyHighlight(IHighlightProperty property, IColor color)
+        {
+            property?.Highlight(color);
+        }
+
+        /// <inheritdoc />
+        protected override void RemoveHighlight(IHighlightProperty property)
+        {
+            property?.Unhighlight();
+        }
+
+        /// <summary>
         /// "Highlight object" behavior's data.
         /// </summary>
         [DisplayName("Highlight Object")]
@@ -30,6 +76,13 @@ namespace VRBuilder.Core.Behaviors
         public class EntityData : IBehaviorData, IColorHighlightBehaviorData<IHighlightProperty>
         {
             private ModeParameter<IColor> customColor;
+
+            /// <inheritdoc />
+            public Metadata Metadata { get; set; }
+
+            /// <inheritdoc />
+            [IgnoreDataMember]
+            public string Name => $"Highlight {TargetObjects}";
 
             /// <summary>
             /// <see cref="ModeParameter{T}"/> of the highlight color.
@@ -60,42 +113,6 @@ namespace VRBuilder.Core.Behaviors
             [DataMember]
             [DisplayName("Objects")]
             public MultipleScenePropertyReference<IHighlightProperty> TargetObjects { get; set; }
-
-            /// <inheritdoc />
-            public Metadata Metadata { get; set; }
-
-            /// <inheritdoc />
-            [IgnoreDataMember]
-            public string Name => $"Highlight {TargetObjects}";
-        }
-
-        [JsonConstructor]
-        public HighlightObjectBehavior() : this(Guid.Empty, defaultHighlightColor)
-        {
-        }
-
-        public HighlightObjectBehavior(Guid objectId, IColor highlightColor) : base(objectId, highlightColor)
-        {
-        }
-
-        public HighlightObjectBehavior(IHighlightProperty target) : this(target, defaultHighlightColor)
-        {
-        }
-
-        public HighlightObjectBehavior(IHighlightProperty target, IColor highlightColor) : this(ProcessReferenceUtils.GetUniqueIdFrom(target), highlightColor)
-        {
-        }
-
-        /// <inheritdoc />
-        protected override void ApplyHighlight(IHighlightProperty property, IColor color)
-        {
-            property?.Highlight(color);
-        }
-
-        /// <inheritdoc />
-        protected override void RemoveHighlight(IHighlightProperty property)
-        {
-            property?.Unhighlight();
         }
     }
 }

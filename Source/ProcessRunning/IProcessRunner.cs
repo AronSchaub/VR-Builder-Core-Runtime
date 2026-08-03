@@ -6,26 +6,27 @@ using VRBuilder.Core.Registry;
 namespace VRBuilder.Core.ProcessRunning
 {
     /// <summary>
-    /// Contract for running a process.
-    /// This is the service-oriented counterpart to the static <see cref="DefaultProcessRunner"/>.
-    /// The default implementation is registered automatically in the service registry.
+    /// Service that drives a process: <see cref="Initialize"/> sets the process up, <see cref="Update"/>
+    /// advances it every frame, and <see cref="Events"/> exposes its lifecycle. Resolve it via the
+    /// <see cref="VRBuilder.Core.Runtime.Registry.ServiceRegistry"/>; the default implementation is
+    /// <see cref="DefaultProcessRunner"/>.
     /// </summary>
     public interface IProcessRunner : IService<IProcessRunnerConfiguration>
     {
         /// <summary>
         /// The currently running process, or <c>null</c> if none is running.
         /// </summary>
-        IProcess CurrentProcess { get; }
+        IProcess? CurrentProcess { get; }
 
         /// <summary>
         /// The current Chapter, or <c>null</c> if none is running.
         /// </summary>
-        IChapter CurrentChapter { get; }
+        IChapter? CurrentChapter { get; }
 
         /// <summary>
-        /// The currently running process, or <c>null</c> if none is running.
+        /// The current step of the running process, or <c>null</c> if none is running.
         /// </summary>
-        IStep CurrentStep { get; }
+        IStep? CurrentStep { get; }
 
         /// <summary>
         /// <c>true</c> if a process has been initialized and is currently active.
@@ -49,8 +50,14 @@ namespace VRBuilder.Core.ProcessRunning
         /// </summary>
         void Start();
 
+        /// <summary>
+        /// Advances the currently running process and raises the corresponding lifecycle events.
+        /// </summary>
         void Update();
 
+        /// <summary>
+        /// Stops the running process and releases runner state.
+        /// </summary>
         void Stop();
 
         /// <summary>
@@ -73,6 +80,10 @@ namespace VRBuilder.Core.ProcessRunning
         /// </summary>
         void SkipCurrentChapter();
 
+        /// <summary>
+        /// Notifies the runner that the given scene was unloaded so it can reset its state.
+        /// </summary>
+        /// <param name="sceneName">The name of the unloaded scene.</param>
         void OnSceneUnloaded(string sceneName);
     }
 }

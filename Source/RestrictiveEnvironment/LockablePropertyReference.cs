@@ -29,10 +29,17 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         [IgnoreDataMember]
         private ILockableProperty property;
 
+        /// <summary>
+        /// Initializes an empty <see cref="LockablePropertyReference"/> that is resolved lazily on first <see cref="GetProperty"/> call.
+        /// </summary>
         public LockablePropertyReference()
         {
         }
 
+        /// <summary>
+        /// Initializes a <see cref="LockablePropertyReference"/> that points to the given property's scene object and type.
+        /// </summary>
+        /// <param name="property">The lockable property to reference; must not be <c>null</c>.</param>
         public LockablePropertyReference(ILockableProperty property)
         {
             TargetObject = new SingleSceneObjectReference(property.SceneObject.Guid);

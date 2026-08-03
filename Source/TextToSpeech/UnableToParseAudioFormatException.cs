@@ -5,8 +5,17 @@ using System;
 
 namespace VRBuilder.Core.TextToSpeech
 {
+    /// <summary>
+    /// Thrown when audio data cannot be interpreted as the expected audio format.
+    /// </summary>
     public class UnableToParseAudioFormatException : Exception
     {
-        public UnableToParseAudioFormatException(string msg) : base(msg) { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnableToParseAudioFormatException"/> class with a custom error message.
+        /// </summary>
+        /// <param name="msg">The message that describes the audio format problem.</param>
+        public UnableToParseAudioFormatException(string msg) : base(msg)
+        {
+        }
     }
 }
