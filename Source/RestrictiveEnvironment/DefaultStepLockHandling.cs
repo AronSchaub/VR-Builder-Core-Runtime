@@ -9,7 +9,6 @@ using System.Linq;
 using VRBuilder.Core.Configuration.Modes;
 using VRBuilder.Core.ProcessRunning;
 using VRBuilder.Core.Properties;
-using VRBuilder.Core.Registry;
 using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.StepLocking;
@@ -24,13 +23,10 @@ namespace VRBuilder.Core.RestrictiveEnvironment
     {
         private IStepLockConfiguration configuration;
 
+        /// <inheritdoc />
         public void SetConfiguration(IStepLockConfiguration config)
         {
             configuration = config;
-        }
-
-        public void Initialize()
-        {
         }
 
         /// <inheritdoc />
@@ -116,37 +112,6 @@ namespace VRBuilder.Core.RestrictiveEnvironment
             }
         }
 
-        private IStepData GetNextStep(ITransition completedTransition)
-        {
-            if (completedTransition.Data.TargetStep != null)
-            {
-                return completedTransition.Data.TargetStep.Data;
-            }
-
-            if (!ServiceRegistry.Has<IProcessRunner>() || !ServiceRegistry.Get<IProcessRunner>().IsRunning)
-            {
-                return null;
-            }
-
-            IProcessData process = ServiceRegistry.Get<IProcessRunner>().CurrentProcess.Data;
-            // Test all chapters, but the last.
-            for (int i = 0; i < process.Chapters.Count - 1; i++)
-            {
-                if (process.Chapters[i] == process.Current)
-                {
-                    if (process.Chapters[i + 1].Data.FirstStep != null)
-                    {
-                        return process.Chapters[i + 1].Data.FirstStep.Data;
-                    }
-
-                    break;
-                }
-            }
-
-            // No next step found, seems to be the last.
-            return null;
-        }
-
         /// <inheritdoc />
         public void Configure(IMode mode)
         {
@@ -189,6 +154,44 @@ namespace VRBuilder.Core.RestrictiveEnvironment
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Initializes the lock handling service. This implementation has no setup to perform.
+        /// </summary>
+        public void Initialize()
+        {
+        }
+
+        private IStepData GetNextStep(ITransition completedTransition)
+        {
+            if (completedTransition.Data.TargetStep != null)
+            {
+                return completedTransition.Data.TargetStep.Data;
+            }
+
+            if (!ServiceRegistry.Has<IProcessRunner>() || !ServiceRegistry.Get<IProcessRunner>().IsRunning)
+            {
+                return null;
+            }
+
+            IProcessData process = ServiceRegistry.Get<IProcessRunner>().CurrentProcess.Data;
+            // Test all chapters, but the last.
+            for (int i = 0; i < process.Chapters.Count - 1; i++)
+            {
+                if (process.Chapters[i] == process.Current)
+                {
+                    if (process.Chapters[i + 1].Data.FirstStep != null)
+                    {
+                        return process.Chapters[i + 1].Data.FirstStep.Data;
+                    }
+
+                    break;
+                }
+            }
+
+            // No next step found, seems to be the last.
+            return null;
         }
     }
 }

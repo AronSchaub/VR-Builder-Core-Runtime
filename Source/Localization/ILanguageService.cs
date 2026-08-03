@@ -7,58 +7,58 @@ using VRBuilder.Core.Registry;
 
 namespace VRBuilder.Core.Localization
 {
-	/// <summary>
-	/// Language service to load current language-based settings from <see cref="LanguageSettings"/>.
-	/// </summary>
-	public interface ILanguageService: IService<ILanguageConfiguration>
-	{
-		/// <summary>
-		/// String localization table used by the current process.
-		/// </summary>
-		string ProcessStringLocalizationTable { get; }
-		
-		/// <summary>
-		/// Gets the active selected or default language.
-		/// </summary>
-		CultureInfo ActiveOrDefaultLocale { get; set; }
-		
-		/// <summary>
-		/// Return the region code of the active or default language.
-		/// </summary>
-		string ActiveOrDefaultRegionCode { get; set; }
-		
-		/// <summary>
-		/// Current selected application language.
-		/// </summary>
-		string ApplicationLanguage { get; set; }
+    /// <summary>
+    /// Language service to load current language-based settings from the runtime configuration.
+    /// </summary>
+    public interface ILanguageService : IService<ILanguageConfiguration>
+    {
+        /// <summary>
+        /// String localization table used by the current process.
+        /// </summary>
+        string ProcessStringLocalizationTable { get; }
 
-		/// <summary>
-		/// Get Locale object from a language or language code string.
-		/// </summary>
-		/// <param name="languageOrCode">The language or language code string.</param>
-		/// <returns>The Locale object corresponding to the language code string or NULL.</returns>
-		public CultureInfo GetCultureInfoFromString(string languageOrCode);
-		
-		/// <summary>
-		/// Convert natural language name to two-letters ISO code.
-		/// </summary>
-		/// <param name="language">String with natural language name or two-letters ISO code.</param>
-		/// <param name="result">
-		/// If <paramref name="language"/> is already in two-letters ISO code, simply returns it.
-		/// If <paramref name="language"/> is a natural language name, returns two-symbol code.
-		/// Otherwise, returns null.
-		/// </param>
-		/// <returns>Return true if the operation successful.</returns>
-		public bool TryConvertToTwoLetterIsoCode(string language, out string result);
+        /// <summary>
+        /// Gets the active selected or default language.
+        /// </summary>
+        CultureInfo ActiveOrDefaultLocale { get; set; }
 
-		/// <summary>
-		/// Try to localize a step name if used as a key in a localization table.
-		/// </summary>
-		/// <param name="step">Reference of the current step.</param>
-		/// <param name="localizationTable">Name of the location of the localized key.</param>
-		/// <param name="locale">Language to localize the step into.</param>
-		/// <returns></returns>
-		public string GetLocalizedStepName(IStep step, string localizationTable, CultureInfo locale);
+        /// <summary>
+        /// Return the region code of the active or default language.
+        /// </summary>
+        string ActiveOrDefaultRegionCode { get; set; }
+
+        /// <summary>
+        /// Current selected application language.
+        /// </summary>
+        string ApplicationLanguage { get; set; }
+
+        /// <summary>
+        /// Get Locale object from a language or language code string.
+        /// </summary>
+        /// <param name="languageOrCode">The language or language code string.</param>
+        /// <returns>The Locale object corresponding to the language code string or NULL.</returns>
+        public CultureInfo GetCultureInfoFromString(string languageOrCode);
+
+        /// <summary>
+        /// Convert natural language name to two-letters ISO code.
+        /// </summary>
+        /// <param name="language">String with natural language name or two-letters ISO code.</param>
+        /// <param name="result">
+        /// If <paramref name="language"/> is already in two-letters ISO code, simply returns it.
+        /// If <paramref name="language"/> is a natural language name, returns two-symbol code.
+        /// Otherwise, returns null.
+        /// </param>
+        /// <returns>Return true if the operation successful.</returns>
+        public bool TryConvertToTwoLetterIsoCode(string language, out string result);
+
+        /// <summary>
+        /// Try to localize a step name if used as a key in a localization table.
+        /// </summary>
+        /// <param name="step">Reference of the current step.</param>
+        /// <param name="localizationTable">Name of the location of the localized key.</param>
+        /// <param name="locale">Language to localize the step into.</param>
+        /// <returns></returns>
+        public string GetLocalizedStepName(IStep step, string localizationTable, CultureInfo locale);
 
         /// <summary>
         /// Try to localize a chapter name if used as a key in a localization table.
@@ -85,7 +85,7 @@ namespace VRBuilder.Core.Localization
         /// <param name="locale">Custom language used inside the engines.</param>
         /// <returns>Returns the localized string with the given key, location, and custom language.</returns>
         public string GetLocalizedString(string localizationKey, string localizationTable, CultureInfo locale);
-        
+
         /// <summary>
         /// Try to get the localized string for a key and in a table with a custom locale.
         /// </summary>
@@ -107,5 +107,5 @@ namespace VRBuilder.Core.Localization
         /// <exception cref="ArgumentException">Thrown when <paramref name="languageName"/> is not natural language name.</exception>
         /// <returns>The two-letter ISO code from the given language name. If it cannot parse the string, it returns null.</returns>
         public string ConvertNaturalLanguageNameToTwoLetterIsoCode(string languageName);
-	}
+    }
 }

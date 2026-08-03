@@ -5,7 +5,6 @@
 using System.Runtime.Serialization;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Runtime.Registry;
-using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Utils;
 
 namespace VRBuilder.Core.Behaviors
@@ -17,21 +16,21 @@ namespace VRBuilder.Core.Behaviors
     [DataContract(IsReference = true)]
     public abstract class Behavior<TData> : Entity<TData>, IBehavior where TData : class, IBehaviorData, new()
     {
-        /// <inheritdoc />
-        IBehaviorData IDataOwner<IBehaviorData>.Data
-        {
-            get { return Data; }
-        }
-
+        /// <summary>
+        /// Creates a new behavior and subscribes to lifecycle logging when enabled in the runtime configuration.
+        /// </summary>
         protected Behavior()
         {
             if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogBehaviors)
             {
-                LifeCycle.StageChanged += (sender, args) =>
-                {
-                    ForwardingLogger.LogFormat("{0}<b>Behavior</b> <i>'{1} ({2})'</i> is <b>{3}</b>.\n", ConsoleUtils.GetTabs(2), Data.Name, GetType().Name, LifeCycle.Stage);
-                };
+                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("{0}<b>Behavior</b> <i>'{1} ({2})'</i> is <b>{3}</b>.\n", ConsoleUtils.GetTabs(2), Data.Name, GetType().Name, LifeCycle.Stage); };
             }
+        }
+
+        /// <inheritdoc />
+        IBehaviorData IDataOwner<IBehaviorData>.Data
+        {
+            get { return Data; }
         }
 
         /// <inheritdoc />

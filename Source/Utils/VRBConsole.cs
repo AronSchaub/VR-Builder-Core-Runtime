@@ -7,13 +7,13 @@ using VRBuilder.UI.Console;
 namespace VRBuilder.Core.Utils
 {
     /// <summary>
-    /// Log messages to an in-world console set up in the <see cref="RuntimeConfigurator"/>.
+    /// Log messages to an in-world console set up by the runtime configurator.
     /// </summary>
     public static class VRBConsole
     {
         private static ILogConsole console;
         private static Queue<Action> executionQueue = new Queue<Action>();
-        
+
         //TODO: make a VRBConsoleService or put it into RuntimeService
         // public virtual string VRBConsolePrefab => "Prefabs/DefaultVRBConsole";
         //

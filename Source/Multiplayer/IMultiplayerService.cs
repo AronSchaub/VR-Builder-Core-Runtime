@@ -3,6 +3,9 @@ using VRBuilder.Core.SceneObjects;
 
 namespace VRBuilder.Core.Multiplayer
 {
+    /// <summary>
+    /// Provides the ability to request authority over scene objects in a multiplayer session.
+    /// </summary>
     public interface IMultiplayerService
     {
         /// <summary>

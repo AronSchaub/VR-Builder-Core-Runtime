@@ -11,12 +11,17 @@ namespace VRBuilder.Core.Conditions
     /// </summary>
     public abstract class ObjectInTargetActiveProcess<TData> : StageProcess<TData> where TData : class, IObjectInTargetData
     {
+        private readonly Stopwatch stopWatch = new();
+
+        private bool isInside;
+
+        /// <summary>
+        /// Creates an "object in target" active process for the given condition data.
+        /// </summary>
+        /// <param name="data">The condition's data.</param>
         protected ObjectInTargetActiveProcess(TData data) : base(data)
         {
         }
-
-        private bool isInside;
-        private readonly Stopwatch stopWatch = new();
 
         /// <inheritdoc />
         public override void Start()

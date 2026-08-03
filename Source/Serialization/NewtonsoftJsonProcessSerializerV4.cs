@@ -2,13 +2,13 @@
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using VRBuilder.Core.Behaviors;
 using VRBuilder.Core.Configuration.Modes;
 using VRBuilder.Core.EntityOwners;
@@ -24,6 +24,7 @@ namespace VRBuilder.Core.Serialization
         /// <inheritdoc/>
         public override string Name { get; } = "Newtonsoft Json Importer v4";
 
+        /// <inheritdoc/>
         protected override int Version { get; } = 4;
 
         /// <inheritdoc/>
@@ -38,10 +39,12 @@ namespace VRBuilder.Core.Serialization
             {
                 return base.ProcessFromByteArray(data);
             }
+
             if (version == 2)
             {
                 return new ImprovedNewtonsoftJsonProcessSerializer().ProcessFromByteArray(data);
             }
+
             if (version == 3)
             {
                 return new NewtonsoftJsonProcessSerializerV3().ProcessFromByteArray(data);
@@ -86,10 +89,12 @@ namespace VRBuilder.Core.Serialization
             {
                 return base.ChapterFromByteArray(data);
             }
+
             if (version == 2)
             {
                 return new ImprovedNewtonsoftJsonProcessSerializer().ChapterFromByteArray(data);
             }
+
             if (version == 3)
             {
                 return new NewtonsoftJsonProcessSerializerV3().ChapterFromByteArray(data);
@@ -126,13 +131,13 @@ namespace VRBuilder.Core.Serialization
         private class ChapterWrapper : Wrapper
         {
             [DataMember]
-            public List<IChapter> SubChapters = new List<IChapter>();
+            public IChapter Chapter;
 
             [DataMember]
             public List<IStep> Steps = new List<IStep>();
 
             [DataMember]
-            public IChapter Chapter;
+            public List<IChapter> SubChapters = new List<IChapter>();
 
             public ChapterWrapper()
             {
@@ -222,13 +227,13 @@ namespace VRBuilder.Core.Serialization
         private class ProcessWrapper : Wrapper
         {
             [DataMember]
-            public List<IChapter> SubChapters = new List<IChapter>();
+            public IProcess Process;
 
             [DataMember]
             public List<IStep> Steps = new List<IStep>();
 
             [DataMember]
-            public IProcess Process;
+            public List<IChapter> SubChapters = new List<IChapter>();
 
             public ProcessWrapper()
             {

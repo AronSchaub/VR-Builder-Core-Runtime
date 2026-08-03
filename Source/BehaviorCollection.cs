@@ -20,7 +20,7 @@ namespace VRBuilder.Core
     public class BehaviorCollection : Entity<BehaviorCollection.EntityData>, IBehaviorCollection
     {
         /// <summary>
-        /// The data class for <see cref="IBehavior"/> collections.
+        /// Creates a new, empty behavior collection.
         /// </summary>
         [DataContract(IsReference = true)]
         public class EntityData : EntityCollectionData<IBehavior>, IBehaviorCollectionData
@@ -71,12 +71,6 @@ namespace VRBuilder.Core
         }
 
         /// <inheritdoc />
-        protected override IConfigurator GetConfigurator()
-        {
-            return new ParallelConfigurator<IBehavior>(Data);
-        }
-
-        /// <inheritdoc />
         public IBehaviorCollection Clone()
         {
             BehaviorCollection clonedBehaviorCollection = new BehaviorCollection();
@@ -90,9 +84,37 @@ namespace VRBuilder.Core
             get { return Data; }
         }
 
-        public BehaviorCollection()
+        /// <inheritdoc />
+        protected override IConfigurator GetConfigurator()
         {
-            Data.Behaviors = new List<IBehavior>();
+            return new ParallelConfigurator<IBehavior>(Data);
+        }
+
+        /// <summary>
+        /// The data class for <see cref="IBehavior"/> collections.
+        /// </summary>
+        [DataContract(IsReference = true)]
+        public class EntityData : EntityCollectionData<IBehavior>, IBehaviorCollectionData
+        {
+            /// <summary>
+            /// List of all <see cref="IBehavior"/>s added.
+            /// </summary>
+            [DataMember]
+            [DisplayName(""), ReorderableListOf(typeof(FoldableAttribute), typeof(DrawIsBlockingToggleAttribute), typeof(HelpAttribute), typeof(MenuAttribute)), ExtendableList]
+            public virtual IList<IBehavior> Behaviors { get; set; }
+
+            /// <summary>
+            /// Returns a list of all <see cref="IBehavior"/>s added.
+            /// </summary>
+            public override IEnumerable<IBehavior> GetChildren()
+            {
+                return Behaviors.ToList();
+            }
+
+            /// <summary>
+            /// Reference to <see cref="IBehavior"/>'s current mode.
+            /// </summary>
+            public IModeService ModeService { get; set; }
         }
     }
 }

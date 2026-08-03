@@ -14,6 +14,10 @@ namespace VRBuilder.Core.EntityOwners
     /// </summary>
     public class FoldedLifeCycleConfigurator<TEntity> : Configurator<IEntitySequenceData<TEntity>> where TEntity : IEntity
     {
+        /// <summary>
+        /// Creates a configurator for the given entity sequence data.
+        /// </summary>
+        /// <param name="data">The sequence data to configure.</param>
         public FoldedLifeCycleConfigurator(IEntitySequenceData<TEntity> data) : base(data)
         {
         }

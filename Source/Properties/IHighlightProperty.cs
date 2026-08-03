@@ -12,6 +12,11 @@ namespace VRBuilder.Core.Properties
     public interface IHighlightProperty : ISceneObjectProperty
     {
         /// <summary>
+        /// Is object currently highlighted.
+        /// </summary>
+        bool IsHighlighted { get; }
+
+        /// <summary>
         /// Emitted when the object gets highlighted.
         /// </summary>
         event Action<IHighlightPropertyEventArgs> HighlightStartedAction;
@@ -20,11 +25,6 @@ namespace VRBuilder.Core.Properties
         /// Emitted when the object gets unhighlighted.
         /// </summary>
         event Action<IHighlightPropertyEventArgs> HighlightEndedAction;
-
-        /// <summary>
-        /// Is object currently highlighted.
-        /// </summary>
-        bool IsHighlighted { get; }
 
         /// <summary>
         /// Highlight this object and use <paramref name="highlightColor"/>.
@@ -38,6 +38,9 @@ namespace VRBuilder.Core.Properties
         void Unhighlight();
     }
 
+    /// <summary>
+    /// Event arguments for highlight events.
+    /// </summary>
     public interface IHighlightPropertyEventArgs
     {
     }

@@ -18,6 +18,15 @@ namespace VRBuilder.Core
     [DataContract(IsReference = true)]
     public abstract class Entity<TData> : IEntity, IDataOwner<TData> where TData : class, IData, new()
     {
+        /// <summary>
+        /// Creates a new entity and initializes its lifecycle and data.
+        /// </summary>
+        protected Entity()
+        {
+            LifeCycle = new LifeCycle(this);
+            Data = new TData();
+        }
+
         /// <inheritdoc />
         [DataMember]
         public TData Data { get; private set; }
@@ -35,12 +44,6 @@ namespace VRBuilder.Core
         /// <inheritdoc />
         [IgnoreDataMember]
         public IEntity Parent { get; set; }
-
-        protected Entity()
-        {
-            LifeCycle = new LifeCycle(this);
-            Data = new TData();
-        }
 
         /// <inheritdoc />
         public virtual IStageProcess GetActivatingProcess()
@@ -113,6 +116,15 @@ namespace VRBuilder.Core
                     child.Update();
                 }
             }
+        }
+
+        /// <summary>
+        /// Override this method if your behavior or condition supports changing between process modes (<see cref="IModeService"/>).
+        /// By default returns an empty configurator that does nothing.
+        /// </summary>
+        protected virtual IConfigurator GetConfigurator()
+        {
+            return new EmptyConfigurator();
         }
     }
 }

@@ -5,6 +5,9 @@ using VRBuilder.Core.Registry;
 
 namespace VRBuilder.Core.User
 {
+    /// <summary>
+    /// Configuration for the <see cref="IUserService"/> service.
+    /// </summary>
     public interface IUserConfiguration : IServiceConfiguration
     {
     }

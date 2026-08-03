@@ -2,8 +2,6 @@
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
 
-using VRBuilder.Core.Registry;
-
 namespace VRBuilder.Core.Input
 {
     /// <summary>
@@ -11,19 +9,30 @@ namespace VRBuilder.Core.Input
     /// </summary>
     public class NoOpInputController : IInputController
     {
+        /// <summary>
+        /// No-op implementation that does not set up any input actions.
+        /// </summary>
         public void SetupInputActions()
         {
         }
 
+        /// <summary>
+        /// No-op implementation that does not load any input actions.
+        /// </summary>
         public void LoadInputActions()
         {
         }
 
+        /// <summary>
+        /// Indicates whether the controller uses a custom key binding asset.
+        /// </summary>
+        /// <returns><c>false</c> always, as the no-op controller never uses a custom key binding asset.</returns>
         public bool UsesCustomKeyBindingAsset()
         {
             return false;
         }
 
+        /// <inheritdoc/>
         public void SetConfiguration(IInputConfiguration configuration)
         {
         }

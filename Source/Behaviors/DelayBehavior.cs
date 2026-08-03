@@ -17,31 +17,18 @@ namespace VRBuilder.Core.Behaviors
     public class DelayBehavior : Behavior<DelayBehavior.EntityData>
     {
         /// <summary>
-        /// The data class for a delay behavior.
+        /// Creates a new <see cref="DelayBehavior"/> with no delay.
         /// </summary>
-        [DisplayName("Delay")]
-        [DataContract(IsReference = true)]
-        public class EntityData : IBehaviorData
-        {
-            [DataMember]
-            [DisplayName("Delay")]
-            [DisplayTooltip("Delay before the behavior completes, in seconds.")]
-            public float DelayTime { get; set; }
-
-            public Metadata Metadata { get; set; }
-
-            [IgnoreDataMember]
-            public string Name
-            {
-                get { return $"Wait for {DelayTime} seconds"; }
-            }
-        }
-
         [JsonConstructor]
         public DelayBehavior() : this(0)
         {
         }
 
+        /// <summary>
+        /// Creates a behavior that waits <paramref name="delayTime"/> seconds before completing.
+        /// Negative values are clamped to zero.
+        /// </summary>
+        /// <param name="delayTime">Delay in seconds; must be zero or positive.</param>
         public DelayBehavior(float delayTime)
         {
             if (delayTime < 0f)
@@ -51,6 +38,38 @@ namespace VRBuilder.Core.Behaviors
             }
 
             Data.DelayTime = delayTime;
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetActivatingProcess()
+        {
+            return new ActivatingProcess(Data);
+        }
+
+        /// <summary>
+        /// The data class for a delay behavior.
+        /// </summary>
+        [DisplayName("Delay")]
+        [DataContract(IsReference = true)]
+        public class EntityData : IBehaviorData
+        {
+            /// <summary>
+            /// Delay in seconds before the behavior completes.
+            /// </summary>
+            [DataMember]
+            [DisplayName("Delay")]
+            [DisplayTooltip("Delay before the behavior completes, in seconds.")]
+            public float DelayTime { get; set; }
+
+            /// <inheritdoc />
+            public Metadata Metadata { get; set; }
+
+            /// <inheritdoc />
+            [IgnoreDataMember]
+            public string Name
+            {
+                get { return $"Wait for {DelayTime} seconds"; }
+            }
         }
 
         private class ActivatingProcess : StageProcess<EntityData>
@@ -84,12 +103,6 @@ namespace VRBuilder.Core.Behaviors
             public override void FastForward()
             {
             }
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetActivatingProcess()
-        {
-            return new ActivatingProcess(Data);
         }
     }
 }

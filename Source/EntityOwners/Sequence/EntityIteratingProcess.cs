@@ -14,6 +14,10 @@ namespace VRBuilder.Core.EntityOwners
     /// </summary>
     public abstract class EntityIteratingProcess<TEntitySequenceDataWithMode, TEntity> : StageProcess<TEntitySequenceDataWithMode> where TEntity : IEntity where TEntitySequenceDataWithMode : class, IEntitySequenceDataWithMode<TEntity>
     {
+        /// <summary>
+        /// Creates a process that iterates over the entities of the given sequence data.
+        /// </summary>
+        /// <param name="data">The sequence data holding the entities to iterate over.</param>
         protected EntityIteratingProcess(TEntitySequenceDataWithMode data) : base(data)
         {
         }

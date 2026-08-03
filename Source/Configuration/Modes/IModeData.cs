@@ -6,6 +6,9 @@
 
 namespace VRBuilder.Core.Configuration.Modes
 {
+    /// <summary>
+    /// Data that carries the <see cref="IModeService"/> which determines how its owner behaves.
+    /// </summary>
     public interface IModeData : IData
     {
         IMode Mode { get; set; }

@@ -9,7 +9,6 @@ using VRBuilder.Core.Configuration;
 using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.Utils;
-using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Utils;
 
 namespace VRBuilder.Core.Conditions
@@ -20,24 +19,21 @@ namespace VRBuilder.Core.Conditions
     [DataContract(IsReference = true)]
     public abstract class Condition<TData> : CompletableEntity<TData>, ICondition, ILockablePropertiesProvider where TData : class, IConditionData, new()
     {
+        /// <summary>
+        /// Creates a new condition and subscribes to lifecycle logging when enabled in the runtime configuration.
+        /// </summary>
         protected Condition()
         {
             if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogConditions)
             {
-                LifeCycle.StageChanged += (sender, args) =>
-                {
-                    ForwardingLogger.LogFormat("{0}<b>Condition</b> <i>'{1} ({2})'</i> is <b>{3}</b>.\n", ConsoleUtils.GetTabs(2), Data.Name, GetType().Name, LifeCycle.Stage);
-                };
+                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("{0}<b>Condition</b> <i>'{1} ({2})'</i> is <b>{3}</b>.\n", ConsoleUtils.GetTabs(2), Data.Name, GetType().Name, LifeCycle.Stage); };
             }
         }
 
         /// <inheritdoc />
         IConditionData IDataOwner<IConditionData>.Data
         {
-            get
-            {
-                return Data;
-            }
+            get { return Data; }
         }
 
         /// <inheritdoc />

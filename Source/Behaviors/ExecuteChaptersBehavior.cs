@@ -1,11 +1,11 @@
 // Modifications copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.EntityOwners;
 using VRBuilder.Core.EntityOwners.ParallelEntityCollection;
@@ -18,6 +18,65 @@ namespace VRBuilder.Core.Behaviors
     [DataContract(IsReference = true)]
     public class ExecuteChaptersBehavior : Behavior<ExecuteChaptersBehavior.EntityData>
     {
+        /// <summary>
+        /// Creates an execute-chapters behavior with no chapters.
+        /// </summary>
+        [JsonConstructor]
+        public ExecuteChaptersBehavior() : this(chapters: new List<IChapter>())
+        {
+        }
+
+        /// <summary>
+        /// Creates an execute-chapters behavior that runs the given sub-chapters in parallel.
+        /// </summary>
+        /// <param name="subChapters">The sub-chapters to execute.</param>
+        public ExecuteChaptersBehavior(IEnumerable<SubChapter> subChapters)
+        {
+            Data.SubChapters = new List<SubChapter>(subChapters);
+        }
+
+        /// <summary>
+        /// Creates an execute-chapters behavior that runs the given chapters in parallel.
+        /// </summary>
+        /// <param name="chapters">The chapters to execute.</param>
+        public ExecuteChaptersBehavior(IEnumerable<IChapter> chapters) : this(new List<SubChapter>(chapters.Select(chapter => new SubChapter(chapter))))
+        {
+        }
+
+        /// <summary>
+        /// Creates an execute-chapters behavior that runs the given chapter.
+        /// </summary>
+        /// <param name="chapter">The chapter to execute.</param>
+        public ExecuteChaptersBehavior(IChapter chapter) : this(new List<SubChapter>() { new SubChapter(chapter) })
+        {
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetActivatingProcess()
+        {
+            return new ActivatingProcess(Data);
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetDeactivatingProcess()
+        {
+            return new DeactivatingProcess(Data);
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetAbortingProcess()
+        {
+            return new ParallelAbortingProcess<EntityData>(Data);
+        }
+
+        /// <inheritdoc />
+        public override IBehavior Clone()
+        {
+            ExecuteChaptersBehavior clonedBehavior = new ExecuteChaptersBehavior();
+            Data.SubChapters.ForEach(sc => clonedBehavior.Data.SubChapters.Add(new SubChapter(sc.Chapter.Clone(), sc.IsOptional)));
+            return clonedBehavior;
+        }
+
         /// <summary>
         /// Execute chapters behavior data.
         /// </summary>
@@ -44,31 +103,15 @@ namespace VRBuilder.Core.Behaviors
             [DisplayTooltip("If true, the chapter at the same index can be interrupted once all other chapters are complete.")]
             public List<bool> IsOptionalChapter { get; set; }
 
+            /// <inheritdoc />
             [IgnoreDataMember]
             public string Name => "Execute Chapters";
 
+            /// <inheritdoc />
             public override IEnumerable<IChapter> GetChildren()
             {
                 return SubChapters.Select(sc => sc.Chapter);
             }
-        }
-
-        [JsonConstructor]
-        public ExecuteChaptersBehavior() : this(chapters: new List<IChapter>())
-        {
-        }
-
-        public ExecuteChaptersBehavior(IEnumerable<SubChapter> subChapters)
-        {
-            Data.SubChapters = new List<SubChapter>(subChapters);
-        }
-
-        public ExecuteChaptersBehavior(IEnumerable<IChapter> chapters) : this(new List<SubChapter>(chapters.Select(chapter => new SubChapter(chapter))))
-        {
-        }
-
-        public ExecuteChaptersBehavior(IChapter chapter) : this(new List<SubChapter>() { new SubChapter(chapter) })
-        {
         }
 
         private class ActivatingProcess : StageProcess<EntityData>
@@ -192,32 +235,6 @@ namespace VRBuilder.Core.Behaviors
                     subChapter.Chapter.LifeCycle.MarkToFastForwardStage(Stage.Deactivating);
                 }
             }
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetActivatingProcess()
-        {
-            return new ActivatingProcess(Data);
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetDeactivatingProcess()
-        {
-            return new DeactivatingProcess(Data);
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetAbortingProcess()
-        {
-            return new ParallelAbortingProcess<EntityData>(Data);
-        }
-
-        /// <inheritdoc />
-        public override IBehavior Clone()
-        {
-            ExecuteChaptersBehavior clonedBehavior = new ExecuteChaptersBehavior();
-            Data.SubChapters.ForEach(sc => clonedBehavior.Data.SubChapters.Add(new SubChapter(sc.Chapter.Clone(), sc.IsOptional)));
-            return clonedBehavior;
         }
     }
 }

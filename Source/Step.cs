@@ -14,6 +14,7 @@ using VRBuilder.Core.Configuration.Modes;
 using VRBuilder.Core.EntityOwners;
 using VRBuilder.Core.EntityOwners.FoldedEntityCollection;
 using VRBuilder.Core.EntityOwners.ParallelEntityCollection;
+using VRBuilder.Core.Primitives;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.Runtime.Registry;
@@ -30,8 +31,149 @@ namespace VRBuilder.Core
     [DataContract(IsReference = true)]
     public class Step : Entity<Step.EntityData>, IStep
     {
+        /// <summary>
+        /// Creates a new step with no name.
+        /// </summary>
+        protected Step() : this(null)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new step with the given name.
+        /// </summary>
+        /// <param name="name">The name of the step.</param>
+        public Step(string name)
+        {
+            StepMetadata = new StepMetadata();
+            StepMetadata.Guid = Guid.NewGuid();
+
+            Data.Transitions = new TransitionCollection();
+            Data.Behaviors = new BehaviorCollection();
+            Data.Name = name;
+
+            if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogSteps)
+            {
+                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("{0}<b>Step</b> <i>'{1}'</i> is <b>{2}</b>.\n", ConsoleUtils.GetTabs(), Data.Name, LifeCycle.Stage); };
+            }
+        }
+
+        /// <inheritdoc/>
+        public override void Configure(IModeService modeService)
+        {
+#if UNITY_EDITOR
+            try
+            {
+#endif
+            base.Configure(modeService);
+#if UNITY_EDITOR
+            }
+            catch (Exception e)
+            {
+                string fullPath = EntityPathUtils.BuildRichTextEntityPath(this);
+                ForwardingLogger.LogError($"Configure failed at {fullPath}\nException: {e.Message}");
+                ForwardingLogger.LogException(e);
+            }
+#endif
+        }
+
+        ///<inheritdoc />
+        [DataMember]
+        public StepMetadata StepMetadata { get; set; }
+
+        ///<inheritdoc />
+        public override IStageProcess GetActivatingProcess()
+        {
+            return new CompositeProcess(new FoldedActivatingProcess<IStepChild>(Data));
+        }
+
+        ///<inheritdoc />
+        public override IStageProcess GetActiveProcess()
+        {
+            return new CompositeProcess(new FoldedActiveProcess<IStepChild>(Data), new ActiveProcess(Data), new UnlockProcess(Data));
+        }
+
+        ///<inheritdoc />
+        public override IStageProcess GetDeactivatingProcess()
+        {
+            return new CompositeProcess(new FoldedDeactivatingProcess<IStepChild>(Data), new LockProcess(Data));
+        }
+
+        ///<inheritdoc />
+        public override IStageProcess GetAbortingProcess()
+        {
+            return new CompositeProcess(new AbortingProcess(Data), new ParallelAbortingProcess<EntityData>(Data));
+        }
+
+        ///<inheritdoc />
+        /// <inheritdoc/>
+        public IStep Clone()
+        {
+            Step clonedStep = new Step(Data.Name);
+            clonedStep.StepMetadata.Position = StepMetadata.Position;
+            clonedStep.StepMetadata.StepType = StepMetadata.StepType;
+            clonedStep.Data.Transitions = Data.Transitions.Clone();
+            clonedStep.Data.Behaviors = Data.Behaviors.Clone();
+            clonedStep.Data.Name = Data.Name;
+            clonedStep.Data.Description = Data.Description;
+            clonedStep.Data.ToUnlock = new List<LockablePropertyReference>(Data.ToUnlock);
+            clonedStep.Data.GroupsToUnlock = new Dictionary<Guid, IEnumerable<Type>>(Data.GroupsToUnlock);
+
+            return clonedStep;
+        }
+
+        ///<inheritdoc />
+        IStepData IDataOwner<IStepData>.Data
+        {
+            get { return Data; }
+        }
+
+        ///<inheritdoc />
+        protected override IConfigurator GetConfigurator()
+        {
+            return new FoldedLifeCycleConfigurator<IStepChild>(Data);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="IStep"/>.
+        /// </summary>
+        /// <param name="name"><see cref="IStep"/>'s name.</param>
+        /// <param name="position">The step's position in the process graph.</param>
+        /// <param name="stepType">The step's type identifier.</param>
+        /// <returns>The created <see cref="IStep"/>.</returns>
+        public static IStep Create(string name, IVector2 position = default, string stepType = "default")
+        {
+            IStep step = new Step(name);
+            step.StepMetadata.Position = position;
+            step.StepMetadata.StepType = stepType;
+            // PostProcessEntity<IStep>(step);
+
+            return step;
+        }
+
+        /// <summary>
+        /// The data of a <see cref="Step"/>.
+        /// </summary>
         public class EntityData : EntityCollectionData<IStepChild>, IStepData, ILockableStepData
         {
+            /// <summary>
+            /// Creates an empty step data.
+            /// </summary>
+            public EntityData()
+            {
+            }
+
+            ///<inheritdoc />
+            [DataMember]
+            [HideInProcessInspector]
+            public IEnumerable<LockablePropertyReference> ToUnlock { get; set; } = new List<LockablePropertyReference>();
+
+            /// <summary>
+            /// The groups to unlock when the step completes.
+            /// </summary>
+            [DataMember]
+            [HideInProcessInspector]
+            public IDictionary<Guid, IEnumerable<Type>> GroupsToUnlock { get; set; } = new Dictionary<Guid, IEnumerable<Type>>();
+
             ///<inheritdoc />
             [DataMember]
             [DrawingPriority(0)]
@@ -248,90 +390,6 @@ namespace VRBuilder.Core
             {
                 ServiceRegistry.Get<IStepLockService>()?.Lock(Data, lockableProperties);
             }
-        }
-
-        ///<inheritdoc />
-        [DataMember]
-        public StepMetadata StepMetadata { get; set; }
-
-        ///<inheritdoc />
-        public override IStageProcess GetActivatingProcess()
-        {
-            return new CompositeProcess(new FoldedActivatingProcess<IStepChild>(Data));
-        }
-
-        ///<inheritdoc />
-        public override IStageProcess GetActiveProcess()
-        {
-            return new CompositeProcess(new FoldedActiveProcess<IStepChild>(Data), new ActiveProcess(Data), new UnlockProcess(Data));
-        }
-
-        ///<inheritdoc />
-        public override IStageProcess GetDeactivatingProcess()
-        {
-            return new CompositeProcess(new FoldedDeactivatingProcess<IStepChild>(Data), new LockProcess(Data));
-        }
-
-        ///<inheritdoc />
-        public override IStageProcess GetAbortingProcess()
-        {
-            return new CompositeProcess(new AbortingProcess(Data), new ParallelAbortingProcess<EntityData>(Data));
-        }
-
-        ///<inheritdoc />
-        protected override IConfigurator GetConfigurator()
-        {
-            return new FoldedLifeCycleConfigurator<IStepChild>(Data);
-        }
-
-        ///<inheritdoc />
-        public IStep Clone()
-        {
-            Step clonedStep = new Step(Data.Name);
-            clonedStep.StepMetadata.Position = StepMetadata.Position;
-            clonedStep.StepMetadata.StepType = StepMetadata.StepType;
-            clonedStep.Data.Transitions = Data.Transitions.Clone();
-            clonedStep.Data.Behaviors = Data.Behaviors.Clone();
-            clonedStep.Data.Name = Data.Name;
-            clonedStep.Data.Description = Data.Description;
-            clonedStep.Data.ToUnlock = new List<LockablePropertyReference>(Data.ToUnlock);
-            clonedStep.Data.GroupsToUnlock = new Dictionary<Guid, IEnumerable<Type>>(Data.GroupsToUnlock);
-
-            return clonedStep;
-        }
-
-        ///<inheritdoc />
-        IStepData IDataOwner<IStepData>.Data
-        {
-            get { return Data; }
-        }
-
-        protected Step() : this(null)
-        {
-        }
-
-        public Step(string name)
-        {
-            StepMetadata = new StepMetadata();
-            StepMetadata.Guid = Guid.NewGuid();
-
-            Data.Transitions = new TransitionCollection();
-            Data.Behaviors = new BehaviorCollection();
-            Data.Name = name;
-
-            if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogSteps)
-            {
-                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("{0}<b>Step</b> <i>'{1}'</i> is <b>{2}</b>.\n", ConsoleUtils.GetTabs(), Data.Name, LifeCycle.Stage); };
-            }
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="IStep"/>.
-        /// </summary>
-        /// <param name="name"><see cref="IStep"/>'s name.</param>
-        public static IStep Create(string name)
-        {
-            return new Step(name);
         }
     }
 }

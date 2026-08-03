@@ -22,72 +22,17 @@ namespace VRBuilder.Core
     public class TransitionCollection : Entity<TransitionCollection.EntityData>, ITransitionCollection
     {
         /// <summary>
-        /// The data class of the <see cref="ITransition"/>s' collection.
+        /// Initializes a new instance of <see cref="TransitionCollection"/> with no transitions.
         /// </summary>
-        [DataContract(IsReference = true)]
-        public class EntityData : EntityCollectionData<ITransition>, ITransitionCollectionData
+        public TransitionCollection()
         {
-            ///<inheritdoc />
-            [DataMember]
-            [DisplayName(""), KeepPopulated(typeof(Transition)), ReorderableListOf(typeof(FoldableAttribute), typeof(DeletableAttribute)), ExtendableList]
-            public virtual IList<ITransition> Transitions { get; set; }
-
-            ///<inheritdoc />
-            public override IEnumerable<ITransition> GetChildren()
-            {
-                return Transitions.ToArray();
-            }
-
-            ///<inheritdoc />
-            public IMode Mode { get; set; }
-        }
-
-        private class ActiveProcess : StageProcess<EntityData>
-        {
-            public ActiveProcess(EntityData data) : base(data)
-            {
-            }
-
-            ///<inheritdoc />
-            public override void Start()
-            {
-            }
-
-            ///<inheritdoc />
-            public override IEnumerator Update()
-            {
-                while (Data.Transitions.All(transition => transition.IsCompleted == false))
-                {
-                    yield return null;
-                }
-            }
-
-            ///<inheritdoc />
-            public override void End()
-            {
-            }
-
-            ///<inheritdoc />
-            public override void FastForward()
-            {
-            }
-        }
-
-        ///<inheritdoc />
-        protected override IConfigurator GetConfigurator()
-        {
-            return new ParallelConfigurator<ITransition>(Data);
+            Data.Transitions = new List<ITransition>();
         }
 
         ///<inheritdoc />
         ITransitionCollectionData IDataOwner<ITransitionCollectionData>.Data
         {
             get { return Data; }
-        }
-
-        public TransitionCollection()
-        {
-            Data.Transitions = new List<ITransition>();
         }
 
         ///<inheritdoc />
@@ -120,6 +65,66 @@ namespace VRBuilder.Core
             TransitionCollection clonedTransitionCollection = new TransitionCollection();
             clonedTransitionCollection.Data.Transitions = Data.Transitions.Select(transition => transition.Clone()).ToList();
             return clonedTransitionCollection;
+        }
+
+        ///<inheritdoc />
+        protected override IConfigurator GetConfigurator()
+        {
+            return new ParallelConfigurator<ITransition>(Data);
+        }
+
+        /// <summary>
+        /// The data class of the <see cref="ITransition"/>s' collection.
+        /// </summary>
+        [DataContract(IsReference = true)]
+        public class EntityData : EntityCollectionData<ITransition>, ITransitionCollectionData
+        {
+            ///<inheritdoc />
+            [DataMember]
+            [DisplayName(""), KeepPopulated(typeof(Transition)), ReorderableListOf(typeof(FoldableAttribute), typeof(DeletableAttribute)), ExtendableList]
+            public virtual IList<ITransition> Transitions { get; set; }
+
+            ///<inheritdoc />
+            public override IEnumerable<ITransition> GetChildren()
+            {
+                return Transitions.ToArray();
+            }
+
+            /// <summary>
+            /// The mode service used to determine which optional transitions are skipped.
+            /// </summary>
+            public IMode Mode { get; set; }
+        }
+
+        private class ActiveProcess : StageProcess<EntityData>
+        {
+            public ActiveProcess(EntityData data) : base(data)
+            {
+            }
+
+            ///<inheritdoc />
+            public override void Start()
+            {
+            }
+
+            ///<inheritdoc />
+            public override IEnumerator Update()
+            {
+                while (Data.Transitions.All(transition => transition.IsCompleted == false))
+                {
+                    yield return null;
+                }
+            }
+
+            ///<inheritdoc />
+            public override void End()
+            {
+            }
+
+            ///<inheritdoc />
+            public override void FastForward()
+            {
+            }
         }
     }
 }

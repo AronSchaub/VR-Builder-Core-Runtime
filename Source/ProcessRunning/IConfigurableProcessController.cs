@@ -1,4 +1,4 @@
-namespace VRBuilder.ProcessController
+namespace VRBuilder.Core.ProcessRunning
 {
     /// <summary>
     /// Interface for a process controller that can be configured in the setup object.
