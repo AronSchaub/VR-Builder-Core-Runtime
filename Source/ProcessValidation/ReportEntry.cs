@@ -10,14 +10,14 @@ namespace VRBuilder.Core.ProcessValidation
     public class ReportEntry
     {
         /// <summary>
-        /// Priority level for this <see cref="ValidationReportEntry"/>.
-        /// </summary>
-        public readonly ValidationErrorLevel ErrorLevel;
-
-        /// <summary>
         /// ErrorCode to easily identifying the error.
         /// </summary>
         public readonly int Code;
+
+        /// <summary>
+        /// Priority level for this <see cref="ReportEntry"/>.
+        /// </summary>
+        public readonly ValidationErrorLevel ErrorLevel;
 
         /// <summary>
         /// Detailed description of the issue.

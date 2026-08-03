@@ -127,6 +127,9 @@ namespace VRBuilder.Core
         /// Creates a new <see cref="IStep"/>.
         /// </summary>
         /// <param name="name"><see cref="IStep"/>'s name.</param>
+        /// <param name="position">The step's position in the process graph.</param>
+        /// <param name="stepType">The step's type identifier.</param>
+        /// <returns>The created <see cref="IStep"/>.</returns>
         public static IStep Create(string name, IVector2 position = default, string stepType = "default")
         {
             IStep step = new Step(name);

@@ -1,10 +1,10 @@
 // Modifications copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
 using VRBuilder.Core.Properties;
 using VRBuilder.Core.SceneObjects;
@@ -19,8 +19,28 @@ namespace VRBuilder.Core.Behaviors
     [HelpLink("https://www.mindport.co/vr-builder-tutorials/states-data-add-on")]
     public class ResetValueBehavior : Behavior<ResetValueBehavior.EntityData>
     {
+        [JsonConstructor]
+        public ResetValueBehavior() : this(Guid.Empty)
+        {
+        }
+
+        public ResetValueBehavior(Guid propertyId)
+        {
+            Data.Properties = new MultipleScenePropertyReference<IDataPropertyBase>(propertyId);
+        }
+
+        public ResetValueBehavior(IDataPropertyBase property) : this(ProcessReferenceUtils.GetUniqueIdFrom(property))
+        {
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetActivatingProcess()
+        {
+            return new ActivatingProcess(Data);
+        }
+
         /// <summary>
-        /// The <see cref="ResetValueBehavior{T}"/> behavior data.
+        /// The <see cref="ResetValueBehavior"/> behavior data.
         /// </summary>
         [DisplayName("Reset Value")]
         [DataContract(IsReference = true)]
@@ -68,26 +88,6 @@ namespace VRBuilder.Core.Behaviors
             public override void FastForward()
             {
             }
-        }
-
-        [JsonConstructor]
-        public ResetValueBehavior() : this(Guid.Empty)
-        {
-        }
-
-        public ResetValueBehavior(Guid propertyId)
-        {
-            Data.Properties = new MultipleScenePropertyReference<IDataPropertyBase>(propertyId);
-        }
-
-        public ResetValueBehavior(IDataPropertyBase property) : this(ProcessReferenceUtils.GetUniqueIdFrom(property))
-        {
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetActivatingProcess()
-        {
-            return new ActivatingProcess(Data);
         }
     }
 }

@@ -4,7 +4,7 @@
 namespace VRBuilder.Core.Registry
 {
     /// <summary>
-    /// Every Service by the <see cref="VRBuilder.Core.Configuration.VRBuilderServices"/> needs this Interface to be implemented.
+    /// Every Service registered in the <see cref="VRBuilder.Core.Runtime.Registry.ServiceRegistry"/> needs this Interface to be implemented.
     /// It will get it's Configuration to be set, and then it will be initialized.
     /// </summary>
     public interface IService<in T> where T : IServiceConfiguration

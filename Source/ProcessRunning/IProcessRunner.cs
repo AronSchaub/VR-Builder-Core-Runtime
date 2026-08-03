@@ -7,10 +7,10 @@ namespace VRBuilder.Core.ProcessRunning
 {
     /// <summary>
     /// Contract for running a process.
-    /// This is the service-oriented counterpart to the static <see cref="VRBuilder.Core.ProcessRunner"/>.
-    /// The default implementation is registered automatically — access via <see cref="VRBuilder.Core.Configuration.ProcessRunnerLocator"/>.
+    /// This is the service-oriented counterpart to the static <see cref="DefaultProcessRunner"/>.
+    /// The default implementation is registered automatically in the service registry.
     /// </summary>
-    public interface IProcessRunner: IService<IProcessRunnerConfiguration>
+    public interface IProcessRunner : IService<IProcessRunnerConfiguration>
     {
         /// <summary>
         /// The currently running process, or <c>null</c> if none is running.
@@ -34,7 +34,7 @@ namespace VRBuilder.Core.ProcessRunning
 
         /// <summary>
         /// Lifecycle events for the current process.
-        /// These mirror the events on the static <see cref="UnityEditor.PackageManager.Events"/>.
+        /// These mirror the events on <see cref="ProcessEvents"/>.
         /// </summary>
         ProcessEvents Events { get; }
 

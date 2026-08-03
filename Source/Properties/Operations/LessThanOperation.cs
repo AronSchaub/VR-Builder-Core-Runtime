@@ -3,7 +3,7 @@ using System;
 namespace VRBuilder.Core.Properties.Operations
 {
     /// <summary>
-    /// True if left < right.
+    /// True if left &lt; right.
     /// </summary>
     public class LessThanOperation<T> : IOperationCommand<T, bool> where T : IComparable<T>
     {
@@ -23,9 +23,9 @@ namespace VRBuilder.Core.Properties.Operations
         /// </summary>
         private class AOTHelper
         {
+            LessThanOperation<bool> bln = new LessThanOperation<bool>();
             LessThanOperation<float> flt = new LessThanOperation<float>();
             LessThanOperation<string> str = new LessThanOperation<string>();
-            LessThanOperation<bool> bln = new LessThanOperation<bool>();
         }
     }
 }

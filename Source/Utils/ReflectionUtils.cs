@@ -13,17 +13,18 @@ namespace VRBuilder.Core.Utils
 {
     public static class ReflectionUtils
     {
+        private static Type[] cachedTypes;
+
         /// <summary>
         /// Return <paramref name="type"/> name taking into consideration if it is nested type or not.
         /// </summary>
         public static string GetNameWithNesting(this Type type)
         {
             return type.MemberType == MemberTypes.NestedType ? string.Concat(GetNameWithNesting(type.DeclaringType), "+", type.Name) : type.Name;
-
         }
 
         /// <summary>
-        /// If the given <paramref name="list"/> implements IList<>, return its generic type argument. Otherwise, return typeof(object).
+        /// If the given <paramref name="list"/> implements IList{T}, return its generic type argument. Otherwise, return typeof(object).
         /// </summary>
         public static Type GetEntryType(object list)
         {
@@ -68,8 +69,6 @@ namespace VRBuilder.Core.Utils
 
             return entryDeclaredType;
         }
-
-        private static Type[] cachedTypes;
 
         /// <summary>
         /// Returns all existing types of all assemblies.
@@ -358,7 +357,6 @@ namespace VRBuilder.Core.Utils
             }
 
             return IsField(info) ? ((FieldInfo)info).FieldType : null;
-
         }
 
         /// <summary>
@@ -418,7 +416,6 @@ namespace VRBuilder.Core.Utils
         public static Type GetTypeFromAssemblyQualifiedName(string assemblyQualifiedName)
         {
             return string.IsNullOrEmpty(assemblyQualifiedName) ? null : GetAllTypes().FirstOrDefault(type => type.AssemblyQualifiedName == assemblyQualifiedName);
-
         }
 
         /// <summary>
@@ -475,6 +472,7 @@ namespace VRBuilder.Core.Utils
                 case string s when string.IsNullOrEmpty(s):
                     return true;
             }
+
             return value.GetType().GetInterfaces().Contains(typeof(ICanBeEmpty)) && ((ICanBeEmpty)value).IsEmpty();
         }
 
