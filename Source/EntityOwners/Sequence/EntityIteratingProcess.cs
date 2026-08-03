@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System.Collections;
 using VRBuilder.Core.Configuration.Modes;
@@ -40,14 +42,14 @@ namespace VRBuilder.Core.EntityOwners
                     continue;
                 }
 
-                while (ShouldActivateCurrent() == false)
+                while (!ShouldActivateCurrent())
                 {
                     yield return null;
                 }
 
                 Data.Current.LifeCycle.Activate();
 
-                if (Data.Current is IOptional && Data.ModeService.CheckIfSkipped(Data.Current.GetType()))
+                if (Data.Current is IOptional && Data.Mode.CheckIfSkipped(Data.Current.GetType()))
                 {
                     Data.Current.LifeCycle.MarkToFastForward();
                 }
@@ -57,7 +59,7 @@ namespace VRBuilder.Core.EntityOwners
                     yield return null;
                 }
 
-                while (ShouldDeactivateCurrent() == false)
+                while (!ShouldDeactivateCurrent())
                 {
                     yield return null;
                 }
@@ -96,7 +98,7 @@ namespace VRBuilder.Core.EntityOwners
 
                 current.LifeCycle.MarkToFastForward();
 
-                if (current.LifeCycle.Stage == Stage.Activating || current.LifeCycle.Stage == Stage.Active)
+                if (current.LifeCycle.Stage is Stage.Activating or Stage.Active)
                 {
                     current.LifeCycle.Deactivate();
                 }

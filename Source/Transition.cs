@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System.Collections.Generic;
 using System.Linq;
@@ -132,7 +134,7 @@ namespace VRBuilder.Core
             public IStep TargetStep { get; set; }
 
             ///<inheritdoc />
-            public IModeService ModeService { get; set; }
+            public IMode Mode { get; set; }
 
             ///<inheritdoc />
             public bool IsCompleted { get; set; }
@@ -190,7 +192,7 @@ namespace VRBuilder.Core
             protected override bool CheckIfCompleted()
             {
                 return Data.Conditions
-                    .Where(condition => Data.ModeService.CheckIfSkipped(condition.GetType()) == false)
+                    .Where(condition => Data.Mode.CheckIfSkipped(condition.GetType()) == false)
                     .All(condition => condition.IsCompleted);
             }
         }
@@ -204,7 +206,7 @@ namespace VRBuilder.Core
             ///<inheritdoc />
             public override void Complete()
             {
-                foreach (ICondition condition in Data.Conditions.Where(condition => Data.ModeService.CheckIfSkipped(condition.GetType()) == false))
+                foreach (ICondition condition in Data.Conditions.Where(condition => Data.Mode.CheckIfSkipped(condition.GetType()) == false))
                 {
                     condition.Autocomplete();
                 }

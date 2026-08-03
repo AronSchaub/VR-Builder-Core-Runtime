@@ -50,9 +50,25 @@ namespace VRBuilder.Core.ProcessRunning
             }
         }
 
-        /// <summary>
-        /// Advances the running process and raises the corresponding lifecycle events.
-        /// </summary>
+        private void HandleModeChanged(object sender, ModeChangedEventArgs args)
+        {
+            if (currentProcess != null)
+            {
+                currentProcess.Configure(args.Mode);
+                ServiceRegistry.Get<IStepLockService>()?.Configure(ServiceRegistry.Get<IModeService>().ActiveOrDefaultMode);
+            }
+        }
+
+        private void HandleProcessStageChanged(object sender, ActivationStateChangedEventArgs e)
+        {
+            if (e.Stage == Stage.Inactive)
+            {
+                if (ServiceRegistry.Has<ModeService>())
+                    ServiceRegistry.Get<ModeService>().ModeHandler.ModeChanged -= HandleModeChanged;
+                Stop();
+            }
+        }
+
         public void Update()
         {
             if (currentProcess == null)
@@ -121,10 +137,10 @@ namespace VRBuilder.Core.ProcessRunning
                 ServiceRegistry.Get<ModeService>().ModeHandler.ModeChanged += HandleModeChanged;
 
             currentProcess.LifeCycle.StageChanged += HandleProcessStageChanged;
-            currentProcess.Configure(ServiceRegistry.Get<IModeService>());
+            currentProcess.Configure(ServiceRegistry.Get<IModeService>().ActiveOrDefaultMode);
 
             var stepLockService = ServiceRegistry.Get<IStepLockService>();
-            stepLockService?.Configure(ServiceRegistry.Get<IModeService>());
+            stepLockService?.Configure(ServiceRegistry.Get<IModeService>().ActiveOrDefaultMode);
             stepLockService?.OnProcessStarted(currentProcess);
             currentProcess.LifeCycle.Activate();
 

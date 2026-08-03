@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System;
 using VRBuilder.Core.Configuration.Modes;
@@ -21,7 +23,7 @@ namespace VRBuilder.Core.EntityOwners
         }
 
         /// <inheritdoc />
-        public override void Configure(IModeService modeService, Stage stage)
+        public override void Configure(IMode mode, Stage stage)
         {
             if (stage == Stage.Inactive)
             {
@@ -40,7 +42,7 @@ namespace VRBuilder.Core.EntityOwners
                 return;
             }
 
-            if (modeService.CheckIfSkipped(Data.Current.GetType()))
+            if (mode.CheckIfSkipped(Data.Current.GetType()))
             {
                 Data.Current.LifeCycle.MarkToFastForwardStage(stage);
             }

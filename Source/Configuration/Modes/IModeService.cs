@@ -4,8 +4,6 @@
 // Modifications copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
-
 namespace VRBuilder.Core.Configuration.Modes
 {
     /// <summary>
@@ -14,44 +12,13 @@ namespace VRBuilder.Core.Configuration.Modes
     public interface IModeService
     {
         /// <summary>
-        /// The name of this process mode.
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
         /// Get or set the default or active mode.
         /// </summary>
-        IModeService ActiveOrDefaultMode { get; set; }
-
+        IMode ActiveOrDefaultMode { get; set; }
+        
         /// <summary>
-        /// Gets or sets the mode handler that manages the process modes during runtime.
+        /// Get or set the mode handler.
         /// </summary>
         IModeHandler ModeHandler { get; set; }
-
-        /// <summary>
-        /// Returns whether the given <see cref="IOptional"/> type should be skipped in this process mode.
-        /// </summary>
-        /// <typeparam name="ISkippable">The actual type implementing ISkippable.</typeparam>
-        bool CheckIfSkipped<TOptional>() where TOptional : IOptional;
-
-        /// <summary>
-        /// Returns whether the given type should be skipped in this process mode.
-        /// </summary>
-        /// <param name="type">The type to check.</param>
-        bool CheckIfSkipped(Type type);
-
-        /// <summary>
-        /// Provides a specific parameter for this mode.
-        /// </summary>
-        /// <param name="key">Name of the parameter.</param>
-        /// <typeparam name="T">Type this parameter should be.</typeparam>
-        /// <returns>The value for the given key</returns>
-        T GetParameter<T>(string key);
-
-        /// <summary>
-        /// Checks if given key exists.
-        /// </summary>
-        /// <param name="key">Name of the key</param>
-        bool ContainsParameter<T>(string key);
     }
 }

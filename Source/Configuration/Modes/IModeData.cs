@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 namespace VRBuilder.Core.Configuration.Modes
 {
@@ -9,9 +11,6 @@ namespace VRBuilder.Core.Configuration.Modes
     /// </summary>
     public interface IModeData : IData
     {
-        /// <summary>
-        /// The mode service that drives which <see cref="IOptional"/> parts are skipped and which parameters are applied.
-        /// </summary>
-        IModeService ModeService { get; set; }
+        IMode Mode { get; set; }
     }
 }

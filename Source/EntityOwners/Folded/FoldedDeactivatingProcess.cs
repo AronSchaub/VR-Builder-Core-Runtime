@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections;
@@ -43,7 +45,7 @@ namespace VRBuilder.Core.EntityOwners.FoldedEntityCollection
                     Data.Current.LifeCycle.Deactivate();
                 }
 
-                if (Data.Current.LifeCycle.Stage == Stage.Deactivating && Data.ModeService.CheckIfSkipped(Data.Current.GetType()))
+                if (Data.Current.LifeCycle.Stage == Stage.Deactivating && Data.Mode.CheckIfSkipped(Data.Current.GetType()))
                 {
                     Data.Current.LifeCycle.MarkToFastForwardStage(Stage.Deactivating);
                 }

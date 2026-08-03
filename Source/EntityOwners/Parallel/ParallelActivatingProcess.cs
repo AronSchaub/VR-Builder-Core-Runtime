@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System.Collections;
 using System.Linq;
@@ -20,7 +22,7 @@ namespace VRBuilder.Core.EntityOwners.ParallelEntityCollection
         /// <inheritdoc />
         public override void Start()
         {
-            foreach (IEntity child in Data.GetChildren().Where(child => Data.ModeService.CheckIfSkipped(child.GetType()) == false))
+            foreach (IEntity child in Data.GetChildren().Where(child => Data.Mode.CheckIfSkipped(child.GetType()) == false))
             {
                 child.LifeCycle.Activate();
             }
@@ -29,7 +31,7 @@ namespace VRBuilder.Core.EntityOwners.ParallelEntityCollection
         /// <inheritdoc />
         public override IEnumerator Update()
         {
-            while (GetBlockingChildren(Data, Data.ModeService).Any(child => child.LifeCycle.Stage == Stage.Activating))
+            while (GetBlockingChildren(Data, Data.Mode).Any(child => child.LifeCycle.Stage == Stage.Activating))
             {
                 yield return null;
             }

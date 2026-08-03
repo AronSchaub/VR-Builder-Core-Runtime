@@ -20,6 +20,7 @@ using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.StepLocking;
+using VRBuilder.Core.Utils;
 using VRBuilder.Utils;
 
 namespace VRBuilder.Core
@@ -216,10 +217,43 @@ namespace VRBuilder.Core
             public IStepChild Current { get; set; }
 
             ///<inheritdoc />
-            public IModeService ModeService { get; set; }
+            [DataMember]
+            [HideInProcessInspector]
+            public IEnumerable<LockablePropertyReference> ToUnlock { get; set; } = new List<LockablePropertyReference>();
+
+            [DataMember]
+            [HideInProcessInspector]
+            public IDictionary<Guid, IEnumerable<Type>> GroupsToUnlock { get; set; } = new Dictionary<Guid, IEnumerable<Type>>();
 
             /// <inheritdoc />
             IEntity IEntitySequenceData.Current => Current;
+
+            public EntityData()
+            {
+            }
+            public IMode Mode
+            {
+                get;
+                set;
+            }
+        }
+
+        public override void Configure(IMode mode)
+        {
+#if UNITY_EDITOR
+            try
+            {
+#endif
+                base.Configure(mode);
+#if UNITY_EDITOR
+            }
+            catch (Exception e)
+            {
+                string fullPath = EntityPathUtils.BuildRichTextEntityPath(this);
+                ForwardingLogger.LogError($"Configure failed at {fullPath}\nException: {e.Message}");
+                ForwardingLogger.LogException(e);
+            }
+#endif
         }
 
         private class UnlockProcess : StageProcess<EntityData>

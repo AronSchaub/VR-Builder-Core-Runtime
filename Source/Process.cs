@@ -144,7 +144,7 @@ namespace VRBuilder.Core
             public string Name { get; set; }
 
             /// <inheritdoc />
-            public IModeService ModeService { get; set; }
+            public IMode Mode { get; set; }
 
             /// <inheritdoc />
             IEntity IEntitySequenceData.Current => Current;

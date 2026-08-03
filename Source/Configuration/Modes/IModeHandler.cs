@@ -1,6 +1,8 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
+// Modifications copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections.ObjectModel;
@@ -20,7 +22,7 @@ namespace VRBuilder.Core.Configuration.Modes
         /// <summary>
         /// The ordered collection of all available process modes.
         /// </summary>
-        ReadOnlyCollection<IModeService> AvailableModes { get; }
+        ReadOnlyCollection<IMode> AvailableModes { get; }
 
         /// <summary>
         /// The index of the current process mode.
@@ -30,7 +32,7 @@ namespace VRBuilder.Core.Configuration.Modes
         /// <summary>
         /// The current process mode.
         /// </summary>
-        IModeService CurrentModeService { get; }
+        IMode CurrentMode { get; }
 
         /// <summary>
         /// Set the current process mode.
@@ -41,7 +43,7 @@ namespace VRBuilder.Core.Configuration.Modes
         /// <summary>
         /// Set the current process mode, this process mode has to be one of the available modes.
         /// </summary>
-        /// <param name="modeService">The desired process mode which should be set.</param>
-        void SetMode(IModeService modeService);
+        /// <param name="mode">The desired process mode which should be set.</param>
+        void SetMode(IMode mode);
     }
 }

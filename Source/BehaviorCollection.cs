@@ -22,9 +22,28 @@ namespace VRBuilder.Core
         /// <summary>
         /// Creates a new, empty behavior collection.
         /// </summary>
-        public BehaviorCollection()
+        [DataContract(IsReference = true)]
+        public class EntityData : EntityCollectionData<IBehavior>, IBehaviorCollectionData
         {
-            Data.Behaviors = new List<IBehavior>();
+            /// <summary>
+            /// List of all <see cref="IBehavior"/>s added.
+            /// </summary>
+            [DataMember]
+            [DisplayName(""), ReorderableListOf(typeof(FoldableAttribute), typeof(DrawIsBlockingToggleAttribute), typeof(HelpAttribute), typeof(MenuAttribute)), ExtendableList]
+            public virtual IList<IBehavior> Behaviors { get; set; }
+
+            /// <summary>
+            /// Returns a list of all <see cref="IBehavior"/>s added.
+            /// </summary>
+            public override IEnumerable<IBehavior> GetChildren()
+            {
+                return Behaviors.ToList();
+            }
+
+            /// <summary>
+            /// Reference to <see cref="IBehavior"/>'s current mode.
+            /// </summary>
+            public IMode Mode { get; set; }
         }
 
         /// <inheritdoc />

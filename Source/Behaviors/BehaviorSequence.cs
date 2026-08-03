@@ -129,13 +129,7 @@ namespace VRBuilder.Core.Behaviors
             }
 
             /// <inheritdoc />
-            public bool IsBlocking { get; set; }
-
-            /// <inheritdoc />
-            public override IEnumerable<IBehavior> GetChildren()
-            {
-                return Behaviors.ToList();
-            }
+            public IMode Mode { get; set; }
 
             /// <inheritdoc />
             [IgnoreDataMember]
