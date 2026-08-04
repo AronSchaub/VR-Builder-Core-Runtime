@@ -129,16 +129,20 @@ namespace VRBuilder.Core.Behaviors
             }
 
             /// <inheritdoc />
+            public bool IsBlocking { get; set; }
+
+            /// <inheritdoc />
+            public override IEnumerable<IBehavior> GetChildren()
+            {
+                return Behaviors.ToList();
+            }
+
+            /// <inheritdoc />
             public IMode Mode { get; set; }
 
             /// <inheritdoc />
             [IgnoreDataMember]
             public IBehavior Current { get; set; }
-
-            /// <summary>
-            /// The current mode service, used to decide whether optional child behaviors are skipped.
-            /// </summary>
-            public IModeService ModeService { get; set; }
 
             /// <inheritdoc />
             IEntity IEntitySequenceData.Current => Current;

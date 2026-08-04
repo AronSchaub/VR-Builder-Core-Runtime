@@ -14,23 +14,14 @@ namespace VRBuilder.Core.Configuration.Modes
     /// </summary>
     public class ModeChangedEventArgs : EventArgs
     {
-        /// <summary>
-        /// Creates event args for the given mode service.
-        /// </summary>
-        /// <param name="modeService">The newly activated mode service.</param>
-        public ModeChangedEventArgs(IModeService modeService)
+        public ModeChangedEventArgs(IMode mode)
         {
-            ModeService = modeService;
+            Mode = mode;
         }
 
         /// <summary>
         /// The newly activated <see cref="IMode"/>.
         /// </summary>
         public IMode Mode { get; private set; }
-
-        public ModeChangedEventArgs(IMode mode)
-        {
-            Mode = mode;
-        }
     }
 }

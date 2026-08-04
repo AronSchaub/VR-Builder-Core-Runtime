@@ -69,15 +69,6 @@ namespace VRBuilder.Core
             return new EmptyProcess();
         }
 
-        /// <summary>
-        /// Override this method if your behavior or condition supports changing between process modes (<see cref="IMode"/>).
-        /// By default returns an empty configurator that does nothing.
-        /// </summary>
-        protected virtual IConfigurator GetConfigurator()
-        {
-            return new EmptyConfigurator();
-        }
-
         /// <inheritdoc />
         public virtual void Configure(IMode mode)
         {
@@ -119,7 +110,7 @@ namespace VRBuilder.Core
         }
 
         /// <summary>
-        /// Override this method if your behavior or condition supports changing between process modes (<see cref="IModeService"/>).
+        /// Override this method if your behavior or condition supports changing between process modes (<see cref="IMode"/>).
         /// By default returns an empty configurator that does nothing.
         /// </summary>
         protected virtual IConfigurator GetConfigurator()
