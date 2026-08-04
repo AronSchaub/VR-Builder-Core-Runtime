@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
@@ -18,7 +19,7 @@ namespace VRBuilder.Core.Serialization.NewtonsoftJson
     /// <summary>
     /// This serializer uses NewtonsoftJson to serialize data, the outcome is a json file in the UTF-8 encoding.
     /// </summary>
-    public class NewtonsoftJsonProcessSerializer : IProcessSerializer
+    public partial class NewtonsoftJsonProcessSerializer : IProcessSerializer
     {
         private static readonly List<JsonConverter> CachedJsonConverters = CreateJsonConverters();
         private static readonly JsonSerializerSettings CachedProcessSerializerSettings = CreateSettings(CachedJsonConverters);
@@ -173,28 +174,48 @@ namespace VRBuilder.Core.Serialization.NewtonsoftJson
         /// <param name="data">The serialized data.</param>
         /// <param name="settings">The serializer settings to use.</param>
         /// <returns>The deserialized object.</returns>
-        protected T Deserialize<T>(byte[] data, JsonSerializerSettings settings)
+        protected T? Deserialize<T>(byte[] data, JsonSerializerSettings settings)
         {
-            string stringData = new UTF8Encoding().GetString(data);
-            return (T)JsonConvert.DeserializeObject(stringData, settings);
+            return JsonConvert.DeserializeObject<T>(new UTF8Encoding().GetString(data), settings);
         }
 
-        internal class ProcessSerializationBinder : DefaultSerializationBinder
+        internal partial class ProcessSerializationBinder : DefaultSerializationBinder
         {
-            public override Type BindToType(string assemblyName, string typeName)
+            public override Type BindToType(string? assemblyName, string typeName)
             {
                 if (typeName == "VRBuilder.Core.Editor.UI.Drawers.Metadata.ReorderableElementMetadata")
                 {
                     return typeof(ReorderableElementMetadata);
                 }
 
-                if (typeName.StartsWith("VRBuilder") || typeName.StartsWith("TinkerFlow"))
-                    return Type.GetType(typeName);
+                // Assembly-qualified type names embed the Unity assembly name "VRBuilder.Core".
+                // Rewrite it to the assembly this binder runs in, so process files saved in Unity
+                // load in this engine. This applies to the outer assembly name and to generic
+                // arguments in both positions ("..., VRBuilder.Core]]" for the last argument and
+                // "..., VRBuilder.Core]," for inner arguments), and must run BEFORE the fast path
+                // below, which would otherwise hand an unresolvable generic name to Type.GetType.
+                var localAssembly = GetType().Assembly.GetName().Name;
+                if (assemblyName == "VRBuilder.Core")
+                {
+                    assemblyName = localAssembly;
+                }
 
-                typeName = typeName.Replace(", TinkerFlow]]", $", {GetType().Assembly.GetName().Name}]]");
+                typeName = VrBuilderCoreRegex().Replace(typeName, $", {localAssembly}");
+
+                if (typeName.StartsWith("VRBuilder") || typeName.StartsWith("TinkerFlow"))
+                {
+                    var type = Type.GetType(typeName);
+                    if (type != null)
+                        return type;
+                    // Fall through to the default binder, which reports a clearer error for
+                    // generics whose arguments cannot be resolved.
+                }
 
                 return base.BindToType(assemblyName, typeName);
             }
+
+            [GeneratedRegex(@", VRBuilder\.Core(?=\])")]
+            private static partial Regex VrBuilderCoreRegex();
         }
     }
 }
