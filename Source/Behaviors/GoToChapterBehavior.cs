@@ -6,6 +6,8 @@ using System.Collections;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using VRBuilder.Core.Attributes;
+using VRBuilder.Core.ProcessRunning;
+using VRBuilder.Core.Runtime.Registry;
 #if UNITY_6000_0_OR_NEWER
 using System.Linq;
 #endif
