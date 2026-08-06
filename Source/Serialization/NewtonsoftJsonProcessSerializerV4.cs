@@ -21,6 +21,8 @@ namespace VRBuilder.Core.Serialization
     /// </summary>
     public class NewtonsoftJsonProcessSerializerV4 : NewtonsoftJsonProcessSerializer
     {
+        private static readonly JsonSerializerSettings TolerantSerializerSettings = CreateTolerantSerializerSettings();
+
         /// <inheritdoc/>
         public override string Name { get; } = "Newtonsoft Json Importer v4";
 
@@ -50,7 +52,7 @@ namespace VRBuilder.Core.Serialization
                 return new NewtonsoftJsonProcessSerializerV3().ProcessFromByteArray(data);
             }
 
-            ProcessWrapper wrapper = Deserialize<ProcessWrapper>(data, ProcessSerializerSettings);
+            ProcessWrapper wrapper = Deserialize<ProcessWrapper>(data, TolerantSerializerSettings);
             return wrapper.GetProcess();
         }
 
@@ -100,8 +102,25 @@ namespace VRBuilder.Core.Serialization
                 return new NewtonsoftJsonProcessSerializerV3().ChapterFromByteArray(data);
             }
 
-            ChapterWrapper wrapper = Deserialize<ChapterWrapper>(data, ProcessSerializerSettings);
+            ChapterWrapper wrapper = Deserialize<ChapterWrapper>(data, TolerantSerializerSettings);
             return wrapper.GetChapter();
+        }
+
+        /// <summary>
+        /// Creates V4 deserialization settings that recover invalid behavior and condition entries.
+        /// </summary>
+        /// <returns>The standard process settings with the recovery converter applied first.</returns>
+        private static JsonSerializerSettings CreateTolerantSerializerSettings()
+        {
+            return new JsonSerializerSettings
+            {
+                Converters = new[] { new BrokenEntityConverter() }.Concat(ProcessSerializerSettings.Converters).ToList(),
+                PreserveReferencesHandling = ProcessSerializerSettings.PreserveReferencesHandling,
+                Formatting = ProcessSerializerSettings.Formatting,
+                ConstructorHandling = ProcessSerializerSettings.ConstructorHandling,
+                SerializationBinder = ProcessSerializerSettings.SerializationBinder,
+                TypeNameHandling = ProcessSerializerSettings.TypeNameHandling
+            };
         }
 
         /// <inheritdoc/>
