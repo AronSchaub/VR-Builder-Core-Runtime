@@ -207,21 +207,21 @@ namespace VRBuilder.Core.Utils
         {
             Type conditionType = conditionData.GetType();
             Type[] referenceTypes = { typeof(SingleScenePropertyReference<>), typeof(MultipleScenePropertyReference<>) };
-            (BindingFlags flags, Func<MemberInfo, Type> getMemberType)[] memberKinds =
-            {
-                (BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, m => ((PropertyInfo)m).PropertyType),
-                (BindingFlags.Instance | BindingFlags.Public, m => ((FieldInfo)m).FieldType),
-            };
 
-            return referenceTypes
-                .SelectMany(refType => memberKinds
-                    .SelectMany(kind => conditionType
-                        .GetMembers(kind.flags)
-                        .Where(m => m is PropertyInfo or FieldInfo
-                                    && kind.getMemberType(m).IsConstructedGenericType
-                                    && kind.getMemberType(m).GetGenericTypeDefinition() == refType)
-                        .Cast<MemberInfo>()))
-                .ToList();
+            bool IsScenePropertyReference(Type memberType)
+            {
+                return memberType.IsConstructedGenericType && referenceTypes.Contains(memberType.GetGenericTypeDefinition());
+            }
+            
+            IEnumerable<MemberInfo> properties = conditionType
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(property => IsScenePropertyReference(property.PropertyType));
+
+            IEnumerable<MemberInfo> fields = conditionType
+                .GetFields(BindingFlags.Instance | BindingFlags.Public)
+                .Where(field => IsScenePropertyReference(field.FieldType));
+
+            return properties.Concat(fields).ToList();
         }
 
         /// <summary>
