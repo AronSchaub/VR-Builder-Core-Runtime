@@ -1,9 +1,11 @@
-﻿namespace VRBuilder.Core.Configuration.Modes
+﻿using VRBuilder.Core.Registry;
+
+namespace VRBuilder.Core.Configuration.Modes
 {
 	/// <summary>
-	/// Configuration of the current mode object inside the engine.
+	/// Configuration Interface of the current mode object inside the engine.
 	/// </summary>
-	public interface IModeConfiguration
+	public interface IModeServiceConfiguration: IServiceConfiguration
 	{
 	}
 }
