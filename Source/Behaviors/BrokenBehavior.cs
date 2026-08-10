@@ -9,6 +9,9 @@ namespace VRBuilder.Core.Behaviors
     /// <summary>
     /// Preserves a behavior that could not be deserialized so its source JSON remains inspectable.
     /// </summary>
+    /// <remarks>
+    /// Do not use this class as a normal behavior. It's just a fallback for importing processes!
+    /// </remarks>
     [DataContract(IsReference = true)]
     internal class BrokenBehavior : Behavior<BrokenBehavior.EntityData>
     {

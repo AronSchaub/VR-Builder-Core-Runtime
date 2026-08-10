@@ -9,6 +9,9 @@ namespace VRBuilder.Core.Conditions
     /// <summary>
     /// Preserves a condition that could not be deserialized so its source JSON remains inspectable.
     /// </summary>
+    /// <remarks>
+    /// Do not use this class as a normal condition. It's just a fallback for importing processes!
+    /// </remarks>
     [DataContract(IsReference = true)]
     internal class BrokenCondition : Condition<BrokenCondition.EntityData>
     {

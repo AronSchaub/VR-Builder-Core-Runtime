@@ -19,6 +19,9 @@ namespace VRBuilder.Core.Serialization.NewtonsoftJson
     /// <summary>
     /// This serializer uses NewtonsoftJson to serialize data, the outcome is a json file in the UTF-8 encoding.
     /// </summary>
+    /// <remarks>
+    /// Partial is important to implement engine-based extensions and code generation.
+    /// </remarks>
     public partial class NewtonsoftJsonProcessSerializer : IProcessSerializer
     {
         private static readonly List<JsonConverter> CachedJsonConverters = CreateJsonConverters();
