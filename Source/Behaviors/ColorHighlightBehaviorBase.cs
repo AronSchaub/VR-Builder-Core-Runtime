@@ -9,7 +9,7 @@ namespace VRBuilder.Core.Behaviors
 {
     /// <summary>
     /// Shared base behavior for color-based highlighting.
-    /// No UnityEngine dependencies — uses engine-agnostic <see cref="IColor"/>.
+    /// It uses engine-agnostic <see cref="IColor"/>.
     /// </summary>
     /// <typeparam name="TData">Behavior data type.</typeparam>
     /// <typeparam name="TProperty">Target property type.</typeparam>
