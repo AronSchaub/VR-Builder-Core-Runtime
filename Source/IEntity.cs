@@ -11,7 +11,7 @@ namespace VRBuilder.Core
     /// An entity owns an <see cref="ILifeCycle"/> that drives it through the <see cref="Stage"/>s; for each
     /// stage it provides the matching <see cref="IStageProcess"/> via the Get*Process methods, and
     /// <see cref="Configure"/> wires the entity to the active process mode.
-    /// Do not implement this interface directly — derive from <c>Behavior</c>, <c>Condition</c>,
+    /// Do not implement this interface directly! Derive from <c>Behavior</c>, <c>Condition</c>,
     /// <c>Step</c>, <c>Chapter</c> or <c>Process</c> instead.
     /// </summary>
     public interface IEntity

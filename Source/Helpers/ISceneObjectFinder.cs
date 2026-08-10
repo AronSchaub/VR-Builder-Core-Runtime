@@ -11,9 +11,9 @@ namespace VRBuilder.Core.Helpers
     /// <c>Object.FindObjectsByType</c> or Godot's scene tree traversal directly. This interface
     /// abstracts that lookup so each engine provides its own implementation.
     ///
-    /// <b>Unity</b> — uses <c>SceneUtils.GetActiveAndInactiveComponents&lt;ProcessSceneObject&gt;</c>
+    /// <b>Unity</b> uses <c>SceneUtils.GetActiveAndInactiveComponents&lt;ProcessSceneObject&gt;</c>
     /// to find every <c>ProcessSceneObject</c> across all loaded scenes.<br/>
-    /// <b>Godot</b> — traverses the <c>SceneManager</c> node tree via <c>GetChildren(true)</c> and
+    /// <b>Godot</b> uses the <c>SceneManager</c> node tree via <c>GetChildren(true)</c> and
     /// filters by type.
     ///
     /// The finder is injected through <see cref="SceneObjects.ISceneObjectRegistryConfiguration.SceneObjectFinder"/>

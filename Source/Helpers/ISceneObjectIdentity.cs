@@ -13,12 +13,12 @@ namespace VRBuilder.Core.Helpers
     /// An <see cref="ISceneObject"/> has two separate identity concepts:
     /// <list type="bullet">
     ///   <item><description>
-    ///     <b>GUID</b> (<see cref="ISceneObject.Guid"/>) — the serialized identity stored in scene or
+    ///     <b>GUID</b> (<see cref="ISceneObject.Guid"/>) is the serialized identity stored in scene or
     ///     prefab files. It persists across saves and reloads and is the key used in
     ///     <see cref="SceneObjects.SceneObjectRegistry"/>.
     ///   </description></item>
     ///   <item><description>
-    ///     <b>Instance identity</b> (this interface) — a transient engine-native identifier
+    ///     <b>Instance identity</b> (this interface) represents a transient engine-native identifier
     ///     (<c>GetInstanceID</c> in Unity, <c>GetInstanceId</c> in Godot) that is unique per
     ///     live GameObject or node. It differentiates multiple in-scene instances that initially
     ///     carry the same serialized GUID (for example, several copies of the same prefab).
