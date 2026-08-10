@@ -131,10 +131,10 @@ namespace VRBuilder.Core
             ///<inheritdoc />
             [HideInProcessInspector]
             [DataMember]
-            public IStep TargetStep { get; set; }
+            public IStep? TargetStep { get; set; }
 
             ///<inheritdoc />
-            public IMode Mode { get; set; }
+            public IMode? Mode { get; set; }
 
             ///<inheritdoc />
             public bool IsCompleted { get; set; }
