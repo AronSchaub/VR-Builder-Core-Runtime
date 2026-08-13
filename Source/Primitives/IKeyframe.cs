@@ -23,5 +23,11 @@ namespace VRBuilder.Core.Primitives
 
         /// <summary>The weighted tangent mode of the keyframe, represented as an integer.</summary>
         int WeightedMode { get; set; }
+        
+        /// <summary>The incoming weight affects the slope of the curve from the previous key to this key.</summary>
+        public float InWeight { get; }
+        
+        /// <summary>The outgoing weight affects the slope of the curve from this key to the next key.</summary>
+        public float OutWeight { get; }
     }
 }

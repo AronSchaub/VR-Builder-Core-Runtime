@@ -55,7 +55,7 @@ namespace VRBuilder.Core.Conditions
                     }
                 }
 
-                if (isInside && stopWatch.ElapsedMilliseconds >= Data.RequiredTimeInside)
+                if (isInside && stopWatch.ElapsedMilliseconds >= Data.RequiredTimeInside * 1000)
                 {
                     Data.IsCompleted = true;
                     break;

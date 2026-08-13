@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
 using System.Runtime.Serialization;
 
 namespace VRBuilder.Core.Primitives
@@ -15,6 +16,10 @@ namespace VRBuilder.Core.Primitives
         /// <summary>The raw PCM audio sample data.</summary>
         [DataMember]
         public byte[] RawAudioData { readonly get; set; }
+
+        /// <summary>The audio clip object of the engine.</summary>
+        [IgnoreDataMember]
+        public object RawAudioClip { get; set; }
 
         /// <summary>The sample rate of the audio clip in Hz.</summary>
         [DataMember]
@@ -38,6 +43,7 @@ namespace VRBuilder.Core.Primitives
         public AudioClipData(byte[] rawAudioData, int frequency, int channels, string name = null)
         {
             RawAudioData = rawAudioData;
+            RawAudioClip = null;
             Frequency = frequency;
             Channels = channels;
             Name = name;

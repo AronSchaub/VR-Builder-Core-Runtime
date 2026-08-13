@@ -31,6 +31,14 @@ namespace VRBuilder.Core.Primitives
         /// <summary>The weighted tangent mode of the keyframe, represented as an integer.</summary>
         [DataMember]
         public int WeightedMode { readonly get; set; }
+        
+        /// <summary>The incoming weight affects the slope of the curve from the previous key to this key.</summary>
+        [DataMember]
+        public float InWeight { readonly get; set; }
+        
+        /// <summary>The outgoing weight affects the slope of the curve from this key to the next key.</summary>
+        [DataMember]
+        public float OutWeight { readonly get; set; }
 
         /// <summary>
         /// Initializes a new <see cref="KeyframeData"/> with the specified values.
@@ -40,13 +48,17 @@ namespace VRBuilder.Core.Primitives
         /// <param name="inTangent">The tangent of the curve entering the keyframe. Defaults to 0.</param>
         /// <param name="outTangent">The tangent of the curve leaving the keyframe. Defaults to 0.</param>
         /// <param name="weightedMode">The weighted tangent mode of the keyframe. Defaults to 0.</param>
-        public KeyframeData(float time, float value, float inTangent = 0f, float outTangent = 0f, int weightedMode = 0)
+        /// <param name="inWeight">The incoming weight affects the slope of the curve. Defaults to 0.</param>
+        /// <param name="outWeight">The outgoing weight affects the slope of the curve. Defaults to 0.</param>
+        public KeyframeData(float time, float value, float inTangent = 0f, float outTangent = 0f, int weightedMode = 0, float inWeight = 0f, float outWeight = 0f)
         {
             Time = time;
             Value = value;
             InTangent = inTangent;
             OutTangent = outTangent;
             WeightedMode = weightedMode;
+            InWeight = inWeight;
+            OutWeight = outWeight;
         }
     }
 }
