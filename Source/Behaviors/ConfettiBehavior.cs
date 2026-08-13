@@ -222,7 +222,7 @@ namespace VRBuilder.Core.Behaviors
 
                 if (Data.Duration > 0)
                 {
-                    while (stopWatch.ElapsedMilliseconds < Data.Duration)
+                    while (stopWatch.ElapsedMilliseconds < Data.Duration * 1000)
                     {
                         yield return null;
                     }

@@ -89,7 +89,7 @@ namespace VRBuilder.Core.Behaviors
             /// <inheritdoc />
             public override IEnumerator Update()
             {
-                while (stopWatch.ElapsedMilliseconds < Data.DelayTime)
+                while (stopWatch.ElapsedMilliseconds < Data.DelayTime * 1000)
                     yield return null;
             }
 

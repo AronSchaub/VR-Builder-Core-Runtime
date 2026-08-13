@@ -179,6 +179,7 @@ namespace VRBuilder.Core.Serialization.NewtonsoftJson
             return (T)JsonConvert.DeserializeObject(stringData, settings);
         }
 
+        // TODO this must be a serializer for each engine like the forward logger
         internal class ProcessSerializationBinder : DefaultSerializationBinder
         {
             public override Type BindToType(string assemblyName, string typeName)
@@ -188,8 +189,14 @@ namespace VRBuilder.Core.Serialization.NewtonsoftJson
                     return typeof(ReorderableElementMetadata);
                 }
 
-                if (typeName.StartsWith("VRBuilder") || typeName.StartsWith("TinkerFlow"))
+                if (typeName.StartsWith("VRBuilder"))
+                {
+                    return Type.GetType(typeName+", "+assemblyName);
+                }
+                if (typeName.StartsWith("TinkerFlow"))
+                {
                     return Type.GetType(typeName);
+                }
 
                 typeName = typeName.Replace(", TinkerFlow]]", $", {GetType().Assembly.GetName().Name}]]");
 

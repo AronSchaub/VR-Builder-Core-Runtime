@@ -86,7 +86,7 @@ namespace VRBuilder.Core.Conditions
             /// <inheritdoc />
             protected override bool CheckIfCompleted()
             {
-                return stopWatch.ElapsedMilliseconds >= Data.Timeout;
+                return stopWatch.ElapsedMilliseconds >= Data.Timeout * 1000;
             }
 
             /// <inheritdoc />

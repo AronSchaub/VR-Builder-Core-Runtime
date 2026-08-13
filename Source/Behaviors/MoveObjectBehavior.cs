@@ -123,9 +123,9 @@ namespace VRBuilder.Core.Behaviors
             /// <inheritdoc />
             public override IEnumerator Update()
             {
-                while (stopWatch.ElapsedMilliseconds < Data.Duration)
+                while (stopWatch.ElapsedMilliseconds < Data.Duration * 1000)
                 {
-                    float progress = stopWatch.ElapsedMilliseconds / Data.Duration;
+                    float progress = (float)stopWatch.ElapsedMilliseconds / 1000 / Data.Duration;
                     Data.TargetObject.Value.MoveTo(Data.FinalPosition.Value, progress, Data.AnimationCurve);
                     yield return null;
                 }
