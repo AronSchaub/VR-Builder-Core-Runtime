@@ -15,7 +15,7 @@ namespace VRBuilder.Core.Localization
         /// <summary>
         /// String localization table used by the current process.
         /// </summary>
-        string ProcessStringLocalizationTable { get; }
+        string ProcessStringLocalizationTable { get; set; }
 
         /// <summary>
         /// Gets the active selected or default language.
