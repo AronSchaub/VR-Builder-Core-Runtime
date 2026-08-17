@@ -17,6 +17,11 @@ namespace VRBuilder.Core.Configuration
         public event Action<string?> SelectedProcessChanged;
         
         /// <summary>
+        /// The runtime configurator of the current session.
+        /// </summary>
+        IRuntimeHandler Handler { get; set; }
+        
+        /// <summary>
         /// The name of the selected process, or <c>null</c> if none is selected.
         /// </summary>
         string? SelectedProcess { get; set; }
@@ -35,11 +40,6 @@ namespace VRBuilder.Core.Configuration
         /// The streaming-assets path of the selected process.
         /// </summary>
         string SelectedProcessStreamingAssetsPath { get; set; }
-
-        /// <summary>
-        /// The runtime configurator of the current session.
-        /// </summary>
-        IRuntimeConfigurator Configurator { get; set; }
 
         /// <summary>
         /// Configuration of which lifecycle events should be logged.

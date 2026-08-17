@@ -13,9 +13,19 @@ namespace VRBuilder.Core.Localization
     public interface ILanguageService : IService<ILanguageConfiguration>
     {
         /// <summary>
+        /// Raised when the selected process changes.
+        /// </summary>
+        public event Action<string?> SelectedLocalizationTableChanged;
+        
+        /// <summary>
+        /// The runtime configurator of the current session.
+        /// </summary>
+        ILanguageHandler Handler { get; set; }
+        
+        /// <summary>
         /// String localization table used by the current process.
         /// </summary>
-        string ProcessStringLocalizationTable { get; set; }
+        string SelectedProcessLocalizationTable { get; set; }
 
         /// <summary>
         /// Gets the active selected or default language.
@@ -31,6 +41,8 @@ namespace VRBuilder.Core.Localization
         /// Current selected application language.
         /// </summary>
         string ApplicationLanguage { get; set; }
+        
+        ILanguageHandler LanguageHandler { get; set; }
 
         /// <summary>
         /// Get Locale object from a language or language code string.
