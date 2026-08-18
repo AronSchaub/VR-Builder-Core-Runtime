@@ -1,7 +1,11 @@
+// Copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 using System;
 using System.Threading.Tasks;
 using VRBuilder.Core.ProcessRunning;
 using VRBuilder.Core.Registry;
+using VRBuilder.Core.Serialization;
 using VRBuilder.Core.Utils.Logging;
 
 namespace VRBuilder.Core.Configuration
@@ -12,7 +16,8 @@ namespace VRBuilder.Core.Configuration
     public interface IRuntimeService : IService<IRuntimeServiceConfiguration>
     {
         /// <summary>
-        /// Raised when the selected process changes.
+        /// Raised when the selected process changes for other services or components.
+        /// Settings object according to <see cref="IRuntimeConfiguration"/> handled over <see cref="IRuntimeHandler"/>.
         /// </summary>
         public event Action<string?> SelectedProcessChanged;
         
@@ -22,15 +27,15 @@ namespace VRBuilder.Core.Configuration
         IRuntimeHandler Handler { get; set; }
         
         /// <summary>
-        /// The name of the selected process, or <c>null</c> if none is selected.
-        /// </summary>
-        string? SelectedProcess { get; set; }
-        
-        /// <summary>
         /// Process handler who handels the process runner at engine runtime.
         /// </summary>
         IConfigurableProcessHandler ProcessHandler { get; set; }
-
+        
+        /// <summary>
+        /// The path of the selected process, or <c>null</c> if none is selected. The process is saved and loaded inside <see cref="IRuntimeConfiguration"/>.
+        /// </summary>
+        string? SelectedProcess { get; set; }
+        
         /// <summary>
         /// The file name of the process manifest, or <c>null</c> if none is used.
         /// </summary>
@@ -41,6 +46,11 @@ namespace VRBuilder.Core.Configuration
         /// </summary>
         string SelectedProcessStreamingAssetsPath { get; set; }
 
+        /// <summary>
+        /// Process serializer to load the process file and get <see cref="IProcess"/> out of it.
+        /// </summary>
+        public IProcessSerializer Serializer { get; set; }
+        
         /// <summary>
         /// Configuration of which lifecycle events should be logged.
         /// </summary>

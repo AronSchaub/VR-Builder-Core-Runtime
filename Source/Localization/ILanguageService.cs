@@ -18,11 +18,6 @@ namespace VRBuilder.Core.Localization
         public event Action<string?> SelectedLocalizationTableChanged;
         
         /// <summary>
-        /// The runtime configurator of the current session.
-        /// </summary>
-        ILanguageHandler Handler { get; set; }
-        
-        /// <summary>
         /// String localization table used by the current process.
         /// </summary>
         string SelectedProcessLocalizationTable { get; set; }
@@ -41,8 +36,6 @@ namespace VRBuilder.Core.Localization
         /// Current selected application language.
         /// </summary>
         string ApplicationLanguage { get; set; }
-        
-        ILanguageHandler LanguageHandler { get; set; }
 
         /// <summary>
         /// Get Locale object from a language or language code string.
