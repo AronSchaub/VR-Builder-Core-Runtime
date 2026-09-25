@@ -9,7 +9,7 @@ namespace VRBuilder.Core.Behaviors
     /// playing audio, spawning confetti). Behaviors own <see cref="IBehaviorData"/> and expose their
     /// runtime logic as <see cref="IStageProcess"/>es through the inherited <see cref="IEntity"/> contract.
     /// </summary>
-    public interface IBehavior : IEntity, IDataOwner<IBehaviorData>, IClonable<IBehavior>
+    public interface IBehavior : IEntity, IDataOwner<IBehaviorData>
     {
     }
 }

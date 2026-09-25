@@ -68,12 +68,10 @@ namespace VRBuilder.Core.Behaviors
             Data.Duration = duration;
             Data.ExecutionStages = executionStages;
 
-#if UNITY_6000_0_OR_NEWER
             if (string.IsNullOrEmpty(Data.ConfettiMachinePrefabPath) && ServiceRegistry.Has<ISceneService>())
             {
                 Data.ConfettiMachinePrefabPath = ServiceRegistry.Get<ISceneService>().DefaultConfettiPrefab;
             }
-#endif
         }
 
 

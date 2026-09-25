@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
 
+using System;
 using VRBuilder.Core.Configuration.Modes;
 
 namespace VRBuilder.Core
@@ -16,6 +17,16 @@ namespace VRBuilder.Core
     /// </summary>
     public interface IEntity
     {
+        /// <summary>
+        /// Unique identifier of the entity.
+        /// </summary>
+        Guid Id { get; }
+
+        /// <summary>
+        /// Generates a new unique identifier for the entity.
+        /// </summary>
+        void RegenerateId();
+
         /// <summary>
         /// The entity's life cycle.
         /// </summary>

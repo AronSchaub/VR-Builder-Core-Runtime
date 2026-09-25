@@ -117,6 +117,8 @@ namespace VRBuilder.Core.ProcessRunning
 
             Events.ProcessSetup?.Invoke(this, new ProcessEventArgs(currentProcess));
 
+            RuntimeEntityGraph.Prepare(currentProcess);
+
             if (ServiceRegistry.Has<ModeService>())
                 ServiceRegistry.Get<ModeService>().ModeHandler.ModeChanged += HandleModeChanged;
 

@@ -3,6 +3,7 @@
 // Modifications copyright (c) 2021-2026 MindPort GmbH
 
 using System.Runtime.Serialization;
+using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Utils;
@@ -16,6 +17,12 @@ namespace VRBuilder.Core.Behaviors
     [DataContract(IsReference = true)]
     public abstract class Behavior<TData> : Entity<TData>, IBehavior where TData : class, IBehaviorData, new()
     {
+        /// <inheritdoc />
+        IBehaviorData IDataOwner<IBehaviorData>.Data
+        {
+            get { return Data; }
+        }
+
         /// <summary>
         /// Creates a new behavior and subscribes to lifecycle logging when enabled in the runtime configuration.
         /// </summary>
@@ -27,16 +34,5 @@ namespace VRBuilder.Core.Behaviors
             }
         }
 
-        /// <inheritdoc />
-        IBehaviorData IDataOwner<IBehaviorData>.Data
-        {
-            get { return Data; }
-        }
-
-        /// <inheritdoc />
-        public virtual IBehavior Clone()
-        {
-            return MemberwiseClone() as IBehavior;
-        }
     }
 }

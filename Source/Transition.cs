@@ -1,13 +1,12 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
-// Modifications copyright (c) 2026 Aron Schaub
-// SPDX-License-Identifier: Apache-2.0
 
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using VRBuilder.Core.Attributes;
+using VRBuilder.Core.Cloning;
 using VRBuilder.Core.Conditions;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Configuration.Modes;
@@ -15,6 +14,7 @@ using VRBuilder.Core.EntityOwners;
 using VRBuilder.Core.EntityOwners.ParallelEntityCollection;
 using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.Runtime.Registry;
+using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Utils;
 
 namespace VRBuilder.Core
@@ -25,92 +25,6 @@ namespace VRBuilder.Core
     [DataContract(IsReference = true)]
     public class Transition : CompletableEntity<Transition.EntityData>, ITransition, ILockablePropertiesProvider
     {
-        /// <inheritdoc />
-        public Transition()
-        {
-            Data.Conditions = new List<ICondition>();
-            Data.TargetStep = null;
-
-            if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogTransitions)
-            {
-                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("{0}<b>Transition to</b> <i>{1}</i> is <b>{2}</b>.\n", ConsoleUtils.GetTabs(3), Data.TargetStep != null ? Data.TargetStep.Data.Name + " (Step)" : "chapter's end", LifeCycle.Stage); };
-            }
-        }
-
-        /// <inheritdoc />
-        public IEnumerable<LockablePropertyData> GetLockableProperties()
-        {
-            IEnumerable<LockablePropertyData> lockable = new List<LockablePropertyData>();
-            foreach (ICondition condition in Data.Conditions)
-            {
-                if (condition is ILockablePropertiesProvider lockableCondition)
-                {
-                    lockable = lockable.Union(lockableCondition.GetLockableProperties());
-                }
-            }
-
-            return lockable;
-        }
-
-        ///<inheritdoc />
-        ITransitionData IDataOwner<ITransitionData>.Data
-        {
-            get { return Data; }
-        }
-
-        ///<inheritdoc />
-        public override IStageProcess GetActivatingProcess()
-        {
-            return new CompositeProcess(new ParallelActivatingProcess<EntityData>(Data), new ActivatingProcess(Data));
-        }
-
-        ///<inheritdoc />
-        public override IStageProcess GetActiveProcess()
-        {
-            return new CompositeProcess(new ParallelActiveProcess<EntityData>(Data), new ActiveProcess(Data));
-        }
-
-        ///<inheritdoc />
-        public override IStageProcess GetDeactivatingProcess()
-        {
-            return new ParallelDeactivatingProcess<EntityData>(Data);
-        }
-
-        /// <inheritdoc />
-        public override IStageProcess GetAbortingProcess()
-        {
-            return new ParallelAbortingProcess<EntityData>(Data);
-        }
-
-        /// <inheritdoc />
-        public ITransition Clone()
-        {
-            Transition clonedTransition = new Transition();
-            clonedTransition.Data.Conditions = Data.Conditions.Select(condition => condition.Clone()).ToList();
-            clonedTransition.Data.TargetStep = Data.TargetStep;
-            return clonedTransition;
-        }
-
-        ///<inheritdoc />
-        protected override IConfigurator GetConfigurator()
-        {
-            return new ParallelConfigurator<ICondition>(Data);
-        }
-
-        ///<inheritdoc />
-        protected override IAutocompleter GetAutocompleter()
-        {
-            return new EntityAutocompleter(Data);
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="ITransition"/>.
-        /// </summary>
-        public static ITransition Create()
-        {
-            return new Transition();
-        }
-
         /// <summary>
         /// The transition's data class.
         /// </summary>
@@ -128,18 +42,29 @@ namespace VRBuilder.Core
                 return Conditions.ToArray();
             }
 
+            /// <summary>
+            /// Clone-aware reference to the target step.
+            /// </summary>
+            [HideInProcessInspector]
+            [DataMember]
+            public EntityReference<IStep> TargetStepReference { get; } = new EntityReference<IStep>();
+
             ///<inheritdoc />
             [HideInProcessInspector]
             [DataMember]
-            public IStep? TargetStep { get; set; }
+            [System.Obsolete("Use TargetStepReference instead.")]
+            public IStep TargetStep
+            {
+                get => TargetStepReference.Entity;
+                set => TargetStepReference.Set(value);
+            }
 
             ///<inheritdoc />
-            public IMode? Mode { get; set; }
+            public IMode Mode { get; set; }
 
             ///<inheritdoc />
             public bool IsCompleted { get; set; }
 
-            /// <inheritdoc />
             [IgnoreDataMember]
             [IgnoreInStepInspector]
             public string Name
@@ -191,9 +116,17 @@ namespace VRBuilder.Core
             ///<inheritdoc />
             protected override bool CheckIfCompleted()
             {
-                return Data.Conditions
-                    .Where(condition => Data.Mode.CheckIfSkipped(condition.GetType()) == false)
-                    .All(condition => condition.IsCompleted);
+                IEntity[] conditions = RuntimeEntityGraph.GetChildren(Data);
+                for (int i = 0; i < conditions.Length; i++)
+                {
+                    ICondition condition = (ICondition)conditions[i];
+                    if (Data.Mode.CheckIfSkipped(condition.GetType()) == false && condition.IsCompleted == false)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
         }
 
@@ -206,11 +139,97 @@ namespace VRBuilder.Core
             ///<inheritdoc />
             public override void Complete()
             {
-                foreach (ICondition condition in Data.Conditions.Where(condition => Data.Mode.CheckIfSkipped(condition.GetType()) == false))
+                IEntity[] conditions = RuntimeEntityGraph.GetChildren(Data);
+                for (int i = 0; i < conditions.Length; i++)
                 {
-                    condition.Autocomplete();
+                    ICondition condition = (ICondition)conditions[i];
+                    if (Data.Mode.CheckIfSkipped(condition.GetType()) == false)
+                    {
+                        condition.Autocomplete();
+                    }
                 }
             }
         }
+
+        ///<inheritdoc />
+        ITransitionData IDataOwner<ITransitionData>.Data
+        {
+            get { return Data; }
+        }
+
+        ///<inheritdoc />
+        public override IStageProcess GetActivatingProcess()
+        {
+            return new CompositeProcess(new EntityOwners.ParallelEntityCollection.ParallelActivatingProcess<EntityData>(Data), new ActivatingProcess(Data));
+        }
+
+        ///<inheritdoc />
+        public override IStageProcess GetActiveProcess()
+        {
+            return new CompositeProcess(new EntityOwners.ParallelEntityCollection.ParallelActiveProcess<EntityData>(Data), new ActiveProcess(Data));
+        }
+
+        ///<inheritdoc />
+        public override IStageProcess GetDeactivatingProcess()
+        {
+            return new EntityOwners.ParallelEntityCollection.ParallelDeactivatingProcess<EntityData>(Data);
+        }
+
+        /// <inheritdoc />
+        public override IStageProcess GetAbortingProcess()
+        {
+            return new ParallelAbortingProcess<EntityData>(Data);
+        }
+
+        ///<inheritdoc />
+        protected override IConfigurator GetConfigurator()
+        {
+            return new ParallelConfigurator<ICondition>(Data);
+        }
+
+        ///<inheritdoc />
+        protected override IAutocompleter GetAutocompleter()
+        {
+            return new EntityAutocompleter(Data);
+        }
+
+        /// <inheritdoc />
+        public Transition()
+        {
+            Data.Conditions = new List<ICondition>();
+            Data.TargetStepReference.Set(null);
+
+            if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogTransitions)
+            {
+                LifeCycle.StageChanged += (sender, args) =>
+                {
+                    IStep targetStep = Data.TargetStepReference.Entity;
+                    ForwardingLogger.LogFormat("{0}<b>Transition to</b> <i>{1}</i> is <b>{2}</b>.\n", ConsoleUtils.GetTabs(3), targetStep != null ? targetStep.Data.Name + " (Step)" : "chapter's end", LifeCycle.Stage);
+                };
+            }
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ITransition"/>.
+        /// </summary>
+        public static ITransition Create()
+        {
+            return new Transition();
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<LockablePropertyData> GetLockableProperties()
+        {
+            IEnumerable<LockablePropertyData> lockable = new List<LockablePropertyData>();
+            foreach (ICondition condition in Data.Conditions)
+            {
+                if (condition is ILockablePropertiesProvider lockableCondition)
+                {
+                    lockable = lockable.Union(lockableCondition.GetLockableProperties());
+                }
+            }
+            return lockable;
+        }
+
     }
 }

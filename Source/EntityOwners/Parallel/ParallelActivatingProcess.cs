@@ -5,7 +5,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Collections;
-using System.Linq;
 using VRBuilder.Core.Configuration.Modes;
 
 namespace VRBuilder.Core.EntityOwners.ParallelEntityCollection
@@ -22,16 +21,20 @@ namespace VRBuilder.Core.EntityOwners.ParallelEntityCollection
         /// <inheritdoc />
         public override void Start()
         {
-            foreach (IEntity child in Data.GetChildren().Where(child => Data.Mode.CheckIfSkipped(child.GetType()) == false))
+            IEntity[] children = RuntimeEntityGraph.GetChildren(Data);
+            for (int i = 0; i < children.Length; i++)
             {
-                child.LifeCycle.Activate();
+                if (Data.Mode.CheckIfSkipped(children[i].GetType()) == false)
+                {
+                    children[i].LifeCycle.Activate();
+                }
             }
         }
 
         /// <inheritdoc />
         public override IEnumerator Update()
         {
-            while (GetBlockingChildren(Data, Data.Mode).Any(child => child.LifeCycle.Stage == Stage.Activating))
+            while (HasBlockingChildInStage(Stage.Activating))
             {
                 yield return null;
             }
@@ -45,9 +48,13 @@ namespace VRBuilder.Core.EntityOwners.ParallelEntityCollection
         /// <inheritdoc />
         public override void FastForward()
         {
-            foreach (IEntity child in Data.GetChildren().Where(child => child.LifeCycle.Stage == Stage.Activating))
+            IEntity[] children = RuntimeEntityGraph.GetChildren(Data);
+            for (int i = 0; i < children.Length; i++)
             {
-                child.LifeCycle.MarkToFastForwardStage(Stage.Activating);
+                if (children[i].LifeCycle.Stage == Stage.Activating)
+                {
+                    children[i].LifeCycle.MarkToFastForwardStage(Stage.Activating);
+                }
             }
         }
     }

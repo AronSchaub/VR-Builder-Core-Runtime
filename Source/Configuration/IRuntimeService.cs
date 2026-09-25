@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
+using VRBuilder.Core.Cloning;
 using VRBuilder.Core.ProcessRunning;
 using VRBuilder.Core.Registry;
 using VRBuilder.Core.Serialization;
@@ -50,6 +51,11 @@ namespace VRBuilder.Core.Configuration
         /// Process serializer to load the process file and get <see cref="IProcess"/> out of it.
         /// </summary>
         public IProcessSerializer Serializer { get; set; }
+        
+        /// <summary>
+        /// Service used to create independent copies of entity graphs.
+        /// </summary>
+        IEntityCloner EntityCloner { get; }
         
         /// <summary>
         /// Configuration of which lifecycle events should be logged.

@@ -16,13 +16,13 @@ namespace VRBuilder.Core.Configuration
         IRuntimeConfiguration RuntimeConfiguration { get; set; }
         
         /// <summary>
-        /// Current selected process referenced by <see cref="IRuntimeConfiguration"/> and trigger <see cref="SelectedProcessChanged"/> on set.
+        /// Current selected process referenced by <see cref="IRuntimeConfiguration"/> and trigger <see cref="SelectedProcessChangedAction"/> on set.
         /// </summary>
         string SelectedProcess { get; set; }
 
         /// <summary>
         /// Event raised if the process of the <see cref="IRuntimeConfiguration"/> is changed. The string argument is the selected process with the path.
         /// </summary>
-        public event Action<string> SelectedProcessChanged;
+        public event Action<string> SelectedProcessChangedAction;
     }
 }

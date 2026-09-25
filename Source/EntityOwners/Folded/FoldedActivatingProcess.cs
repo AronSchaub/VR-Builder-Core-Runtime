@@ -5,7 +5,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Collections;
-using System.Collections.Generic;
 
 namespace VRBuilder.Core.EntityOwners.FoldedEntityCollection
 {
@@ -14,7 +13,8 @@ namespace VRBuilder.Core.EntityOwners.FoldedEntityCollection
     /// </summary>
     internal class FoldedActivatingProcess<TEntity> : StageProcess<IEntitySequenceDataWithMode<TEntity>> where TEntity : IEntity
     {
-        private IEnumerator<TEntity> enumerator;
+        private IEntity[] children;
+        private int currentIndex;
 
         public FoldedActivatingProcess(IEntitySequenceDataWithMode<TEntity> data) : base(data)
         {
@@ -23,16 +23,16 @@ namespace VRBuilder.Core.EntityOwners.FoldedEntityCollection
         /// <inheritdoc />
         public override void Start()
         {
-            enumerator = Data.GetChildren().GetEnumerator();
-            enumerator.Reset();
+            children = RuntimeEntityGraph.GetChildren(Data);
+            currentIndex = 0;
         }
 
         /// <inheritdoc />
         public override IEnumerator Update()
         {
-            while (enumerator.MoveNext())
+            while (TryMoveNext(out TEntity child))
             {
-                Data.Current = enumerator.Current;
+                Data.Current = child;
 
                 if (Data.Current == null)
                 {
@@ -56,7 +56,7 @@ namespace VRBuilder.Core.EntityOwners.FoldedEntityCollection
         /// <inheritdoc />
         public override void End()
         {
-            enumerator = null;
+            children = null;
         }
 
         /// <inheritdoc />
@@ -64,9 +64,9 @@ namespace VRBuilder.Core.EntityOwners.FoldedEntityCollection
         {
             if (Equals(Data.Current, default(IEntity)))
             {
-                if (enumerator.MoveNext())
+                if (TryMoveNext(out TEntity child))
                 {
-                    Data.Current = enumerator.Current;
+                    Data.Current = child;
                 }
             }
 
@@ -82,8 +82,20 @@ namespace VRBuilder.Core.EntityOwners.FoldedEntityCollection
                     Data.Current.LifeCycle.MarkToFastForwardStage(Stage.Activating);
                 }
 
-                Data.Current = enumerator.MoveNext() ? enumerator.Current : default;
+                Data.Current = TryMoveNext(out TEntity nextChild) ? nextChild : default;
             }
+        }
+
+        private bool TryMoveNext(out TEntity child)
+        {
+            if (children == null || currentIndex >= children.Length)
+            {
+                child = default;
+                return false;
+            }
+
+            child = (TEntity)children[currentIndex++];
+            return true;
         }
     }
 }

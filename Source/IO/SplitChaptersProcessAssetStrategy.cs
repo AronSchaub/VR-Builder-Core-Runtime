@@ -92,10 +92,6 @@ namespace VRBuilder.Core.IO
 
             IChapterData IDataOwner<IChapterData>.Data => Data;
 
-            public IChapter Clone()
-            {
-                throw new System.NotImplementedException();
-            }
         }
     }
 }

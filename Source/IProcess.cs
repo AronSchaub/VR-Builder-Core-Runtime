@@ -9,7 +9,7 @@ namespace VRBuilder.Core
     /// <see cref="IChapter"/>s and, through its <see cref="ILifeCycle"/>, drives execution from
     /// chapter to chapter. The running instance is driven by the <see cref="IProcessRunner"/> service.
     /// </summary>
-    public interface IProcess : IEntity, IDataOwner<IProcessData>, IClonable<IProcess>
+    public interface IProcess : IEntity, IDataOwner<IProcessData>
     {
         /// <summary>
         /// Utility data used by editor.

@@ -73,8 +73,15 @@ namespace VRBuilder.Core.Serialization
                 ForwardingLogger.LogError(ex.Message);
             }
 
-            // This line is required to undo the changes applied to the process.
-            wrapper.GetProcess();
+            try
+            {
+                // Undo the temporary graph changes applied for serialization.
+                wrapper.GetProcess();
+            }
+            finally
+            {
+                wrapper.RestoreSelectedSteps();
+            }
 
             return bytes;
         }
@@ -140,8 +147,15 @@ namespace VRBuilder.Core.Serialization
                 ForwardingLogger.LogError(ex.Message);
             }
 
-            // This line is required to undo the changes applied to the process.
-            wrapper.GetChapter();
+            try
+            {
+                // Undo the temporary graph changes applied for serialization.
+                wrapper.GetChapter();
+            }
+            finally
+            {
+                wrapper.RestoreSelectedSteps();
+            }
 
             return bytes;
         }
@@ -165,7 +179,7 @@ namespace VRBuilder.Core.Serialization
             public ChapterWrapper(IChapter chapter)
             {
                 // Set LastSelectedStep to null, to prevent it needlessly serializing a full step tree.
-                chapter.ChapterMetadata.LastSelectedStep = null;
+                ClearLastSelectedStep(chapter);
 
                 Steps.AddRange(GetSteps(chapter));
                 SubChapters.AddRange(GetSubChapters(chapter));
@@ -174,9 +188,10 @@ namespace VRBuilder.Core.Serialization
                 {
                     foreach (ITransition transition in step.Data.Transitions.Data.Transitions)
                     {
-                        if (transition.Data.TargetStep != null)
+                        IStep targetStep = transition.Data.TargetStepReference.Entity;
+                        if (targetStep != null)
                         {
-                            transition.Data.TargetStep = new StepRef() { StepMetadata = new StepMetadata() { Guid = transition.Data.TargetStep.StepMetadata.Guid } };
+                            transition.Data.TargetStepReference.Set(new StepRef() { StepMetadata = new StepMetadata() { Guid = targetStep.StepMetadata.Guid } });
                         }
                     }
                 }
@@ -184,7 +199,7 @@ namespace VRBuilder.Core.Serialization
                 foreach (IChapter subChapter in SubChapters)
                 {
                     // Set LastSelectedStep to null, to prevent it needlessly serializing a full step tree.
-                    subChapter.ChapterMetadata.LastSelectedStep = null;
+                    ClearLastSelectedStep(subChapter);
 
                     List<IStep> stepRefs = new List<IStep>();
                     foreach (IStep step in subChapter.Data.Steps)
@@ -210,13 +225,13 @@ namespace VRBuilder.Core.Serialization
                 {
                     foreach (ITransition transition in step.Data.Transitions.Data.Transitions)
                     {
-                        if (transition.Data.TargetStep == null)
+                        if (transition.Data.TargetStepReference.Entity != null && transition.Data.TargetStepReference.Entity is not StepRef)
                         {
                             continue;
                         }
 
-                        StepRef stepRef = (StepRef)transition.Data.TargetStep;
-                        transition.Data.TargetStep = Steps.FirstOrDefault(step => step.StepMetadata.Guid == stepRef.StepMetadata.Guid);
+                        Guid targetId = transition.Data.TargetStepReference.Id;
+                        transition.Data.TargetStepReference.Set(Steps.FirstOrDefault(candidate => candidate.Id == targetId));
                     }
                 }
 
@@ -263,7 +278,7 @@ namespace VRBuilder.Core.Serialization
                 foreach (IChapter chapter in process.Data.Chapters)
                 {
                     // Set LastSelectedStep to null, to prevent it needlessly serializing a full step tree.
-                    chapter.ChapterMetadata.LastSelectedStep = null;
+                    ClearLastSelectedStep(chapter);
 
                     Steps.AddRange(GetSteps(chapter));
                     SubChapters.AddRange(GetSubChapters(chapter));
@@ -273,9 +288,10 @@ namespace VRBuilder.Core.Serialization
                 {
                     foreach (ITransition transition in step.Data.Transitions.Data.Transitions)
                     {
-                        if (transition.Data.TargetStep != null)
+                        IStep targetStep = transition.Data.TargetStepReference.Entity;
+                        if (targetStep != null)
                         {
-                            transition.Data.TargetStep = new StepRef() { StepMetadata = new StepMetadata() { Guid = transition.Data.TargetStep.StepMetadata.Guid } };
+                            transition.Data.TargetStepReference.Set(new StepRef() { StepMetadata = new StepMetadata() { Guid = targetStep.StepMetadata.Guid } });
                         }
                     }
                 }
@@ -283,7 +299,7 @@ namespace VRBuilder.Core.Serialization
                 foreach (IChapter subChapter in SubChapters)
                 {
                     // Set LastSelectedStep to null, to prevent it needlessly serializing a full step tree.
-                    subChapter.ChapterMetadata.LastSelectedStep = null;
+                    ClearLastSelectedStep(subChapter);
 
                     List<IStep> stepRefs = new List<IStep>();
                     foreach (IStep step in subChapter.Data.Steps)
@@ -309,13 +325,13 @@ namespace VRBuilder.Core.Serialization
                 {
                     foreach (ITransition transition in step.Data.Transitions.Data.Transitions)
                     {
-                        if (transition.Data.TargetStep == null)
+                        if (transition.Data.TargetStepReference.Entity != null && transition.Data.TargetStepReference.Entity is not StepRef)
                         {
                             continue;
                         }
 
-                        StepRef stepRef = (StepRef)transition.Data.TargetStep;
-                        transition.Data.TargetStep = Steps.FirstOrDefault(step => step.StepMetadata.Guid == stepRef.StepMetadata.Guid);
+                        Guid targetId = transition.Data.TargetStepReference.Id;
+                        transition.Data.TargetStepReference.Set(Steps.FirstOrDefault(candidate => candidate.Id == targetId));
                     }
                 }
 
@@ -343,6 +359,29 @@ namespace VRBuilder.Core.Serialization
 
         private class Wrapper
         {
+            [JsonIgnore]
+            private readonly Dictionary<IChapter, IStep> selectedSteps = new Dictionary<IChapter, IStep>();
+
+            protected void ClearLastSelectedStep(IChapter chapter)
+            {
+                if (!selectedSteps.ContainsKey(chapter))
+                {
+                    selectedSteps.Add(chapter, chapter.ChapterMetadata.LastSelectedStep);
+                }
+
+                chapter.ChapterMetadata.LastSelectedStep = null;
+            }
+
+            public void RestoreSelectedSteps()
+            {
+                foreach (KeyValuePair<IChapter, IStep> selection in selectedSteps)
+                {
+                    selection.Key.ChapterMetadata.LastSelectedStep = selection.Value;
+                }
+
+                selectedSteps.Clear();
+            }
+
             protected IEnumerable<IStep> GetSteps(IChapter chapter)
             {
                 List<IStep> steps = new List<IStep>();
@@ -394,6 +433,14 @@ namespace VRBuilder.Core.Serialization
 
                 public ILifeCycle LifeCycle { get; } = null;
 
+                [JsonIgnore]
+                public Guid Id => StepMetadata?.Guid ?? Guid.Empty;
+
+                public void RegenerateId()
+                {
+                    throw new NotImplementedException();
+                }
+
                 public IStageProcess GetActivatingProcess()
                 {
                     throw new NotImplementedException();
@@ -419,17 +466,13 @@ namespace VRBuilder.Core.Serialization
                     throw new NotImplementedException();
                 }
 
-                public IStep Clone()
-                {
-                    throw new NotImplementedException();
-                }
-
                 public IStageProcess GetAbortingProcess()
                 {
                     throw new NotImplementedException();
                 }
 
                 public StepMetadata StepMetadata { get; set; }
+                [JsonIgnore]
                 public IEntity Parent { get; set; }
             }
         }

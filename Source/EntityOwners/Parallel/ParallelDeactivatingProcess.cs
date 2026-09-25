@@ -1,11 +1,8 @@
 // Copyright (c) 2013-2019 Innoactive GmbH
 // Licensed under the Apache License, Version 2.0
 // Modifications copyright (c) 2021-2026 MindPort GmbH
-// Modifications copyright (c) 2026 Aron Schaub
-// SPDX-License-Identifier: Apache-2.0
 
 using System.Collections;
-using System.Linq;
 using VRBuilder.Core.Configuration.Modes;
 
 namespace VRBuilder.Core.EntityOwners.ParallelEntityCollection
@@ -22,16 +19,20 @@ namespace VRBuilder.Core.EntityOwners.ParallelEntityCollection
         /// <inheritdoc />
         public override void Start()
         {
-            foreach (IEntity child in Data.GetChildren().Where(child => !Data.Mode.CheckIfSkipped(child.GetType())))
+            IEntity[] children = RuntimeEntityGraph.GetChildren(Data);
+            for (int i = 0; i < children.Length; i++)
             {
-                child.LifeCycle.Deactivate();
+                if (Data.Mode.CheckIfSkipped(children[i].GetType()) == false)
+                {
+                    children[i].LifeCycle.Deactivate();
+                }
             }
         }
 
         /// <inheritdoc />
         public override IEnumerator Update()
         {
-            while (GetBlockingChildren(Data, Data.Mode).Any(child => child.LifeCycle.Stage == Stage.Deactivating))
+            while (HasBlockingChildInStage(Stage.Deactivating))
             {
                 yield return null;
             }
@@ -40,9 +41,13 @@ namespace VRBuilder.Core.EntityOwners.ParallelEntityCollection
         /// <inheritdoc />
         public override void End()
         {
-            foreach (IEntity child in Data.GetChildren().Where(child => child.LifeCycle.Stage != Stage.Inactive))
+            IEntity[] children = RuntimeEntityGraph.GetChildren(Data);
+            for (int i = 0; i < children.Length; i++)
             {
-                child.LifeCycle.MarkToFastForward();
+                if (children[i].LifeCycle.Stage != Stage.Inactive)
+                {
+                    children[i].LifeCycle.MarkToFastForward();
+                }
             }
         }
 

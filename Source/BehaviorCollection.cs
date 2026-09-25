@@ -20,11 +20,30 @@ namespace VRBuilder.Core
     public class BehaviorCollection : Entity<BehaviorCollection.EntityData>, IBehaviorCollection
     {
         /// <summary>
-        /// Creates a new, empty behavior collection.
+        /// The data class for <see cref="IBehavior"/> collections.
         /// </summary>
-        public BehaviorCollection()
+        [DataContract(IsReference = true)]
+        public class EntityData : EntityCollectionData<IBehavior>, IBehaviorCollectionData
         {
-            Data.Behaviors = new List<IBehavior>();
+            /// <summary>
+            /// List of all <see cref="IBehavior"/>s added.
+            /// </summary>
+            [DataMember]
+            [DisplayName(""), ReorderableListOf(typeof(FoldableAttribute), typeof(DrawIsBlockingToggleAttribute), typeof(HelpAttribute), typeof(MenuAttribute)), ExtendableList]
+            public virtual IList<IBehavior> Behaviors { get; set; }
+
+            /// <summary>
+            /// Returns a list of all <see cref="IBehavior"/>s added.
+            /// </summary>
+            public override IEnumerable<IBehavior> GetChildren()
+            {
+                return Behaviors.ToList();
+            }
+
+            /// <summary>
+            /// Reference to <see cref="IBehavior"/>'s current mode.
+            /// </summary>
+            public IMode Mode { get; set; }
         }
 
         /// <inheritdoc />
@@ -52,11 +71,9 @@ namespace VRBuilder.Core
         }
 
         /// <inheritdoc />
-        public IBehaviorCollection Clone()
+        protected override IConfigurator GetConfigurator()
         {
-            BehaviorCollection clonedBehaviorCollection = new BehaviorCollection();
-            clonedBehaviorCollection.Data.Behaviors = Data.Behaviors.Select(behavior => behavior.Clone()).ToList();
-            return clonedBehaviorCollection;
+            return new ParallelConfigurator<IBehavior>(Data);
         }
 
         /// <inheritdoc />
@@ -65,37 +82,9 @@ namespace VRBuilder.Core
             get { return Data; }
         }
 
-        /// <inheritdoc />
-        protected override IConfigurator GetConfigurator()
+        public BehaviorCollection()
         {
-            return new ParallelConfigurator<IBehavior>(Data);
-        }
-
-        /// <summary>
-        /// The data class for <see cref="IBehavior"/> collections.
-        /// </summary>
-        [DataContract(IsReference = true)]
-        public class EntityData : EntityCollectionData<IBehavior>, IBehaviorCollectionData
-        {
-            /// <summary>
-            /// List of all <see cref="IBehavior"/>s added.
-            /// </summary>
-            [DataMember]
-            [DisplayName(""), ReorderableListOf(typeof(FoldableAttribute), typeof(DrawIsBlockingToggleAttribute), typeof(HelpAttribute), typeof(MenuAttribute)), ExtendableList]
-            public virtual IList<IBehavior> Behaviors { get; set; }
-
-            /// <summary>
-            /// Returns a list of all <see cref="IBehavior"/>s added.
-            /// </summary>
-            public override IEnumerable<IBehavior> GetChildren()
-            {
-                return Behaviors.ToList();
-            }
-
-            /// <summary>
-            /// Reference to <see cref="IBehavior"/>'s current mode.
-            /// </summary>
-            public IMode Mode { get; set; }
+            Data.Behaviors = new List<IBehavior>();
         }
     }
 }
