@@ -27,6 +27,15 @@ namespace VRBuilder.Core.Behaviors
         protected PlayAudioBehavior() : this(Guid.Empty, null, BehaviorExecutionStages.None)
         {
         }
+        
+        /// <summary>
+        /// Creates an empty play audio behavior, used by the JSON deserializer.
+        /// </summary>
+        /// <param name="audioData">Audio data containing the clip to play.</param>
+        /// <param name="executionStages">Stages at which the audio is played.</param>
+        public PlayAudioBehavior(IAudioData audioData, BehaviorExecutionStages executionStages) : this(Guid.Empty, audioData, executionStages)
+        {
+        }
 
         /// <summary>
         /// Creates a behavior that plays <paramref name="audioData"/> on the audio player identified by <paramref name="audioPlayer"/> at the given <paramref name="executionStages"/>.

@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace VRBuilder.Core.Configuration.Modes
@@ -45,5 +46,12 @@ namespace VRBuilder.Core.Configuration.Modes
         /// </summary>
         /// <param name="mode">The desired process mode which should be set.</param>
         void SetMode(IMode mode);
+
+        /// <summary>
+        /// Set the current process mode.
+        /// </summary>
+        /// <param name="modes">Set new availed modes.</param>
+        /// <param name="index">Default active mode.</param>
+        void SetModes(List<IMode> modes, int index);
     }
 }

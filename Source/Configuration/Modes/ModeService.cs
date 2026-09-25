@@ -6,13 +6,41 @@
 namespace VRBuilder.Core.Configuration.Modes
 {
     /// <summary>
-    /// A process mode that is defined by its name, IConfigurables activation policy and a collection of parameters.
+    /// Service to locate the mode handler and the default or set mode in a session.
     /// Immutable.
     /// </summary>
     public sealed class ModeService : IModeService
     {
-        public IMode ActiveOrDefaultMode { get; set; } = new Mode("Default", new WhitelistTypeRule<IOptional>());
+        public IMode ActiveOrDefaultMode
+        {
+            get {
+                if (ModeHandler is null)
+                {
+                    ForwardingLogger.LogWarning("ModeHandler is not set. New default mode will be used.");
+                    return new Mode("Default", new WhitelistTypeRule<IOptional>());
+                }
+                return ModeHandler.CurrentMode;
+            }
+            set
+            {
+                if (ModeHandler is null)
+                {
+                    ForwardingLogger.LogError("ModeHandler is not set. The mode can't be set.");
+                }
+                else
+                {
+                    ModeHandler.SetMode(value);
+                }
+            }
+        }
 
         public IModeHandler ModeHandler { get; set; }
+        
+        private IModeServiceConfiguration configuration;
+
+        public void SetConfiguration(IModeServiceConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
     }
 }

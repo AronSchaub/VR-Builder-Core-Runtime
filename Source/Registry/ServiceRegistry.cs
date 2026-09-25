@@ -7,7 +7,7 @@ namespace VRBuilder.Core.Runtime.Registry
 {
     /// <summary>
     /// Static service locator for the engine-agnostic core. Services implementing
-    /// <see cref="IService{TConfig}"/> are registered — optionally together with their configuration —
+    /// <see cref="IService{TConfig}"/> are registered, optionally together with their configuration,
     /// and later resolved by type. Default implementations are wired up at startup by the engine-specific
     /// registry loader (e.g. <c>ServiceRegistryLoader</c> in TinkerFlow).
     /// </summary>

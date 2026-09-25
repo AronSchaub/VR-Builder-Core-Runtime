@@ -121,9 +121,9 @@ namespace VRBuilder.Core.Behaviors
                     yield break;
                 }
 
-                while (stopWatch.ElapsedMilliseconds < Data.Duration)
+                while (stopWatch.ElapsedMilliseconds < Data.Duration * 1000)
                 {
-                    float progress = stopWatch.ElapsedMilliseconds / Data.Duration;
+                    float progress = (float)stopWatch.ElapsedMilliseconds / 1000 / Data.Duration;
 
                     foreach (IScaleProperty property in Data.Targets.Values)
                     {

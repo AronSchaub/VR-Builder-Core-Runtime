@@ -121,7 +121,7 @@ namespace VRBuilder.Core.Behaviors
             /// <inheritdoc />
             public override void Start()
             {
-                foreach (var property in Data.TargetObjects.Values)
+                foreach (IModifySceneComponentProperty property in Data.TargetObjects.Values)
                     property.SetComponentActive(Data.ComponentType, Data.SetEnabled);
             }
         }
@@ -137,8 +137,8 @@ namespace VRBuilder.Core.Behaviors
             {
                 if (Data.RevertOnDeactivation)
                 {
-                    foreach (var property in Data.TargetObjects.Values)
-                        property.SetComponentActive(Data.ComponentType, Data.SetEnabled);
+                    foreach (IModifySceneComponentProperty property in Data.TargetObjects.Values)
+                        property.SetComponentActive(Data.ComponentType, !Data.SetEnabled);
                 }
             }
         }

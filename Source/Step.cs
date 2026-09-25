@@ -20,6 +20,7 @@ using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.StepLocking;
+using VRBuilder.Core.Utils;
 using VRBuilder.Utils;
 
 namespace VRBuilder.Core

@@ -149,7 +149,7 @@ namespace VRBuilder.Core
 
             try
             {
-                if (update.MoveNext() == false)
+                if (!update.MoveNext())
                 {
                     FinishCurrentState();
                 }

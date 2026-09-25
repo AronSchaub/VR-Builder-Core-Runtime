@@ -27,6 +27,8 @@ namespace VRBuilder.Core.Serialization
                         { "InTangent", keyframe.InTangent },
                         { "OutTangent", keyframe.OutTangent },
                         { "WeightedMode", keyframe.WeightedMode },
+                        { "InWeight", keyframe.InWeight },
+                        { "OutWeight", keyframe.OutWeight },
                     }.WriteTo(writer);
                     break;
                 default:
@@ -49,8 +51,10 @@ namespace VRBuilder.Core.Serialization
                     float inTangent = data["InTangent"]?.Value<float>() ?? 0;
                     float outTangent = data["OutTangent"]?.Value<float>() ?? 0;
                     int weightedMode = data["WeightedMode"]?.Value<int>() ?? 0;
+                    float inWeight = data["InWeight"]?.Value<float>() ?? 0;
+                    float outWeight = data["OutWeight"]?.Value<float>() ?? 0;
 
-                    return new KeyframeData(time, value, inTangent, outTangent, weightedMode);
+                    return new KeyframeData(time, value, inTangent, outTangent, weightedMode, inWeight, outWeight);
                 }
                 catch (Exception ex)
                 {

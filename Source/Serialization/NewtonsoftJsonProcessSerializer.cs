@@ -182,43 +182,29 @@ namespace VRBuilder.Core.Serialization.NewtonsoftJson
             return JsonConvert.DeserializeObject<T>(new UTF8Encoding().GetString(data), settings);
         }
 
-        internal partial class ProcessSerializationBinder : DefaultSerializationBinder
+        // TODO this must be a serializer for each engine like the forward logger
+        internal class ProcessSerializationBinder : DefaultSerializationBinder
         {
-            public override Type BindToType(string? assemblyName, string typeName)
+            public override Type BindToType(string assemblyName, string typeName)
             {
                 if (typeName == "VRBuilder.Core.Editor.UI.Drawers.Metadata.ReorderableElementMetadata")
                 {
                     return typeof(ReorderableElementMetadata);
                 }
 
-                // Assembly-qualified type names embed the Unity assembly name "VRBuilder.Core".
-                // Rewrite it to the assembly this binder runs in, so process files saved in Unity
-                // load in this engine. This applies to the outer assembly name and to generic
-                // arguments in both positions ("..., VRBuilder.Core]]" for the last argument and
-                // "..., VRBuilder.Core]," for inner arguments), and must run BEFORE the fast path
-                // below, which would otherwise hand an unresolvable generic name to Type.GetType.
-                var localAssembly = GetType().Assembly.GetName().Name;
-                if (assemblyName == "VRBuilder.Core")
+                if (typeName.StartsWith("VRBuilder"))
                 {
-                    assemblyName = localAssembly;
+                    return Type.GetType(typeName+", "+assemblyName);
+                }
+                if (typeName.StartsWith("TinkerFlow"))
+                {
+                    return Type.GetType(typeName);
                 }
 
-                typeName = VrBuilderCoreRegex().Replace(typeName, $", {localAssembly}");
-
-                if (typeName.StartsWith("VRBuilder") || typeName.StartsWith("TinkerFlow"))
-                {
-                    var type = Type.GetType(typeName);
-                    if (type != null)
-                        return type;
-                    // Fall through to the default binder, which reports a clearer error for
-                    // generics whose arguments cannot be resolved.
-                }
+                typeName = typeName.Replace(", TinkerFlow]]", $", {GetType().Assembly.GetName().Name}]]");
 
                 return base.BindToType(assemblyName, typeName);
             }
-
-            [GeneratedRegex(@", VRBuilder\.Core(?=\])")]
-            private static partial Regex VrBuilderCoreRegex();
         }
     }
 }

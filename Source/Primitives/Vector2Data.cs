@@ -16,11 +16,11 @@ namespace VRBuilder.Core.Properties
     {
         /// <summary>Gets or sets the X component of the vector.</summary>
         [DataMember]
-        public float X { readonly get; set; }
+        public float X { get; set; }
 
         /// <summary>Gets or sets the Y component of the vector.</summary>
         [DataMember]
-        public float Y { readonly get; set; }
+        public float Y { get; set; }
 
         /// <summary>Initializes a new instance with the given X and Y components.</summary>
         /// <param name="x">The X component of the vector.</param>

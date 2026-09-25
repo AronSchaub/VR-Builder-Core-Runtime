@@ -14,6 +14,11 @@ namespace VRBuilder.Core.Primitives
         /// <see cref="Frequency"/> and <see cref="Channels"/>.
         /// </summary>
         byte[] RawAudioData { get; }
+        
+        /// <summary>
+        /// Object to store the audio clip of the used engine inside.
+        /// </summary>
+        object RawAudioClip { get; }
 
         /// <summary>Gets the sample rate of the audio data in hertz.</summary>
         int Frequency { get; }

@@ -110,7 +110,10 @@ namespace VRBuilder.Core.ProcessRunning
         public void Start()
         {
             if (IsRunning)
+            {
+                ForwardingLogger.Log($"Process {CurrentProcess} is already running.");
                 return;
+            }
 
             Events.ProcessSetup?.Invoke(this, new ProcessEventArgs(currentProcess));
 

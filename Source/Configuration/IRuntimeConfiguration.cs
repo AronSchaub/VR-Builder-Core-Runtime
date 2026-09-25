@@ -1,8 +1,11 @@
+// Copyright (c) 2026 Aron Schaub
+// SPDX-License-Identifier: Apache-2.0
+
 namespace VRBuilder.Core.Configuration
 {
     /// <summary>
     /// Holds the runtime selection of which process is loaded and where its manifest is located.
-    /// Used by <see cref="IRuntimeConfigurator"/> to drive which process the runtime runs.
+    /// Used by <see cref="IRuntimeHandler"/> to drive which process the runtime runs.
     /// </summary>
     public interface IRuntimeConfiguration
     {

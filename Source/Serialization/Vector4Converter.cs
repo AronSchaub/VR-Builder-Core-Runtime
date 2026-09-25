@@ -71,7 +71,7 @@ namespace VRBuilder.Core.Serialization
         /// <inheritDoc/>
         public override bool CanConvert(Type objectType)
         {
-            return typeof(IVector4) == objectType;
+            return typeof(IVector4).IsAssignableFrom(objectType);
         }
     }
 }

@@ -14,12 +14,12 @@ namespace VRBuilder.Core.Properties
         /// <summary>
         /// Emitted when a collider enters this trigger.
         /// </summary>
-        event Action<IColliderWithTriggerEventArgs> EnteredTriggerAction;
+        event Action<IColliderWithTriggerEventArgs> EnteredTrigger;
 
         /// <summary>
         /// Emitted when a collider exits this trigger.
         /// </summary>
-        event Action<IColliderWithTriggerEventArgs> ExitedTriggerAction;
+        event Action<IColliderWithTriggerEventArgs> ExitedTrigger;
 
         /// <summary>
         /// Returns true if the given <see cref="ISceneObject"/>'s transform is inside this trigger.
