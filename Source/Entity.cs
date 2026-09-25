@@ -29,7 +29,7 @@ namespace VRBuilder.Core
 
         /// <inheritdoc />
         [DataMember]
-        public TData Data { get; private set; }
+        public TData? Data { get; private set; }
 
         /// <inheritdoc />
         IData IDataOwner.Data
