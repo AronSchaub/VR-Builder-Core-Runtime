@@ -207,22 +207,24 @@ namespace VRBuilder.Core.Utils
         {
             Type conditionType = conditionData.GetType();
             Type[] referenceTypes = { typeof(SingleScenePropertyReference<>), typeof(MultipleScenePropertyReference<>) };
-
-            bool IsScenePropertyReference(Type memberType)
+            (BindingFlags flags, Func<MemberInfo, Type> getMemberType)[] memberKinds =
             {
-                return memberType.IsConstructedGenericType && referenceTypes.Contains(memberType.GetGenericTypeDefinition());
-            }
-            
-            IEnumerable<MemberInfo> properties = conditionType
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(property => IsScenePropertyReference(property.PropertyType));
+                (BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, GetMemberType),
+                (BindingFlags.Instance | BindingFlags.Public, GetMemberType),
+            };
 
-            IEnumerable<MemberInfo> fields = conditionType
-                .GetFields(BindingFlags.Instance | BindingFlags.Public)
-                .Where(field => IsScenePropertyReference(field.FieldType));
-
-            return properties.Concat(fields).ToList();
+            return referenceTypes
+                .SelectMany(refType => memberKinds
+                    .SelectMany(kind => conditionType
+                        .GetMembers(kind.flags)
+                        .Where(m => m is PropertyInfo or FieldInfo
+                                    && kind.getMemberType(m).IsConstructedGenericType
+                                    && kind.getMemberType(m).GetGenericTypeDefinition() == refType)
+                        .Cast<MemberInfo>()))
+                .ToList();
         }
+
+        private static Type GetMemberType(MemberInfo m) => m is PropertyInfo p ? p.PropertyType : ((FieldInfo)m).FieldType;
 
         /// <summary>
         /// Recursively resolves the transitive closure of <c>RequireComponent</c> dependencies for a given property type.
