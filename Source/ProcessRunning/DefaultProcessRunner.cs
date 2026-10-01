@@ -36,11 +36,9 @@ namespace VRBuilder.Core.ProcessRunning
         /// <summary>
         /// <c>true</c> if a process has been initialized and is currently active.
         /// </summary>
-        public bool IsRunning => CurrentProcess != null && CurrentProcess.LifeCycle.Stage != Stage.Inactive;
+        public bool IsRunning => CurrentProcess is not null && CurrentProcess.LifeCycle.Stage != Stage.Inactive;
 
-        /// <summary>
-        /// Lifecycle events raised by the runner.
-        /// </summary>
+        /// <inheritdoc/>
         public ProcessEvents Events
         {
             get
@@ -50,6 +48,47 @@ namespace VRBuilder.Core.ProcessRunning
             }
         }
 
+        /// <inheritdoc/>
+        public void SetConfiguration(IProcessRunnerConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+
+        /// <inheritdoc/>
+        public void Initialize(IProcess process)
+        {
+            currentProcess = process;
+            Events.ProcessInitialized?.Invoke(null, new ProcessEventArgs(process));
+        }
+
+        /// <inheritdoc/>
+        public void Start()
+        {
+            if (IsRunning)
+            {
+                ForwardingLogger.Log($"Process {CurrentProcess} is already running.");
+                return;
+            }
+
+            Events.ProcessSetup?.Invoke(this, new ProcessEventArgs(currentProcess));
+
+            RuntimeEntityGraph.Prepare(currentProcess);
+
+            if (ServiceRegistry.Has<ModeService>())
+                ServiceRegistry.Get<ModeService>().ModeHandler.ModeChanged += HandleModeChanged;
+
+            currentProcess.LifeCycle.StageChanged += HandleProcessStageChanged;
+            currentProcess.Configure(ServiceRegistry.Get<IModeService>().ActiveOrDefaultMode);
+
+            var stepLockService = ServiceRegistry.Get<IStepLockService>();
+            stepLockService?.Configure(ServiceRegistry.Get<IModeService>().ActiveOrDefaultMode);
+            stepLockService?.OnProcessStarted(currentProcess);
+            currentProcess.LifeCycle.Activate();
+
+            Events.ProcessStarted?.Invoke(this, new ProcessEventArgs(currentProcess));
+        }
+
+        /// <inheritdoc/>
         public void Update()
         {
             if (currentProcess == null)
@@ -85,69 +124,16 @@ namespace VRBuilder.Core.ProcessRunning
             }
         }
 
-        /// <summary>
-        /// Sets the configuration used by the runner.
-        /// </summary>
-        /// <param name="configuration">The configuration to use.</param>
-        public void SetConfiguration(IProcessRunnerConfiguration configuration)
-        {
-            this.configuration = configuration;
-        }
-
-        /// <summary>
-        /// Initializes the runner with the given process without starting it.
-        /// </summary>
-        /// <param name="process">The process to run.</param>
-        public void Initialize(IProcess process)
-        {
-            currentProcess = process;
-            Events.ProcessInitialized?.Invoke(null, new ProcessEventArgs(process));
-        }
-
-        /// <summary>
-        /// Starts the <see cref="IProcess"/>.
-        /// </summary>
-        public void Start()
-        {
-            if (IsRunning)
-            {
-                ForwardingLogger.Log($"Process {CurrentProcess} is already running.");
-                return;
-            }
-
-            Events.ProcessSetup?.Invoke(this, new ProcessEventArgs(currentProcess));
-
-            RuntimeEntityGraph.Prepare(currentProcess);
-
-            if (ServiceRegistry.Has<ModeService>())
-                ServiceRegistry.Get<ModeService>().ModeHandler.ModeChanged += HandleModeChanged;
-
-            currentProcess.LifeCycle.StageChanged += HandleProcessStageChanged;
-            currentProcess.Configure(ServiceRegistry.Get<IModeService>().ActiveOrDefaultMode);
-
-            var stepLockService = ServiceRegistry.Get<IStepLockService>();
-            stepLockService?.Configure(ServiceRegistry.Get<IModeService>().ActiveOrDefaultMode);
-            stepLockService?.OnProcessStarted(currentProcess);
-            currentProcess.LifeCycle.Activate();
-
-            Events.ProcessStarted?.Invoke(this, new ProcessEventArgs(currentProcess));
-        }
-
-        /// <summary>
-        /// Sets the specified chapter as the next chapter in the process.
-        /// </summary>     
+        /// <inheritdoc/>   
         public void SetNextChapter(IChapter chapter)
         {
             CurrentProcess.Data.OverrideNext = chapter;
         }
 
-        /// <summary>
-        /// Skips the current step and uses given transition.
-        /// </summary>
-        /// <param name="transition">Transition which should be used.</param>
+        /// <inheritdoc/>
         public void SkipStep(ITransition transition)
         {
-            if (IsRunning == false)
+            if (!IsRunning)
             {
                 return;
             }
@@ -158,10 +144,7 @@ namespace VRBuilder.Core.ProcessRunning
             Events.FastForwardStep?.Invoke(this, new FastForwardProcessEventArgs(transition, CurrentProcess));
         }
 
-        /// <summary>
-        /// Skips the given amount of chapters.
-        /// </summary>
-        /// <param name="numberOfChapters">Number of chapters.</param>
+        /// <inheritdoc/>
         public void SkipChapters(int numberOfChapters)
         {
             IList<IChapter> chapters = CurrentProcess.Data.Chapters;
@@ -172,12 +155,10 @@ namespace VRBuilder.Core.ProcessRunning
             }
         }
 
-        /// <summary>
-        /// Skips the current chapters.
-        /// </summary>
+        /// <inheritdoc/>
         public void SkipCurrentChapter()
         {
-            if (IsRunning == false)
+            if (!IsRunning)
             {
                 return;
             }
@@ -192,29 +173,26 @@ namespace VRBuilder.Core.ProcessRunning
             currentChapter.LifeCycle.Deactivate();
         }
 
-        /// <summary>
-        /// Resets the runner state when a scene is unloaded.
-        /// </summary>
-        /// <param name="sceneName">The name of the unloaded scene.</param>
+        /// <inheritdoc/>
         public void OnSceneUnloaded(string sceneName)
         {
             events = null;
         }
 
-        /// <summary>
-        /// Stops the running process and releases runner state.
-        /// </summary>
+        /// <inheritdoc/>
         public void Stop()
         {
+            if (CurrentProcess is not null)
+            {
+                currentProcess = null;
+            }
         }
 
-        private void HandleModeChanged(object sender, ModeChangedEventArgs args)
+        /// <summary>
+        /// Initializes the runner without a process.
+        /// </summary>
+        public void Initialize()
         {
-            if (currentProcess != null)
-            {
-                currentProcess.Configure(args.Mode);
-                ServiceRegistry.Get<IStepLockService>()?.Configure(ServiceRegistry.Get<IModeService>().ActiveOrDefaultMode);
-            }
         }
 
         private void HandleProcessStageChanged(object sender, ActivationStateChangedEventArgs e)
@@ -227,11 +205,13 @@ namespace VRBuilder.Core.ProcessRunning
             }
         }
 
-        /// <summary>
-        /// Initializes the runner without a process.
-        /// </summary>
-        public void Initialize()
+        private void HandleModeChanged(object sender, ModeChangedEventArgs args)
         {
+            if (currentProcess != null)
+            {
+                currentProcess.Configure(args.Mode);
+                ServiceRegistry.Get<IStepLockService>()?.Configure(ServiceRegistry.Get<IModeService>().ActiveOrDefaultMode);
+            }
         }
     }
 }

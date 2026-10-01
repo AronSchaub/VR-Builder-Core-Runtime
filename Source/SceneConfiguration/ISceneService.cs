@@ -13,6 +13,11 @@ namespace VRBuilder.Core.Configuration
     public interface ISceneService : IService<ISceneConfiguration>
     {
         /// <summary>
+        /// The scene handler of the current session.
+        /// </summary>
+        ISceneHandler? Handler { get; set; }
+
+        /// <summary>
         /// Lists all assemblies whose property extensions will be used in the current scene.
         /// </summary>
         IEnumerable<string> ExtensionAssembliesWhitelist { get; }

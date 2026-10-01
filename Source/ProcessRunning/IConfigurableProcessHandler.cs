@@ -1,7 +1,7 @@
 namespace VRBuilder.Core.ProcessRunning
 {
     /// <summary>
-    /// Interface for a process controller that can be configured in the setup object.
+    /// Interface for a process handler that can be configured in the setup object.
     /// </summary>
     public interface IConfigurableProcessHandler
     {

@@ -12,7 +12,7 @@ namespace VRBuilder.Core.Registry
         /// <summary>
         /// Configuration callback. The services needs to cast it to it's own Configuration Interface.
         /// </summary>
-        /// <param name="configuration"></param>
+        /// <param name="configuration">Configuration of the given service.</param>
         void SetConfiguration(T configuration);
     }
 }
