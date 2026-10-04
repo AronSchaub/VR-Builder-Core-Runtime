@@ -75,7 +75,9 @@ namespace VRBuilder.Core.ProcessRunning
             RuntimeEntityGraph.Prepare(currentProcess);
 
             if (ServiceRegistry.Has<ModeService>())
+            {
                 ServiceRegistry.Get<ModeService>().ModeHandler.ModeChanged += HandleModeChanged;
+            }
 
             currentProcess.LifeCycle.StageChanged += HandleProcessStageChanged;
             currentProcess.Configure(ServiceRegistry.Get<IModeService>().ActiveOrDefaultMode);
@@ -91,7 +93,7 @@ namespace VRBuilder.Core.ProcessRunning
         /// <inheritdoc/>
         public void Update()
         {
-            if (currentProcess == null)
+            if (currentProcess is null)
             {
                 return;
             }

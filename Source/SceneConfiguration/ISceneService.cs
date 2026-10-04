@@ -1,9 +1,10 @@
-// Copyright (c) 2026 Aron Schaub
-// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 Aron Schaub, Sebastian Pötter
+// SPDX-License-Identifier: EUPL-1.2
 
 using System;
 using System.Collections.Generic;
 using VRBuilder.Core.Registry;
+using VRBuilder.Core.Utils.Audio;
 
 namespace VRBuilder.Core.Configuration
 {
@@ -31,6 +32,11 @@ namespace VRBuilder.Core.Configuration
         /// Default resources prefab to use for Confetti behavior.
         /// </summary>
         string DefaultConfettiPrefab { get; set; }
+
+        /// <summary>
+        /// Default audio source for playing audio inside the scene.
+        /// </summary>
+        IAudioData DefaultAudioSource { get; set; }
 
         /// <summary>
         /// Adds the specified assembly names to the extension whitelist.

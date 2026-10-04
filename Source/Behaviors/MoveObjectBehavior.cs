@@ -1,5 +1,5 @@
-// Modifications copyright (c) 2026 Aron Schaub
-// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 Aron Schaub, Sebastian Pötter
+// SPDX-License-Identifier: EUPL-1.2
 
 using System;
 using System.Collections;
@@ -86,7 +86,7 @@ namespace VRBuilder.Core.Behaviors
             /// Duration of the transition. If duration is equal or less than zero, target object movement is instantaneous.
             /// </summary>
             [DataMember]
-            [DisplayName("Animation")]
+            [DisplayName("Animation Duration")]
             [DisplayTooltip("Duration of the transition in seconds. If zero or less, movement is instantaneous.")]
             public float Duration { get; set; }
 
