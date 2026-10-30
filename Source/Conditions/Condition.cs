@@ -26,7 +26,7 @@ namespace VRBuilder.Core.Conditions
         {
             if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogConditions)
             {
-                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("{0}<b>Condition</b> <i>'{1} ({2})'</i> is <b>{3}</b>.\n", ConsoleUtils.GetTabs(2), Data.Name, GetType().Name, LifeCycle.Stage); };
+                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat($"{ConsoleUtils.GetTabs(2)}<b>Condition</b> <i>'{Data.Name} ({GetType().Name})'</i> is <b>{LifeCycle.Stage}</b>.\n"); };
             }
         }
 

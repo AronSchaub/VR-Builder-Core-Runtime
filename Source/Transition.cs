@@ -14,7 +14,6 @@ using VRBuilder.Core.EntityOwners;
 using VRBuilder.Core.EntityOwners.ParallelEntityCollection;
 using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.Runtime.Registry;
-using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Utils;
 
 namespace VRBuilder.Core
@@ -204,7 +203,7 @@ namespace VRBuilder.Core
                 LifeCycle.StageChanged += (sender, args) =>
                 {
                     IStep targetStep = Data.TargetStepReference.Entity;
-                    ForwardingLogger.LogFormat("{0}<b>Transition to</b> <i>{1}</i> is <b>{2}</b>.\n", ConsoleUtils.GetTabs(3), targetStep != null ? targetStep.Data.Name + " (Step)" : "chapter's end", LifeCycle.Stage);
+                    ForwardingLogger.LogFormat($"{ConsoleUtils.GetTabs(3)}<b>Transition to</b> <i>{(targetStep != null ? targetStep.Data.Name + " (Step)" : "chapter's end")}</i> is <b>{LifeCycle.Stage}</b>.\n");
                 };
             }
         }

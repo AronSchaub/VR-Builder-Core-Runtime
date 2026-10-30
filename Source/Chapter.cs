@@ -14,8 +14,6 @@ using VRBuilder.Core.EntityOwners.ParallelEntityCollection;
 using VRBuilder.Core.Exceptions;
 using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.Utils;
-using VRBuilder.Core.Utils.Logging;
-using VRBuilder.Utils;
 
 namespace VRBuilder.Core
 {
@@ -258,7 +256,7 @@ namespace VRBuilder.Core
 
             if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogChapters)
             {
-                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("<b>Chapter</b> <i>'{0}'</i> is <b>{1}</b>.\n", Data.Name, LifeCycle.Stage.ToString()); };
+                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat($"<b>Chapter</b> <i>'{Data.Name}'</i> is <b>{LifeCycle.Stage.ToString()}</b>.\n"); };
             }
         }
 

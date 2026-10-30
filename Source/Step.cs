@@ -19,7 +19,6 @@ using VRBuilder.Core.RestrictiveEnvironment;
 using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Core.SceneObjects;
 using VRBuilder.Core.StepLocking;
-using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Core.Utils;
 using VRBuilder.Utils;
 
@@ -325,7 +324,7 @@ namespace VRBuilder.Core
 
             if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogSteps)
             {
-                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("{0}<b>Step</b> <i>'{1}'</i> is <b>{2}</b>.\n", ConsoleUtils.GetTabs(), Data.Name, LifeCycle.Stage); };
+                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat($"{ConsoleUtils.GetTabs()}<b>Step</b> <i>'{Data.Name}'</i> is <b>{LifeCycle.Stage}</b>.\n"); };
             }
         }
 

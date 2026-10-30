@@ -1,7 +1,6 @@
 // Copyright (c) 2026 Aron Schaub
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Runtime.Serialization;
 
 namespace VRBuilder.Core.Primitives
