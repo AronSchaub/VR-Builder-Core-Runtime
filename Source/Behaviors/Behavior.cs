@@ -3,7 +3,6 @@
 // Modifications copyright (c) 2021-2026 MindPort GmbH
 
 using System.Runtime.Serialization;
-using VRBuilder.Core.Utils.Logging;
 using VRBuilder.Core.Configuration;
 using VRBuilder.Core.Runtime.Registry;
 using VRBuilder.Utils;
@@ -30,7 +29,7 @@ namespace VRBuilder.Core.Behaviors
         {
             if (ServiceRegistry.Get<IRuntimeService>().LifeCycleLogging.LogBehaviors)
             {
-                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat("{0}<b>Behavior</b> <i>'{1} ({2})'</i> is <b>{3}</b>.\n", ConsoleUtils.GetTabs(2), Data.Name, GetType().Name, LifeCycle.Stage); };
+                LifeCycle.StageChanged += (sender, args) => { ForwardingLogger.LogFormat($"{ConsoleUtils.GetTabs(2)}<b>Behavior</b> <i>'{Data.Name} ({GetType().Name})'</i> is <b>{LifeCycle.Stage}</b>.\n"); };
             }
         }
 

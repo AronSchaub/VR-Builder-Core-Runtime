@@ -1,8 +1,10 @@
 # REUSE licensing configuration for the ProcessEngine core.
 #
 # This repository originates from MindPort's VR Builder process engine and is
-# licensed Apache-2.0 throughout. Most files carry their own SPDX header; those
-# that only carry the historical prose notice (or none) are covered here.
+# licensed Apache-2.0, with one exception: files written entirely by TinkerFlow's
+# authors carry EUPL-1.2 in their own header (Source/SceneConfiguration/ISceneService.cs
+# today), and both licence texts sit in LICENSES/. Most files carry their own SPDX
+# header; those that only carry the historical prose notice (or none) are covered here.
 #
 # `precedence = "closest"` applies this to files that carry no licensing
 # information of their own, so the existing per-file headers are left untouched.

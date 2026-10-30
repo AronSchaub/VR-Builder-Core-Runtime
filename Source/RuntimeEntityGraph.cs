@@ -1,6 +1,5 @@
 // Copyright (c) 2026 MindPort GmbH
 
-using System;
 using System.Linq;
 using VRBuilder.Core.EntityOwners;
 
