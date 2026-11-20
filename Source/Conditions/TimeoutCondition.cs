@@ -29,6 +29,12 @@ namespace VRBuilder.Core.Conditions
         /// <param name="timeout">Delay before the condition completes, in seconds.</param>
         public TimeoutCondition(float timeout)
         {
+            if (timeout < 0f)
+            {
+                ForwardingLogger.LogWarningFormat("DelayTime has to be zero or positive, but it was {0}. Setting to 0 instead.", timeout);
+                timeout = 0f;
+            }
+
             Data.Timeout = timeout;
         }
 
