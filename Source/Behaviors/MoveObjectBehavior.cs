@@ -1,5 +1,5 @@
 // Copyright (c) 2026 Aron Schaub, Sebastian Pötter
-// SPDX-License-Identifier: EUPL-1.2
+// SPDX-License-Identifier: Apache-2.0
 
 using System;
 using System.Collections;
