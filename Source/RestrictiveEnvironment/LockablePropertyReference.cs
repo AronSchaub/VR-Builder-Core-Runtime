@@ -9,19 +9,19 @@ using VRBuilder.Core.SceneObjects;
 namespace VRBuilder.Core.RestrictiveEnvironment
 {
     /// <summary>
-    /// Serializable reference to a <see cref="LockableProperty"/>
+    /// Serializable reference to a <see cref="ILockableProperty"/>
     /// </summary>
     [DataContract(IsReference = true)]
     public class LockablePropertyReference
     {
         /// <summary>
-        /// Reference to the scene object the LockableProperty is attached to.
+        /// Reference to the scene object the ILockableProperty is attached to.
         /// </summary>
         [DataMember]
         public SingleSceneObjectReference TargetObject;
 
         /// <summary>
-        /// Type name of the LockableProperty.
+        /// Type name of the ILockableProperty.
         /// </summary>
         [DataMember]
         public string Type;
@@ -47,7 +47,7 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         }
 
         /// <summary>
-        /// Returns the referenced <see cref="LockableProperty"/>.
+        /// Returns the referenced <see cref="ILockableProperty"/>.
         /// </summary>
         public ILockableProperty GetProperty()
         {

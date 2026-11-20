@@ -7,7 +7,7 @@ using VRBuilder.Core.Properties;
 namespace VRBuilder.Core.RestrictiveEnvironment
 {
     /// <summary>
-    /// Contains a target <see cref="LockableProperty"/> and additional information which define how the property is handled.
+    /// Contains a target <see cref="ILockableProperty"/> and additional information which define how the property is handled.
     /// </summary>
     public class LockablePropertyData
     {
@@ -41,7 +41,7 @@ namespace VRBuilder.Core.RestrictiveEnvironment
         }
 
         /// <summary>
-        /// Determines whether this instance refers to the same <see cref="LockableProperty"/> as <paramref name="other"/>.
+        /// Determines whether this instance refers to the same <see cref="ILockableProperty"/> as <paramref name="other"/>.
         /// </summary>
         /// <param name="other">The <see cref="LockablePropertyData"/> to compare against.</param>
         /// <returns><c>true</c> if both instances reference the same property; otherwise, <c>false</c>.</returns>
